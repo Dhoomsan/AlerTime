@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/My_schedule"
+            android:icon="@drawable/ic_schedulesicon"
+            android:title="Dynamic Schedule" />
+        <item
+            android:id="@+id/DMy_schedule"
+            android:icon="@drawable/ic_schedulesicon"
+            android:title="Static Schedule" />
+        <item
+            android:id="@+id/nav_notes"
+            android:icon="@drawable/ic_notes"
+            android:title="My Notes" />
+    </group>
+    <item android:title="Manage">
+        <menu>
+            <item
+                android:id="@+id/nav_Alerm"
+                android:icon="@drawable/ic_alarm_clock"
+                android:title="Alerm Setiing" />
+        </menu>
+    </item>
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+        </menu>
+    </item>
+</menu>
