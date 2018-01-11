@@ -11,6 +11,7 @@ import android.util.Log;
  */
 
 public class AlermNotificationReciever extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(AlermNotificationReciever.class.getSimpleName(), "Service Stops! Opss!!!");

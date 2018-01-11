@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,6 +37,7 @@ public class SQLiteListAdapter extends BaseAdapter {
     ArrayList<String> UserETime;
     ArrayList<String> UserSubject ;
     ArrayList<String> User_Venue;
+    ArrayList<String> User_Alarm;
     private SparseBooleanArray mSelectedItemsIds=new SparseBooleanArray();
     public SQLiteListAdapter(
             Context context2,
@@ -43,7 +45,8 @@ public class SQLiteListAdapter extends BaseAdapter {
             ArrayList<String> stime,
             ArrayList<String> etime,
             ArrayList<String> subject,
-            ArrayList<String> venue
+            ArrayList<String> venue,
+            ArrayList<String> alarm
     )
     {
 
@@ -53,6 +56,7 @@ public class SQLiteListAdapter extends BaseAdapter {
         this.UserETime = etime;
         this.UserSubject = subject ;
         this.User_Venue = venue;
+        this.User_Alarm = alarm;
     }
 
     public int getCount() {
@@ -73,7 +77,7 @@ public class SQLiteListAdapter extends BaseAdapter {
         LayoutInflater layoutInflater;
         if (child == null) {
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            child = layoutInflater.inflate(R.layout.display, null,true);
+            child = layoutInflater.inflate(R.layout.display, null, true);
 
             holder = new Holder();
 
@@ -81,6 +85,7 @@ public class SQLiteListAdapter extends BaseAdapter {
             holder.textviewetime = (TextView) child.findViewById(R.id.textViewETime);
             holder.textviewsubject = (TextView) child.findViewById(R.id.textViewSubject);
             holder.textviewvenue = (TextView) child.findViewById(R.id.textViewVenue);
+            holder.textviewalarm = (TextView) child.findViewById(R.id.textViewAlarm);
 
             child.setTag(holder);
 
@@ -88,36 +93,49 @@ public class SQLiteListAdapter extends BaseAdapter {
 
             holder = (Holder) child.getTag();
         }
-            Calendar cal = Calendar.getInstance();
-            int sshour = cal.get(Calendar.HOUR_OF_DAY);
-            int ssmint = cal.get(Calendar.MINUTE);
-            int ctime = sshour*60+ssmint;
-            String shour= UserSTime.get(position);
-            String ehour=UserETime.get(position);
-            String[] SplitStime=shour.split(" ");
-            String[] Splitetime = ehour.split(" ");
-            String st = SplitStime[0];
-            String et = Splitetime[0];
-            Date date1 = new Date();
-            date1.setTime((((Integer.parseInt(st.split(":")[0]))*60 + (Integer.parseInt(st.split(":")[1])))+ date1.getTimezoneOffset())*60000);
-            int storeshour = date1.getHours();
-            int storesmint = date1.getMinutes();
-            int storestime=storeshour*60+storesmint;
-            Date date2 = new Date();
-            date2.setTime((((Integer.parseInt(et.split(":")[0]))*60 + (Integer.parseInt(et.split(":")[1])))+ date1.getTimezoneOffset())*60000);
-            int storeehour = date2.getHours();
-            int storeemint = date2.getMinutes();
-            int storeetime=storeehour*60+storeemint;
-            SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-            Date d = new Date();
-            final String dayOfTheWeek = sdf.format(d);
-            if (ctime >= storestime && ctime < storeetime) {
-                child.setBackgroundColor(Color.parseColor("#E6E8FA"));
-            }
+        Calendar cal = Calendar.getInstance();
+        int sshour = cal.get(Calendar.HOUR_OF_DAY);
+        int ssmint = cal.get(Calendar.MINUTE);
+        int ctime = sshour * 60 + ssmint;
+        String shour = UserSTime.get(position);
+        String ehour = UserETime.get(position);
+        String[] SplitStime = shour.split(" ");
+        String[] Splitetime = ehour.split(" ");
+        String st = SplitStime[0];
+        String et = Splitetime[0];
+        Date date1 = new Date();
+        date1.setTime((((Integer.parseInt(st.split(":")[0])) * 60 + (Integer.parseInt(st.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
+        int storeshour = date1.getHours();
+        int storesmint = date1.getMinutes();
+        int storestime = storeshour * 60 + storesmint;
+        Date date2 = new Date();
+        date2.setTime((((Integer.parseInt(et.split(":")[0])) * 60 + (Integer.parseInt(et.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
+        int storeehour = date2.getHours();
+        int storeemint = date2.getMinutes();
+        int storeetime = storeehour * 60 + storeemint;
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        Date d = new Date();
+        final String dayOfTheWeek = sdf.format(d);
+        if (ctime >= storestime && ctime < storeetime) {
+            child.setBackgroundColor(Color.parseColor("#E6E8FA"));
+        }
+        Random random = new Random();
+        String cb = User_Alarm.get(position);
+        if (cb.equals("00")) {
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
             holder.textviewsubject.setText(UserSubject.get(position));
             holder.textviewvenue.setText(User_Venue.get(position));
+            holder.textviewalarm.setText("");
+        } else{
+
+            holder.textviewalarm.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
+            holder.textviewstime.setText(UserSTime.get(position));
+            holder.textviewetime.setText(UserETime.get(position));
+            holder.textviewsubject.setText(UserSubject.get(position));
+            holder.textviewvenue.setText(User_Venue.get(position));
+            holder.textviewalarm.setText(User_Alarm.get(position));
+         }
         return child;
     }
 
@@ -126,6 +144,7 @@ public class SQLiteListAdapter extends BaseAdapter {
         TextView textviewetime;
         TextView textviewsubject;
         TextView textviewvenue;
+        TextView textviewalarm;
     }
     public void  toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));

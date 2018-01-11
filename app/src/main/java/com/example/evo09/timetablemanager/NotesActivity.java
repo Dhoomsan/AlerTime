@@ -46,6 +46,11 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
     private static final String DNAME = "TimeScheduler";
     Intent intent ;
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
+    }
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Notes");

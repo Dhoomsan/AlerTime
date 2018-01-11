@@ -3,18 +3,17 @@ package com.example.evo09.timetablemanager;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -41,6 +40,12 @@ import android.widget.Toast;
 //#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end #parse("File Header.java") public class ${NAME} { }
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int RequestPermissionCode1 = 2;
+
+    private ProgressDialog csprogress;
+    SQLiteDatabase SQLITEDATABASE;
+    SQLiteHelper SQLITEHELPER;
+    Cursor cursor;
     Intent mServiceIntent;
     private AlarmService mSensorService;
     Context ctx;
@@ -48,26 +53,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return ctx;
     }
 
-
-    SharedPreferences Staticsharedpreferences;
-    public static final String StaticTotalClass = "StaticTotalClass";
-    String getStaticTotalClass;
-    private final String DefaultTotalClassValue = "";
-
     Fragment fragment=null;
     Fragment frag;
     FragmentManager fm1;
+    FragmentTransaction ft1;
     boolean permissiongrant=false;
     TextView evolvan;
-    FragmentTransaction ft1;
     LinearLayout layout;
-    LinearLayout Showstatictable,createstatictable;
-
     Animation slideUp,slideDown;
     SharedPreferences sharedpreferences;
+    private SharedPreferences.Editor mEditor;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
     public static final String AddUpdateFlag = "AddUpdateFlag";
     String insertdata="INSERTDATA";
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,9 +84,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         startService(new Intent(this, AlarmService.class));
 
-        Staticsharedpreferences =getSharedPreferences("Staticmypreference", Context.MODE_PRIVATE);
-        getStaticTotalClass= Staticsharedpreferences.getString(StaticTotalClass, DefaultTotalClassValue);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //permissions
@@ -92,12 +92,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menu.setDisplayShowHomeEnabled(true);
         menu.setIcon(R.drawable.ic_clock);*/
         sharedpreferences =getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        mEditor = sharedpreferences.edit();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        SQLITEHELPER = new SQLiteHelper(this);
+        DBCreate();
+
+        csprogress = new ProgressDialog(this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerview = navigationView.getHeaderView(0);
@@ -110,15 +116,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        if(permissiongrant=true){
-            fm1 = MainActivity.this.getSupportFragmentManager();
-            ft1 = fm1.beginTransaction();
-            frag = new MySchedules();
-            ft1.replace(R.id.content_frame, frag);
-            ft1.commit();
+
+        if(permissiongrant=true) {
+            /*csprogress.setMessage("Fetching...");
+            csprogress.show();
+            csprogress.setCancelable(false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {*/
+                    cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
+                    if(cursor.getCount()!=0) {
+                        fm1 = MainActivity.this.getSupportFragmentManager();
+                        ft1 = fm1.beginTransaction();
+                        frag = new MySchedules();
+                        ft1.replace(R.id.content_frame, frag);
+                        ft1.commit();
+                    }
+                    else {
+                        fm1 = MainActivity.this.getSupportFragmentManager();
+                        ft1 = fm1.beginTransaction();
+                        frag = new MyStaticSchedules();
+                        ft1.replace(R.id.content_frame, frag);
+                        ft1.commit();
+                    }
+                    /*new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            csprogress.dismiss();
+                        }
+                    }, 200);
+                }
+            }, 2000);//just mention the time when you want to launch your action*/
+        }
+
+
+        //..............
+        //Autostartpermisssion();
+        //............
+    }
+    public void DBCreate(){
+        SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
+        SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
+        if(SQLITEDATABASE.isOpen()) {
+            //Log.d("SQ", "open");
+        }
+        else {
+            //Log.d("SLV", "not open");
         }
     }
-
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -143,7 +189,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (requestCode) {
             case 1: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
                     permissiongrant=true;
+                        }
+                    }, 2000);
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Permission denied to read your External storage"+"\n"+"Allow it")
@@ -174,8 +226,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         layout = (LinearLayout) findViewById(R.id.updatelayout);
-        Showstatictable = (LinearLayout) findViewById(R.id.Showstatictable);
-        createstatictable=(LinearLayout) findViewById(R.id.createstatictable);
         slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
         slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
 
@@ -206,33 +256,69 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 layout.startAnimation(slideUp);
                 break;
             }
-            case R.id.action_deleteStatic: {
-                if(getStaticTotalClass.length()==0) {
-                    Toast.makeText(getApplication(),"Sorry !"+"\n"+"Create First.",Toast.LENGTH_SHORT).show();
-
+            case R.id.action_createStatic: {
+                cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
+                if(cursor.getCount()!=0){
+                    Toast.makeText(getApplicationContext(),"Record already existing!",Toast.LENGTH_LONG).show();
                 }
                 else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Are you sure you want to Delete Static Schedule?")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Staticsharedpreferences.edit().clear().commit();
-                                    Showstatictable.setVisibility(View.GONE);
-                                    createstatictable.setVisibility(View.VISIBLE);
-                                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    fm1 = MainActivity.this.getSupportFragmentManager();
+                    ft1 = fm1.beginTransaction();
+                    frag = new MyStaticSchedules();
+                    ft1.replace(R.id.content_frame, frag);
+                    ft1.commit();
                 }
                 break;
             }
+            case R.id.action_deleteStatic: {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Are you sure you want to Delete Schedule?"+"\n"+"it will delete all record")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
+                                SQLITEDATABASE.delete(SQLITEHELPER.TABLE_NAME,null,null);
+                                SQLITEDATABASE.close();
+
+                                mEditor.clear();
+                                mEditor.commit();
+
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                                csprogress.setMessage("Loading...");
+                                csprogress.show();
+                                csprogress.setCancelable(false);
+                                new Handler().postDelayed(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),"Deleted Successfully.",Toast.LENGTH_LONG).show();
+                                        fm1 = MainActivity.this.getSupportFragmentManager();
+                                        ft1 = fm1.beginTransaction();
+                                        frag = new MyStaticSchedules();
+                                        ft1.replace(R.id.content_frame, frag);
+                                        ft1.commit();
+                                        new Handler().postDelayed(new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                csprogress.dismiss();
+                                            }
+                                        }, 300);
+                                    }
+                                }, 1500);//just mention the time when you want to launch your action
+
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+            break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -248,14 +334,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case  R.id.My_schedule:
                fragment=new MySchedules();
                 break;
-            case  R.id.DMy_schedule:
-                fragment=new MyStaticSchedules();
-                break;
             case  R.id.nav_notes:
                 fragment= new NotesActivity();
-                break;
-            case  R.id.nav_Alerm:
-                fragment= new Alarm();
                 break;
             case  R.id.nav_share:
                 try {
@@ -284,8 +364,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         startService(mServiceIntent);
         Log.i("MAINACT", "onDestroy!");
-        super.onDestroy();
     }
 }

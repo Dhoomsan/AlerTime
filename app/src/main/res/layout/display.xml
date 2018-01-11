@@ -2,50 +2,53 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="3"
+        android:paddingBottom="5sp"
+        android:paddingTop="5sp"
         android:gravity="center">
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_weight="1">
+            android:layout_weight="0.8">
             <TextView
                 android:id="@+id/textViewSTime"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Start time"
-                android:textSize="20dp"
+                android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             <TextView
                 android:id="@+id/space"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="to"
+                android:textAlignment="center"
                 android:textSize="10dp"
                 android:textColor="@color/hue"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             <TextView
                 android:id="@+id/textViewETime"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="End Time"
                 android:textSize="10dp"
+                android:textAlignment="center"
                 android:textColor="@color/red"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_weight="1">
             <TextView
                 android:id="@+id/textViewSubject"
@@ -60,18 +63,34 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
+            android:gravity="center"
             android:layout_weight="1">
             <TextView
                 android:id="@+id/textViewVenue"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".5"
                 android:textSize="16dp"
                 android:textColor="@color/blue"
                 android:text="Venue"
                 android:textAlignment="center"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="top"
+            android:layout_weight="0.2">
+            <TextView
+                android:id="@+id/textViewAlarm"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
     </LinearLayout>

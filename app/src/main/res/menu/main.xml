@@ -17,8 +17,13 @@
         android:title="Add"
         app:showAsAction="always"/>
     <item
+        android:id="@+id/action_createStatic"
+        android:icon="@drawable/ic_deleteicon"
+        android:title="Table"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_deleteStatic"
         android:icon="@drawable/ic_deleteicon"
-        android:title="Add"
-        app:showAsAction="always"/>
+        android:title="Delete Table"
+        app:showAsAction="never"/>
 </menu>

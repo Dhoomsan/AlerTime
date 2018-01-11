@@ -48,6 +48,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
     ArrayList<String> ETIME_ArrayList = new ArrayList<String>();
     ArrayList<String> SUBJECT_ArrayList = new ArrayList<String>();
     ArrayList<String> VENUE_ArrayList = new ArrayList<String>();
+    ArrayList<String> ALARM_ArrayList = new ArrayList<String>();
     ListView LISTVIEW;
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
@@ -57,6 +58,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
     String updatedata="UPDATE";
     LinearLayout layout;
     Animation slideUp,slideDown;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,9 +89,10 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
         super.onResume();
     }
     private void ShowSQLiteDBdata() {
-        SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR, " + SQLITEHELPER.KEY_STime + " VARCHAR, " + SQLITEHELPER.KEY_ETime + " VARCHAR, " + SQLITEHELPER.KEY_Subject + " VARCHAR, " + SQLITEHELPER.KEY_Venue + " VARCHAR)";
-        SQLITEDATABASE.execSQL(CREATE_TABLE);
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
+        SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
+
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = 'Monday' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
 
         ID_ArrayList.clear();
@@ -106,6 +109,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
                 ETIME_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime)));
                 SUBJECT_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Subject)));
                 VENUE_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Venue)));
+                ALARM_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor)));
 
             } while (cursor.moveToNext());
         }
@@ -116,7 +120,8 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
                 STIME_ArrayList,
                 ETIME_ArrayList,
                 SUBJECT_ArrayList,
-                VENUE_ArrayList
+                VENUE_ArrayList,
+                ALARM_ArrayList
 
         );
 
@@ -135,34 +140,14 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
         mySchedules.Venue.setText("");
         mySchedules.StartTime.setText("");
         mySchedules.EndTime.setText("");
+       // mySchedules.AlermBefore.setText("");
         mySchedules.Subject.setText(((TextView)view.findViewById(R.id.textViewSubject)).getText().toString());
         mySchedules.Venue.setText(((TextView)view.findViewById(R.id.textViewVenue)).getText().toString());
         mySchedules.StartTime.setText(((TextView)view.findViewById(R.id.textViewSTime)).getText().toString());
         mySchedules.EndTime.setText(((TextView)view.findViewById(R.id.textViewETime)).getText().toString());
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString(StoreId, data);
-        editor.putString(AddUpdateFlag, updatedata);
 
-        AlarmStatus(data);
-       /* editor.putString(AddUpdateFlagt, Stime);
-        editor.putString(AddUpdateFlage, Etime);
-        editor.putString(AddUpdateFlags, Subject);
-        editor.putString(AddUpdateFlagv, Venue);*/
 
-        editor.commit();
-        Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
-        b.setText("Update");
-        layout.setVisibility(View.VISIBLE);
-        layout.startAnimation(slideUp);
-    }
-
-    public void AlarmStatus(String data){
-        String getid=data;
-        SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-        String CREATE_ALERMTABLE ="CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_ALERM + " (" + SQLITEHELPER.KEY_IA + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR, "+ SQLITEHELPER.KEY_Status +" VARCHAR)";
-        SQLITEDATABASE.execSQL(CREATE_ALERMTABLE);
-        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_ALERM + " WHERE  " + SQLITEHELPER.KEY_Status + " = '"+ getid +"'", null);
-        Log.d("abcdefghijk","kdghysid"+getid);
+        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor+ " != '" + "00" + "' AND " + SQLITEHELPER.KEY_ID + " = '"+ data +"'" , null);
         mySchedules.AlermBefore.setText("");
         mySchedules.AlermRepeat.setChecked(false);
         while (cursor != null && cursor.moveToNext()) {
@@ -170,7 +155,18 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
             mySchedules.AlermBefore.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor)));
             mySchedules.AlermRepeat.setChecked(true);
         }
+
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(StoreId, data);
+        editor.putString(AddUpdateFlag, updatedata);
+        editor.commit();
+
+        Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
+        b.setText("Update");
+        layout.setVisibility(View.VISIBLE);
+        layout.startAnimation(slideUp);
     }
+
     @Override
     public boolean onCreateActionMode (ActionMode actionMode, Menu menu){
         actionMode.getMenuInflater().inflate(R.menu.menu, menu);
@@ -228,10 +224,8 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
                                 // Remove  selected items following the ids
                                 SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                                 String sql = "DELETE FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_ID + " = '" + selecteditem + "'";
-                                String sql1 = "DELETE FROM " + SQLITEHELPER.TABLE_ALERM + " WHERE  " + SQLITEHELPER.KEY_Status + " = '" + selecteditem + "'";
                                 try {
                                     SQLITEDATABASE.execSQL(sql);
-                                    SQLITEDATABASE.execSQL(sql1);
                                     Log.d("SQLvarid",selecteditem);
                                 } catch (SQLException e) {
                                 }

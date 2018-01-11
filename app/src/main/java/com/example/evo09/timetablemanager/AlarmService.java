@@ -96,17 +96,18 @@ public class AlarmService extends Service  {
         @Override
         protected void onPreExecute() {
             SQLITEDATABASE = getApplicationContext().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-            CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL)";
+            String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
             SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-            CREATE_ALERMTABLE ="CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_ALERM + " (" + SQLITEHELPER.KEY_IA + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR, "+ SQLITEHELPER.KEY_Status +" VARCHAR)";
-            SQLITEDATABASE.execSQL(CREATE_ALERMTABLE);
+            if(SQLITEDATABASE.isOpen()) {
+                //Log.d("SQ", "open");
+            }
+            else {
+                //Log.d("SLV", "not open");
+            }
         }
         @Override
         protected String doInBackground(String... params) {
-            tableTime=SQLITEHELPER.TABLE_NAME;
-            tableAlerm=SQLITEHELPER.TABLE_ALERM;
-            tableId=SQLITEHELPER.KEY_ID;
-            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " INNER JOIN  "+SQLITEHELPER.TABLE_ALERM+" on "+ SQLITEHELPER.TABLE_NAME +"."+SQLITEHELPER.KEY_ID+"="+SQLITEHELPER.TABLE_ALERM+"."+SQLITEHELPER.KEY_Status, null);
+            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME , null);
             while (cursor != null && cursor.moveToNext()) {
                 Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
                 Abefore = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor));

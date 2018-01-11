@@ -3,114 +3,100 @@ package com.example.evo09.timetablemanager;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
-import android.text.Layout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
-public class MyStaticSchedules extends Fragment implements View.OnClickListener {
+import static android.content.Context.MODE_PRIVATE;
+
+public class MyStaticSchedules extends Fragment implements View.OnClickListener{
+
+    Fragment fragment=null;
+    Fragment frag;
+    FragmentManager fm1;
+    FragmentTransaction ft1;
+
+    Random random;
 
     private ProgressDialog csprogress;
-    static TextView StartTime,EndTime,BreakStartTime;
-    static EditText PeriodDuration,BreakDuration;
-    Button buttonSubmit;
-    Snackbar snackbar1;
-    Toolbar.LayoutParams lp;
-    LinearLayout Showstatictable,createstatictable;
-    static int TimeFlag=0,intstart=0,intend=0,intBstart,TimeSBmin,TimeTotal,Timeplus,TimeABEdiv,Timebbtal,TimeAbtal;
-    String getTime,StrStartTime,StrEndTime,StrBreakStartTime,StrPeriodDuration,StrBreakDuration,StrbuttonSubmit;
-    Date date;
+    SQLiteDatabase SQLITEDATABASE;
+    SQLiteHelper SQLITEHELPER;
+    Cursor cursor;
+    Date STimedate,ETimedate,BSTimedate;
 
-    SharedPreferences Staticsharedpreferences;
-    public static final String Staticmypreference = "Staticmypreference";
-    public static final String StaticStartTime = "StaticStartTime";
-    public static final String StaticEndTime = "StaticEndTime";
-    public static final String StaticBreakStartTime = "StaticBreakStartTime";
-    public static final String StaticPeriodDuration = "StaticPeriodDuration";
-    public static final String StaticBreakDuration = "StaticBreakDuration";
-    public static final String StaticbuttonSubmit = "StaticbuttonSubmit";
-    public static final String StaticTotalClass = "StaticTotalClass";
-    private final String DefaultbuttonSubmitValue = "";
-    private final String DefaultStartTimeValue = "";
-    private final String DefaultEndTimeValue = "";
-    private final String DefaultBreakStartTimeValue = "";
-    private final String DefaultPeriodDurationValue = "";
-    private final String DefaultBreakDurationValue = "";
-    private final String DefaultTotalClassValue = "";
-    String getbuttonSubmitStatus,getStaticStartTime,getStaticEndTime,getStaticBreakStartTime,getStaticPeriodDuration,getStaticBreakDuration,getStaticTotalClass;
+    TextView StartTime,EndTime,BreakStartTime;
+    static Button dynamic,statically;
+    EditText PeriodDuration,BreakDuration,Alarmbefore;
+    Button buttonSubmit;
+    int TimeFlag=0,shour,smint,ehour,emint,intStartTime,intEndTime,intBreakStartTime;
+    String getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore,StrStartTime,StrEndTime;
+    Snackbar snackbar1;
+    //boolean CheckEmptyValidate;
+    String getTime;
+    private String Strday[] = new String[] { "Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday" };
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Schedules");
         setHasOptionsMenu(true);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootview= inflater.inflate(R.layout.fragment_my_static_schedules, container, false);
-        csprogress=new ProgressDialog(getActivity());
+        SQLITEHELPER = new SQLiteHelper(getActivity());
+        csprogress = new ProgressDialog(getContext());
 
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
-
-        Staticsharedpreferences = getActivity().getSharedPreferences(Staticmypreference, Context.MODE_PRIVATE);
-        getbuttonSubmitStatus= Staticsharedpreferences.getString(StaticbuttonSubmit, DefaultbuttonSubmitValue);
-        getStaticStartTime= Staticsharedpreferences.getString(StaticStartTime, DefaultStartTimeValue);
-        getStaticEndTime= Staticsharedpreferences.getString(StaticEndTime, DefaultEndTimeValue);
-        getStaticBreakStartTime= Staticsharedpreferences.getString(StaticBreakStartTime, DefaultBreakStartTimeValue);
-        getStaticPeriodDuration= Staticsharedpreferences.getString(StaticPeriodDuration, DefaultPeriodDurationValue);
-        getStaticBreakDuration=Staticsharedpreferences.getString(StaticBreakDuration, DefaultBreakDurationValue);
-        getStaticTotalClass=Staticsharedpreferences.getString(StaticTotalClass, DefaultTotalClassValue);
-
-        Showstatictable = (LinearLayout) rootview.findViewById(R.id.Showstatictable);
-        createstatictable=(LinearLayout) rootview.findViewById(R.id.createstatictable);
-
+        // random = new Random();
+        //add view
+        dynamic=(Button) rootview.findViewById(R.id.dynamic);
+        //dynamic.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
+        statically=(Button) rootview.findViewById(R.id.statically);
+        //statically.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
         StartTime=(TextView)rootview.findViewById(R.id.StartTime);
         EndTime=(TextView)rootview.findViewById(R.id.EndTime);
         BreakStartTime=(TextView)rootview.findViewById(R.id.BreakStartTime);
-
-        PeriodDuration=(EditText)rootview.findViewById(R.id.PeriodDuration);
+        Alarmbefore=(EditText) rootview.findViewById(R.id.Alarmbefore);
         BreakDuration=(EditText)rootview.findViewById(R.id.BreakDuration);
-
+        PeriodDuration=(EditText)rootview.findViewById(R.id.PeriodDuration);
         buttonSubmit=(Button)rootview.findViewById(R.id.buttonSubmit);
 
-        //set Listener
+        //add listener
+        dynamic.setOnClickListener(this);
+        statically.setOnClickListener(this);
         StartTime.setOnClickListener(this);
         EndTime.setOnClickListener(this);
         BreakStartTime.setOnClickListener(this);
-
-        PeriodDuration.setOnClickListener(this);
-        BreakDuration.setOnClickListener(this);
-
         buttonSubmit.setOnClickListener(this);
 
         return rootview;
@@ -119,47 +105,18 @@ public class MyStaticSchedules extends Fragment implements View.OnClickListener 
     public void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        csprogress.setMessage("Loading...");
-        csprogress.show();
-        csprogress.setCancelable(false);
-        new Handler().postDelayed(new Runnable() {
 
-            @Override
-            public void run() {
-                if(getbuttonSubmitStatus.length()==0){
-                    Log.d("getbuttonSubmitStatus","dhgsd"+getbuttonSubmitStatus);
-                    Showstatictable.setVisibility(View.GONE);
-                    createstatictable.setVisibility(View.VISIBLE);
-                }
-                else {
-                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-                    createstatictable.setVisibility(View.GONE);
-                    Showstatictable.setVisibility(View.VISIBLE);
-                    StaticTableView();
-                }
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        csprogress.dismiss();
-                    }
-                }, 200);
-            }
-        }, 600);//just mention the time when you want to launch your action
     }
     public void onPrepareOptionsMenu(Menu main ) {
         //menu.clear();
         //menu.clear();
-        MenuItem item = main.findItem(R.id.action_add);
-        item.setVisible(false);
-        MenuItem item2 = main.findItem(R.id.action_LANDSCAPE);
-        item2.setVisible(false);
-        MenuItem item3=main.findItem(R.id.action_PORTRAIT);
-        item3.setVisible(false);
+        main.clear();
     }
+
     @Override
     public void onClick(View view) {
+        LinearLayout Staticshowdata=(LinearLayout)getActivity().findViewById(R.id.Staticshowdata);
+        LinearLayout dynamicShowdata=(LinearLayout)getActivity().findViewById(R.id.dynamicShowdata);
         switch (view.getId()){
             case R.id.StartTime:{
                 TimeFlag=789;
@@ -180,175 +137,200 @@ public class MyStaticSchedules extends Fragment implements View.OnClickListener 
                 ButtonSubmit();
                 break;
             }
-        }
+            case R.id.dynamic:
+            {
+                Staticshowdata.setVisibility(View.GONE);
+                Date d = new Date();
+                String stime = String.format("%02d:%02d %s", d.getHours() == 0 ? 12 : d.getHours(), d.getMinutes(), d.getHours() < 12 ? "AM" : "PM");
+                String etime = String.format("%02d:%02d %s", d.getHours()+1 == 0 ? 12 : d.getHours()+1, d.getMinutes(), d.getHours()+1 < 12 ? "AM" : "PM");
+                SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+                final String dayOfTheWeek = sdf.format(d);
 
+                SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+                String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
+                SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
+                SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + dayOfTheWeek + "', '" + stime + "', '" + etime + "', '" + "Math" + "', '" + "Room 101" + "' , '" + "5" + "');");
+                fm1 = getActivity().getSupportFragmentManager();
+                ft1 = fm1.beginTransaction();
+                frag = new MySchedules();
+                ft1.replace(R.id.content_frame, frag);
+                ft1.commit();
+                break;
+            }
+            case R.id.statically:
+            {
+
+                dynamicShowdata.setVisibility(View.GONE);
+                Staticshowdata.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
     }
     public void SetTime(){
         final Calendar mcurrentTime = Calendar.getInstance();
         final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int minute = mcurrentTime.get(Calendar.MINUTE);
-            TimePickerDialog mTimePicker= new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                    int hour = selectedHour;
-                    int minute=selectedMinute;
-                    getTime=String.format("%02d:%02d %s", hour == 0 ? 12 : hour, selectedMinute, selectedHour < 12 ? "AM" : "PM");
-                    if(TimeFlag==789) {
-                        StartTime.setText(getTime);
-                        intstart = hour * 60 + minute;
-                        //Log.d("hourss123", String.valueOf(intstart)+" s "+getTime);
-                    }
-                    else if(TimeFlag==456) {
-                        EndTime.setText(getTime);
-                        intend=hour*60+minute;
-                        //Log.d("hourss456", String.valueOf(intend)+" e "+getTime);
-                    }
-                    else if( TimeFlag==123){
-                        BreakStartTime.setText(getTime);
-                        intBstart=hour*60+minute;
-                        //Log.d("hourss456", String.valueOf(intBstart)+" e "+getTime);
-                    }
-
+        TimePickerDialog mTimePicker= new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                int inthour = selectedHour;
+                int intminute=selectedMinute;
+                getTime=String.format("%02d:%02d %s", inthour == 0 ? 12 : inthour, intminute, inthour < 12 ? "AM" : "PM");
+                if(TimeFlag==789) {
+                    StartTime.setText(getTime);
+                    intStartTime = inthour * 60 + intminute;
                 }
-            }, hour, minute, true);
-            mTimePicker.setTitle("Select Time");
-            mTimePicker.show();
+                else if(TimeFlag==456) {
+                    EndTime.setText(getTime);
+                    intEndTime=inthour * 60 + intminute;
+                }
+                else if( TimeFlag==123){
+                    BreakStartTime.setText(getTime);
+                    intBreakStartTime=inthour * 60 + intminute;
+                }
+
+            }
+        }, hour, minute, true);
+        mTimePicker.setTitle("Select Time");
+        mTimePicker.show();
     }
-    public void ButtonSubmit() {
-        // //Log.d("getStoreId",getStoreId);
-        StrStartTime=StartTime.getText().toString();
-        StrEndTime=EndTime.getText().toString();
-        StrBreakStartTime=BreakStartTime.getText().toString();
-        StrPeriodDuration=PeriodDuration.getText().toString();
-        StrBreakDuration=BreakDuration.getText().toString();
-        StrbuttonSubmit=buttonSubmit.getText().toString();
-        if(StrStartTime.length()==0){
-            snackbar1 = Snackbar.make(getView(), "Start Time Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
+    public void ButtonSubmit(){
+        getStartTime=StartTime.getText().toString();
+        getEndTime=EndTime.getText().toString();
+        getBreakStartTime=BreakStartTime.getText().toString();
+        getPeriodDuration=PeriodDuration.getText().toString();
+        getBreakDuration=BreakDuration.getText().toString();
+        getAlarmbefore=Alarmbefore.getText().toString();
+        CheckEmpty(getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore,intStartTime,intEndTime,intBreakStartTime);
+    }
+    public void  CheckEmpty(String getStartTime,String getEndTime,String getBreakStartTime,String getPeriodDuration,String getBreakDuration,String getAlarmbefore,int intStartTime,int intEndTime,int intBreakStartTime){
+        if(TextUtils.isEmpty(getStartTime) || getStartTime.length()==0 || TextUtils.isEmpty(getEndTime)  || getEndTime.length()==0 || TextUtils.isEmpty(getBreakStartTime) || getBreakStartTime.length()==0 || TextUtils.isEmpty(getPeriodDuration) || getPeriodDuration.length()==0  || TextUtils.isEmpty(getBreakDuration) || getBreakDuration.length()==0 ){
+            snackbar1 = Snackbar.make(getView(), "Error: all fields are required", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(StrEndTime.length()==0){
-            snackbar1 = Snackbar.make(getView(), "End Time Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
+        else if(getPeriodDuration.length()==1){
+            snackbar1 = Snackbar.make(getView(), "Error! Check Period Duration!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(intstart>=intend || intstart==0){
-            //Log.d("hourss", String.valueOf(intstart)+"-"+ String.valueOf(intend));
-            snackbar1 = Snackbar.make(getView(), "Start Time Cannot be higher than or Equals to End Time!", Snackbar.LENGTH_SHORT);snackbar1.show();
+        else if(intStartTime>=intBreakStartTime ) {
+            snackbar1 = Snackbar.make(getView(), "Error! Break-Start-time must be greater then Start-time!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(StrPeriodDuration.length()==0) {
-            snackbar1 = Snackbar.make(getView(), "Period Duration Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
+        else if(intBreakStartTime<intStartTime+Integer.parseInt(getPeriodDuration)){
+            snackbar1 = Snackbar.make(getView(), "Error! Break-Start-time overlapping Period Duration !", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(StrBreakStartTime.length()==0){
-            snackbar1 = Snackbar.make(getView(), "Break Start Time Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
+        else if(getBreakDuration.length()==1){
+            snackbar1 = Snackbar.make(getView(), "Error! Check Break Duration!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(intBstart<=intstart || intBstart>=intend ){
-            //Log.d("hourss", String.valueOf(intstart)+"-"+ String.valueOf(intend));
-            snackbar1 = Snackbar.make(getView(), "Break Start Time Cannot be Less than Start Time or higher than  End Time!", Snackbar.LENGTH_SHORT);snackbar1.show();
+        else if( intEndTime<=intBreakStartTime){
+            snackbar1 = Snackbar.make(getView(), "Error! End-time must be greater then Break-Start-time!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(StrBreakDuration.length()==0) {
-            snackbar1 = Snackbar.make(getView(), "Break Duration Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
+        else if(intEndTime<intBreakStartTime+Integer.parseInt(getBreakDuration)){
+            snackbar1 = Snackbar.make(getView(), "Error! End-time overlapping Break Duration !", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
         else {
-            TimeSBmin=intBstart-intstart;
-            Timeplus=intBstart+Integer.parseInt(StrBreakDuration);
-            TimeABEdiv=intend-Timeplus;
-            Timebbtal=TimeSBmin / Integer.parseInt(StrPeriodDuration);
-            TimeAbtal=TimeABEdiv/ Integer.parseInt(StrPeriodDuration);
-            TimeTotal=Timebbtal+TimeAbtal+2;
-            if((TimeSBmin % Integer.parseInt(StrPeriodDuration)==0) &&(TimeABEdiv % Integer.parseInt(StrPeriodDuration)==0 )) {
-                Log.d("Timemin", String.valueOf(TimeSBmin)+"-"+TimeABEdiv+"-"+TimeTotal);
-
-            SharedPreferences.Editor editor = Staticsharedpreferences.edit();
-            editor.putString(StaticStartTime, StrStartTime);
-            editor.putString(StaticEndTime, StrEndTime);
-            editor.putString(StaticBreakStartTime, StrBreakStartTime);
-            editor.putString(StaticPeriodDuration, StrPeriodDuration);
-            editor.putString(StaticBreakDuration, StrBreakDuration);
-            editor.putString(StaticbuttonSubmit, StrbuttonSubmit);
-            editor.putString(StaticTotalClass, String.valueOf(TimeTotal));
-            editor.commit();
-            //snackbar1 = Snackbar.make(getView(), "Created Successfully", Snackbar.LENGTH_SHORT);snackbar1.show();
-
-            csprogress.setMessage("Loading...");
-            csprogress.show();
-            csprogress.setCancelable(false);
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    StaticTableView();
-                    createstatictable.setVisibility(View.GONE);
-                    Showstatictable.setVisibility(View.VISIBLE);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            csprogress.dismiss();
-                        }
-                    }, 200);
+            if((intBreakStartTime-intStartTime)%Integer.parseInt(getPeriodDuration)==0){
+                if((intEndTime-(intBreakStartTime+Integer.parseInt(getBreakDuration)))%Integer.parseInt(getPeriodDuration)==0){
+                    StaticDBCreate(getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore);
                 }
-            }, 600);//just mention the time when you want to launch your action*/
-            }
-            else
-            {
-                snackbar1 = Snackbar.make(getView(), "it doesn't match with standers!"+"\n"+"Please Choose Dynamic Schedule!", Snackbar.LENGTH_SHORT);snackbar1.show();
+                else {
+                    snackbar1 = Snackbar.make(getView(), "Error! Provided data is not valid!", Snackbar.LENGTH_SHORT);snackbar1.show();
+                }
             }
         }
     }
+    public void StaticDBCreate(String getStartTime,String getEndTime,String getBreakStartTime,String getPeriodDuration,String getBreakDuration,String getAlarmbefore){
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
+        SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
+        if(SQLITEDATABASE.isOpen()) {
+            Log.d("SQ", "open");
+            insertCreateddata(getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore);
+        }
+        else {
+            snackbar1 = Snackbar.make(getView(), "Error! Something went wrong!", Snackbar.LENGTH_SHORT);snackbar1.show();
+        }
+    }
+    public void insertCreateddata(String getStartTime,String getEndTime,String getBreakStartTime,String getPeriodDuration,String getBreakDuration,String getAlarmbefore){
 
-    public void StaticTableView(){
-
-        TimeTotal=Integer.parseInt(getStaticTotalClass);
-
-        String[] SplitStime = getStaticStartTime.split(" ");
-        //String[] SplitEtime = getStaticEndTime.split(" ");
+        String[] SplitStime = getStartTime.split(" ");
         String StineSplitStime = SplitStime[0];
-        //String EtineSplitEtime = SplitEtime[0];
-        // Log.d("StineSplitStime",StineSplitStime+ " e "+EtineSplitEtime);
+        STimedate = new Date();
+        STimedate.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + STimedate.getTimezoneOffset()) * 60000);
+        int SST = STimedate.getHours() * 60 + STimedate.getMinutes();
 
-        Log.d("totalc", String.valueOf(TimeTotal));
-        date = new Date();
-        date.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date.getTimezoneOffset()) * 60000);
-        LinearLayout.LayoutParams param1 = new LinearLayout.LayoutParams(50, 100);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        LinearLayout ll = (LinearLayout) getActivity().findViewById(R.id.linearLayout1);
-        Display display = ((WindowManager) getActivity().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        int width = display.getWidth() / 7;
-        int height = display.getHeight() / TimeTotal;
+        String[] SplitEtime = getEndTime.split(" ");
+        String EtineSplitEtime = SplitEtime[0];
+        ETimedate = new Date();
+        ETimedate.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + ETimedate.getTimezoneOffset()) * 60000);
+        int SET = ETimedate.getHours() * 60 + ETimedate.getMinutes();
 
-        for (int i = 0; i < TimeTotal; i++) {
-            LinearLayout l = new LinearLayout(getContext());
-            l.setOrientation(LinearLayout.HORIZONTAL);
-            for (int j = 0; j < 7; j++) {
-                EditText et = new EditText(getContext());
-                TextView et1 = new TextView(getContext());
-                et.setBackgroundColor(Color.TRANSPARENT);
-                et1.setBackgroundColor(Color.TRANSPARENT);
-                et.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f);
-                et1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f);
-                //et.setLayoutParams(param1);
-                et.setGravity(Gravity.CENTER_VERTICAL);
-                et1.setGravity(Gravity.CENTER_VERTICAL);
-                et.setPadding(5, 5, 5, 5);
-                et1.setPadding(5, 5, 5, 5);
+        String[] SplitBreakTime=getBreakStartTime.split(" ");
+        String BreakTimeSplitBreakTime = SplitBreakTime[0];
+        BSTimedate = new Date();
+        BSTimedate.setTime((((Integer.parseInt(BreakTimeSplitBreakTime.split(":")[0])) * 60 + (Integer.parseInt(BreakTimeSplitBreakTime.split(":")[1]))) + BSTimedate.getTimezoneOffset()) * 60000);
+        int BST = (BSTimedate.getHours() * 60 + BSTimedate.getMinutes());
 
-                if (i == 0 && j == 0) {
-                    int hour = date.getHours();
-                    int mint = date.getMinutes();
-                    et1.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
-                    et1.setBackgroundResource(R.drawable.gradientbottom);
-                } else if (i > 0 && j == 0) {
-                    date.setTime(date.getTime() + Integer.parseInt(getStaticPeriodDuration) * 60000);
-                    int hour = date.getHours();
-                    int mint = date.getMinutes();
-                    et1.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
-                    et1.setBackgroundResource(R.drawable.gradientbottom);
-                } else {
-                    et.setText(" Tap to write ");
-                    et.setBackgroundResource(R.drawable.gradientbottom);
-                }
-                Toolbar.LayoutParams lp = new Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, height);
-                    l.addView(et, lp);
-                    l.addView(et1, lp);
-            }
-            ll.addView(l);
+        if(getAlarmbefore.length()==0){
+            getAlarmbefore="00";
         }
 
+        while (SST <SET) {
+            if (SST==BST) {
+                shour = STimedate.getHours();
+                smint = STimedate.getMinutes();
+                StrStartTime=String.format("%02d:%02d %s", shour == 0 ? 12 : shour, smint, shour < 12 ? "AM" : "PM");
+
+                STimedate.setTime(STimedate.getTime() + Integer.parseInt(getBreakDuration) * 60000);
+                ehour = STimedate.getHours();
+                emint = STimedate.getMinutes();
+                StrEndTime=String.format("%02d:%02d %s", ehour == 0 ? 12 : ehour, emint, ehour < 12 ? "AM" : "PM");
+                for(int i=0;i<7;i++) {
+                    SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + "Break" + "', '" + "Break" + "' , '" + getAlarmbefore + "');");
+                   Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
+                }
+            }
+            else {
+                shour = STimedate.getHours();
+                smint = STimedate.getMinutes();
+                StrStartTime=String.format("%02d:%02d %s", shour == 0 ? 12 : shour, smint, shour < 12 ? "AM" : "PM");
+
+                STimedate.setTime(STimedate.getTime() + Integer.parseInt(getPeriodDuration) * 60000);
+                ehour = STimedate.getHours();
+                emint = STimedate.getMinutes();
+                StrEndTime=String.format("%02d:%02d %s", ehour == 0 ? 12 : ehour, emint, ehour < 12 ? "AM" : "PM");
+                for(int i=0;i<7;i++) {
+                    SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + "Subject" + "', '" + "Venue" + "' , '" + getAlarmbefore + "');");
+                     Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
+                }
+            }
+
+            SST = STimedate.getHours() * 60 + STimedate.getMinutes();
+
+            //Log.d("StrEndTime","\n\n");
+        }
+        csprogress.setMessage("Loading...");
+        csprogress.show();
+        csprogress.setCancelable(false);
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                chechFragmentStatus();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        csprogress.dismiss();
+                    }
+                }, 500);
+            }
+        }, 2000);//just mention the time when you want to launch your action
+    }
+    public void chechFragmentStatus(){
+        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME+" ORDER BY " + SQLITEHELPER.KEY_STime + " ASC", null);
+        if(cursor.getCount()>0){
+            fm1 = getActivity().getSupportFragmentManager();
+            ft1 = fm1.beginTransaction();
+            frag = new MySchedules();
+            ft1.replace(R.id.content_frame, frag);
+            ft1.commit();
+        }
     }
 }

@@ -1,128 +1,263 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@color/hue"
-    tools:context="com.example.evo09.timetablemanager.MyStaticSchedules">
-
+    android:background="@color/hue">
     <!--Statics-->
     <LinearLayout
         android:layout_width="match_parent"
         android:id="@+id/createstatictable"
+        android:orientation="vertical"
         android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="2"
+            android:layout_gravity="center"
+            android:id="@+id/dynamicShowdata">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Create Dynamic Schedule"
+                android:background="@drawable/gradientbottom"
+                android:layout_margin="25dp"
+                android:textStyle="bold"
+                android:id="@+id/dynamic"
+                android:gravity="center"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/statically"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_margin="25dp"
+                android:textStyle="bold"
+                android:background="@drawable/gradientbottom"
+                android:text="Create Static Schedule"/>
+        </LinearLayout>
         <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:fillViewport="true"
             android:scrollbars="none">
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:weightSum="6"
-                android:padding="20dp"
+                android:layout_height="wrap_content"
+                android:weightSum="7"
+                android:visibility="gone"
+                android:id="@+id/Staticshowdata"
                 android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    android:weightSum="2">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Start time : "
+                        android:textStyle="bold"
+                        android:padding="5dp"
+                        android:layout_weight="1.2"
+                        android:background="@color/quartz"
+                        android:gravity="center|end"/>
 
-                <TextView
-                    android:id="@+id/StartTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="16dp"
-                    android:layout_weight="1"
-                    android:gravity="bottom"
-                    android:padding="10dp"
-                    android:hint="Start time ex. 08:00AM"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/grey"/>
-                <TextView
-                    android:id="@+id/EndTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="16dp"
-                    android:layout_weight="1"
-                    android:gravity="bottom"
-                    android:padding="10dp"
-                    android:hint="End time ex. 02:00PM"
-                    android:background="@color/grey"
-                    android:layout_marginBottom="10dp"/>
-                <EditText
-                    android:id="@+id/PeriodDuration"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="16dp"
-                    android:inputType="number"
-                    android:maxLength="2"
-                    android:layout_weight="1"
-                    android:gravity="bottom"
-                    android:padding="10dp"
-                    android:hint="period duration ex.45M"
-                    android:background="@color/grey"
-                    android:layout_marginBottom="10dp"
-                    android:imeOptions="actionNext"/>
-                <TextView
-                    android:id="@+id/BreakStartTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="16dp"
-                    android:layout_weight="1"
-                    android:gravity="bottom"
-                    android:padding="10dp"
-                    android:hint="break start time ex. 12:30PM"
-                    android:background="@color/grey"
-                    android:layout_marginBottom="10dp"/>
-                <EditText
-                    android:id="@+id/BreakDuration"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="16dp"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:maxLength="2"
-                    android:gravity="bottom"
-                    android:padding="10dp"
-                    android:hint="break duration ex.45M"
-                    android:background="@color/grey"
-                    android:layout_marginBottom="10dp"
-                    android:imeOptions="normal"/>
-                <Button
-                    android:id="@+id/buttonSubmit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="16dp"
-                    android:layout_weight="1"
-                    android:text="Submit"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:background="@color/blue"/>
+                    <TextView
+                        android:id="@+id/StartTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="start|center"
+                        android:padding="5dp"
+                        android:hint="Ex. 08:00AM"
+                        android:layout_weight="0.8"
+                        android:background="@color/grey"/>
+                </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Period Duration: "
+                        android:layout_weight="1.2"
+                        android:textStyle="bold"
+                        android:padding="5dp"
+                        android:background="@color/quartz"
+                        android:gravity="center|end"/>
+
+                    <EditText
+                        android:id="@+id/PeriodDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:padding="5dp"
+                        android:layout_weight="0.8"
+                        android:gravity="start|center"
+                        android:hint="Ex.45M"
+                        android:background="@color/grey"
+                        android:imeOptions="actionNext"/>
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:orientation="horizontal"
+                    android:layout_weight="1"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=" Break Start : "
+                        android:background="@color/quartz"
+                        android:layout_column="0"
+                        android:padding="5dp"
+                        android:layout_weight="1.2"
+                        android:textStyle="bold"
+                        android:gravity="center|end" />
+
+                    <TextView
+                        android:id="@+id/BreakStartTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="start|center"
+                        android:padding="5dp"
+                        android:hint="Ex. 12:30PM"
+                        android:background="@color/grey"
+                        android:layout_weight="0.8"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:weightSum="2"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=" Break Duration : "
+                        android:background="@color/quartz"
+                        android:layout_column="0"
+                        android:padding="5dp"
+                        android:textStyle="bold"
+                        android:layout_weight="1.2"
+                        android:gravity="center|end" />
+
+                    <EditText
+                        android:id="@+id/BreakDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:padding="5dp"
+                        android:gravity="start|center"
+                        android:hint="Ex.45M"
+                        android:background="@color/grey"
+                        android:layout_weight="0.8"
+                        android:imeOptions="normal"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:weightSum="2"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=" End time : "
+                        android:background="@color/quartz"
+                        android:layout_weight="1.2"
+                        android:padding="5dp"
+                        android:textStyle="bold"
+                        android:gravity="center|end" />
+
+                    <TextView
+                        android:id="@+id/EndTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.8"
+                        android:padding="5dp"
+                        android:background="@color/grey"
+                        android:gravity="start|center"
+                        android:hint="Ex. 02:00PM" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:weightSum="2"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=" Alarm before : "
+                        android:background="@color/quartz"
+                        android:layout_weight="1.2"
+                        android:padding="5dp"
+                        android:textStyle="bold"
+                        android:gravity="center|end" />
+
+                    <EditText
+                        android:id="@+id/Alarmbefore"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:padding="5dp"
+                        android:gravity="start|center"
+                        android:hint="Ex.10M (optional)"
+                        android:background="@color/grey"
+                        android:layout_weight="0.8"
+                        android:imeOptions="normal"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="1">
+                    <Button
+                        android:id="@+id/buttonSubmit"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="16dp"
+                        android:layout_weight="1"
+                        android:text="Submit"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:background="@color/blue"/>
+
+                </LinearLayout>
             </LinearLayout>
-
         </ScrollView>
         <!-- //////////////////////////////////////////////////// -->
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/Showstatictable">
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-            <ScrollView
-                android:id="@+id/container"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:padding="5dp"
-                        android:orientation="vertical"
-                        android:id="@+id/linearLayout1"/>
-            </ScrollView>
-        </HorizontalScrollView>
-    </LinearLayout>
+        android:id="@+id/ShowStatus"
+        android:text=""
+        android:gravity="center"/>
 </FrameLayout>

@@ -1,31 +1,28 @@
 package com.example.evo09.timetablemanager;
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
@@ -37,16 +34,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.Toolbar;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class MySchedules extends Fragment implements View.OnClickListener,ViewPager.OnPageChangeListener {
+
+    Fragment fragment=null;
+    Fragment frag;
+    FragmentManager fm1;
+    FragmentTransaction ft1;
+
     private ProgressDialog csprogress;
     Button ButtonAddUpdate,ButtonCancel;
     static TextView Dayofweek,StartTime,EndTime;
@@ -56,7 +56,8 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
     static EditText AlermBefore;
     static AutoCompleteTextView Subject,Venue;
-    static CheckBox AlermRepeat;
+    static CheckBox AlermRepeat,Allday;
+
     ViewPager pager;
     LinearLayout layout;
     Animation slideUp,slideDown;
@@ -65,7 +66,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     Snackbar snackbar1;
     SQLiteDatabase SQLITEDATABASE;
     SQLiteHelper SQLITEHELPER;
-    Cursor cursor,cursor1;
+    Cursor cursor;
     ArrayList<String> autosub=new ArrayList<String>();
     ArrayList<String> autoven=new ArrayList<String>();
     ArrayAdapter<String> sub;
@@ -73,6 +74,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
+    private SharedPreferences.Editor editor;
     public static final String StoreId = "StoreId";
     public static final String AddUpdateFlag = "AddUpdateFlag";
     private final String DefaultUnameValue = "";
@@ -86,11 +88,17 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     String cday;
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
+    }
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("Schedules");
         setHasOptionsMenu(true);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -121,6 +129,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         AlermBefore.setFilters(new InputFilter[]{new InputFilterMinMax("1", "60")});
 
         AlermRepeat=(CheckBox)views.findViewById(R.id.AlermRepeat);
+        Allday=(CheckBox)views.findViewById(R.id.Allday);
 
         //Creating the instance of ArrayAdapter containing list of language names
         sub = new ArrayAdapter<String>(getContext(),android.R.layout.select_dialog_item,autosub);
@@ -136,6 +145,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
         Subject.setOnClickListener(this);
         Venue.setOnClickListener(this);
+        Allday.setOnClickListener(this);
 
         return views;
     }
@@ -169,45 +179,38 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     public void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        /*csprogress.setMessage("Loading...");
-        csprogress.show();
-        csprogress.setCancelable(false);
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {*/
-                //viewPager
-                if(pager.getChildCount() > 0) {
-                    Calendar calendar = Calendar.getInstance();
-                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                    if(dayOfWeek>1 && dayOfWeek<=7) {
-                        pager.setCurrentItem(dayOfWeek - 2);
-                        Dayofweek.setText(tabtitles[dayOfWeek-2]);
-                        cday=tabtitles[dayOfWeek-2];
-                        getdataposition=tabtitles[dayOfWeek-2];
-                    } else {
-                        pager.setCurrentItem(0);
-                    }
+        DBCreate();
+        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
+        if(cursor.getCount()!=0) {
+            if (pager.getChildCount() > 0) {
+                Calendar calendar = Calendar.getInstance();
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                if (dayOfWeek > 1 && dayOfWeek <= 7) {
+                    pager.setCurrentItem(dayOfWeek - 2);
+                    Dayofweek.setText(tabtitles[dayOfWeek - 2]);
+                    cday = tabtitles[dayOfWeek - 2];
+                    getdataposition = tabtitles[dayOfWeek - 2];
+                } else {
+                    pager.setCurrentItem(0);
                 }
-                autocomplete();
-                AddData();
-               /* new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        csprogress.dismiss();
-                    }
-                }, 400);
             }
-        }, 1000);//just mention the time when you want to launch your action*/
+            autocomplete();
+            AddData();
+       }
+        else {
+            fm1 = getActivity().getSupportFragmentManager();
+            ft1 = fm1.beginTransaction();
+            frag = new MyStaticSchedules();
+            ft1.replace(R.id.content_frame, frag);
+            ft1.commit();
+        }
     }
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         MenuItem item1=menu.findItem(R.id.action_PORTRAIT);
         item1.setVisible(false);
-        MenuItem item2=menu.findItem(R.id.action_deleteStatic);
-        item2.setVisible(false);
+        /*MenuItem item2=menu.findItem(R.id.action_deleteStatic);
+        item2.setVisible(false);*/
     }
     @Override
     public void onClick(View view) {
@@ -244,6 +247,15 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
                 autocomplete();
                 break;
             }
+            case R.id.Allday:{
+                if(Allday.isChecked()){
+                    Dayofweek.setVisibility(View.GONE);
+                }
+                else {
+                    Dayofweek.setVisibility(View.VISIBLE);
+                }
+                break;
+            }
         }
     }
     public void SetTime(){
@@ -273,10 +285,12 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         mTimePicker.show();
     }
     public void AddorUpdateData() {
+        getStoreId="";
+        Log.d("getStoreIds",getStoreId);
         getStoreId= sharedpreferences.getString(StoreId, DefaultUnameValue);
         InsertUpdateStoreId= sharedpreferences.getString(AddUpdateFlag, DefaultInsertUpdateValue);
 
-        // //Log.d("getStoreId",getStoreId);
+        Log.d("getStoreId",getStoreId);
         Strday=Dayofweek.getText().toString();
         StrStartTime=StartTime.getText().toString();
         StrEndTime=EndTime.getText().toString();
@@ -293,7 +307,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         else if(StrEndTime.length()==0){
             snackbar1 = Snackbar.make(getView(), "End Time Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(intstart>=intend || intstart==0){
+        else if(intstart>=intend || intstart==0 || StrStartTime.length()==0 || StrEndTime.length()==0){
             snackbar1 = Snackbar.make(getView(), "Start Time Cannot be higher than or Equals to End Time.", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
         else if(StrSubject.length()==0) {
@@ -313,23 +327,30 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
             snackbar1.show();
         }
         else {
-            TimeExistOrNot(intstart,intend);
-            if(timeExist==true){
-                Toast.makeText(getActivity(),"Timing  Already Exists in Table update it.", Toast.LENGTH_LONG).show();
-            }
-            else {
-                if (insertdata.equals(InsertUpdateStoreId)) {
+           TimeExistOrNot(intstart,intend,StrStartTime,StrEndTime,InsertUpdateStoreId);
+            if (insertdata.equals(InsertUpdateStoreId)) {
+                if(timeExist==true){
+                    Toast.makeText(getActivity(),"Timing  Already Exists in Table update it.", Toast.LENGTH_LONG).show();
+                }
+                else {
                     DBCreate();
                     InsertDataInTable(Strday, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
                     layout.startAnimation(slideDown);
                     layout.setVisibility(View.GONE);
                     pager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
                     pager.setCurrentItem(pageposition);
-                } else if (updatedata.equals(InsertUpdateStoreId)) {
-                    if (getStoreId.isEmpty()) {
-                        snackbar1 = Snackbar.make(getView(), "Error Add data first!", Snackbar.LENGTH_SHORT);
-                        snackbar1.show();
-                    } else {
+                }
+            }
+            else if (updatedata.equals(InsertUpdateStoreId)) {
+                if (getStoreId.isEmpty()) {
+                    snackbar1 = Snackbar.make(getView(), "Error Add data first!", Snackbar.LENGTH_SHORT);
+                    snackbar1.show();
+                }
+                else{
+                    if(timeExist==true){
+                        AlertDialogShow(getStoreId, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
+                    }
+                    else {
                         UpdateDataInTable(getStoreId, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
                         layout.startAnimation(slideDown);
                         layout.setVisibility(View.GONE);
@@ -342,10 +363,8 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     }
     public void DBCreate(){
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL)";
+        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-        String CREATE_ALERMTABLE ="CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_ALERM + " (" + SQLITEHELPER.KEY_IA + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR, "+ SQLITEHELPER.KEY_Status +" VARCHAR)";
-        SQLITEDATABASE.execSQL(CREATE_ALERMTABLE);
         if(SQLITEDATABASE.isOpen()) {
             //Log.d("SQ", "open");
         }
@@ -354,55 +373,40 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         }
     }
     public void InsertDataInTable(String Strday,String StrStartTime,String StrEndTime,String StrSubject,String StrVenue,String StrAlembefor) {
-
-        //Log.d("Time Between",StrStartTime+ " " +StrEndTime);
-        /*SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-        cursor = SQLITEDATABASE.rawQuery("SELECT " + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_STime + " FROM " + SQLITEHELPER.TABLE_NAME + "  WHERE  "+SQLITEHELPER.KEY_DOWeek+" ='"+getdataposition+"' AND "+SQLITEHELPER.KEY_STime +" BETWEEN ?  AND ?", new String[]{StrStartTime, StrEndTime});
-        if (cursor.moveToFirst()) {
-            SQLITEDATABASE.close();
-            Toast.makeText(getActivity(),"Timing  Already Exists in Table update it.", Toast.LENGTH_LONG).show();
-            //record Exists
+        if(StrAlembefor.length()==0){
+            StrAlembefor="00";
         }
-        else {*/
-            String SQLiteQueryWEEKTABLE = "INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + ")" + " VALUES('" + Strday + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + StrSubject + "', '" + StrVenue + "');";
-            SQLITEDATABASE.execSQL(SQLiteQueryWEEKTABLE);
-            //getlAts Is of First Table
-            cursor1 = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME , null);
-            String WEEKTABLELastId=String.valueOf(cursor1.getCount());
-            //Log.d("WEEKTABLELastId",WEEKTABLELastId);
-            if (AlermRepeat.isChecked()) {
-                String SQLiteQueryALERMTABLE = "INSERT or replace INTO " + SQLITEHELPER.TABLE_ALERM + " (" + SQLITEHELPER.KEY_AlermBefor + "," + SQLITEHELPER.KEY_Status + ") VALUES('" + StrAlembefor + "', '" + WEEKTABLELastId + "');";
-                SQLITEDATABASE.execSQL(SQLiteQueryALERMTABLE);
-                //Log.d("SQLvar", StrAlembefor+"-"+WEEKTABLELastId);
+        if(Allday.isChecked()){
+                for(int i=0;i<7;i++) {
+                    String SQLiteQueryWEEKTABLE = "INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + tabtitles[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + StrSubject + "', '" + StrVenue + "' , '" + StrAlembefor + "');";
+                    SQLITEDATABASE.execSQL(SQLiteQueryWEEKTABLE);
+                }
             }
-            snackbar1 = Snackbar.make(getView(), "Insert Successfully", Snackbar.LENGTH_SHORT);
-            snackbar1.show();
-            //Log.d("SQV", "days");
-        //}
+            else {
+                String SQLiteQueryWEEKTABLE = "INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + " ," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + StrSubject + "', '" + StrVenue + "' , '" + StrAlembefor + "');";
+                SQLITEDATABASE.execSQL(SQLiteQueryWEEKTABLE);
+                snackbar1 = Snackbar.make(getView(), "Insert Successfully", Snackbar.LENGTH_SHORT);
+                snackbar1.show();
+                //Log.d("SQV", "days");
+            }
     }
     public void UpdateDataInTable(String getStoreId,String StrStartTime,String StrEndTime,String StrSubject,String StrVenue,String StrAlembefor) {
-        SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-        cursor = SQLITEDATABASE.rawQuery("SELECT " + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_STime + " FROM " + SQLITEHELPER.TABLE_NAME + "  WHERE  "+SQLITEHELPER.KEY_DOWeek+" ='"+getdataposition+"' AND "+SQLITEHELPER.KEY_STime+" BETWEEN ?  AND ?", new String[]{StrStartTime, StrEndTime});
-        if (cursor.moveToFirst()) {
-            SQLITEDATABASE.close();
-            Toast.makeText(getActivity(),"Timing  Already Exists in Table update it.", Toast.LENGTH_LONG).show();
-            //record Exists
+        if(StrAlembefor.length()==0){
+            StrAlembefor="00";
+        }
+        String St=StartTime.getText().toString();
+        if(Allday.isChecked()){
+            for(int i=0;i<7;i++) {
+                SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+                SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_STime + " = '" + St + "'");
+            }
         }
         else {
             SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-            SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
-            //Log.d("SQLVJ", getStoreId + "-" + StrStartTime + "-" + StrEndTime + "-" + StrSubject + "-" + StrVenue + "-" + StrAlembefor);
-            if (AlermRepeat.isChecked()) {
-                SQLITEDATABASE.execSQL("UPDATE " + SQLITEHELPER.TABLE_ALERM + " SET " + SQLITEHELPER.KEY_AlermBefor + " = '" + StrAlembefor + "' ," + SQLITEHELPER.KEY_Status + "= '" + getStoreId + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
-                //Log.d("Enter", StrAlembefor);
-            } else {
-                String sql = "DELETE FROM " + SQLITEHELPER.TABLE_ALERM + " WHERE  " + SQLITEHELPER.KEY_Status + " = '" + getStoreId + "'";
-                SQLITEDATABASE.execSQL(sql);
-            }
+            SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
             snackbar1 = Snackbar.make(getView(), "Updation Successful", Snackbar.LENGTH_SHORT);
             snackbar1.show();
             SQLITEDATABASE.close();
-            //Log.d("SQLVG", "days");
         }
     }
     @Override
@@ -423,9 +427,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
     }
     public void autocomplete() {
-        SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR, " + SQLITEHELPER.KEY_STime + " VARCHAR, " + SQLITEHELPER.KEY_ETime + " VARCHAR, " + SQLITEHELPER.KEY_Subject + " VARCHAR, " + SQLITEHELPER.KEY_Venue + " VARCHAR)";
-        SQLITEDATABASE.execSQL(CREATE_TABLE);
+        DBCreate();
         cursor = SQLITEDATABASE.rawQuery("SELECT " + SQLITEHELPER.KEY_Subject +"," + SQLITEHELPER.KEY_Venue + " FROM " + SQLITEHELPER.TABLE_NAME+" GROUP BY " + SQLITEHELPER.KEY_Subject + " ORDER BY " + SQLITEHELPER.KEY_Subject + " DESC", null);
         autosub.clear();
         autoven.clear();
@@ -436,9 +438,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         }
     }
     public void AddData() {
-        SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY, " + SQLITEHELPER.KEY_DOWeek + " VARCHAR, " + SQLITEHELPER.KEY_STime + " VARCHAR, " + SQLITEHELPER.KEY_ETime + " VARCHAR, " + SQLITEHELPER.KEY_Subject + " VARCHAR, " + SQLITEHELPER.KEY_Venue + " VARCHAR)";
-        SQLITEDATABASE.execSQL(CREATE_TABLE);
+        DBCreate();
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
         while (cursor != null && cursor.moveToNext()) {
             String Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
@@ -473,10 +473,8 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
         }
     }
-    public void TimeExistOrNot(int intstart, int intend) {
-        SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY, " + SQLITEHELPER.KEY_DOWeek + " VARCHAR, " + SQLITEHELPER.KEY_STime + " VARCHAR, " + SQLITEHELPER.KEY_ETime + " VARCHAR, " + SQLITEHELPER.KEY_Subject + " VARCHAR, " + SQLITEHELPER.KEY_Venue + " VARCHAR)";
-        SQLITEDATABASE.execSQL(CREATE_TABLE);
+    public void TimeExistOrNot(int intstart, int intend, String StrStartTime,String StrEndTime,String InsertUpdateStoreId) {
+        DBCreate();
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
         EStime=new int[cursor.getCount()];
         EEtime=new int[cursor.getCount()];
@@ -506,7 +504,22 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
             //Log.d("dhfdhf5", "on");
             timeExist = false;
         }
+        /*else if(InsertUpdateStoreId.equals(updatedata)){
+
+        }*/
         else {
+
+            String[] SplitStime = StrStartTime.split(" ");
+            String[] SplitEtime = StrEndTime.split(" ");
+            String StineSplitStime = SplitStime[0];
+            String EtineSplitEtime = SplitEtime[0];
+            Date date1 = new Date();
+            date1.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
+            Date date2 = new Date();
+            date2.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + date2.getTimezoneOffset()) * 60000);
+            intstart = date1.getHours()*60+date1.getMinutes();
+            intend = date2.getHours()*60+date2.getMinutes();
+
             for (int j = 0; j < EStime.length; j++) {
                 if (intstart >= EStime[j] && intstart < EEtime[j]) {
                     //Log.d("dhfdhf1", String.valueOf(intstart) + " >=" + EStime[j] + " && " + String.valueOf(intstart) + "<" + EEtime[j]);
@@ -527,5 +540,29 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
             }
         }
     }
+    public void AlertDialogShow(final String getStoreId, final String StrStartTime, final String StrEndTime, final String StrSubject, final String StrVenue, final String StrAlembefor){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Timing  Already Existing"+"\n"+"click ' Yes' to Push Timing below")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        DBCreate();
+                        String getdataposition=Dayofweek.getText().toString();
+                        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND " + SQLITEHELPER.KEY_STime + " >= '"+ StrStartTime +"' ", null);
+                        while (cursor != null && cursor.moveToNext()) {
+                            SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+                            SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
 
+                        }
+                        Toast.makeText(getContext(),"Ok",Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 }

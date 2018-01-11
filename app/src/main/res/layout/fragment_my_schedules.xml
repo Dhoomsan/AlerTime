@@ -79,32 +79,34 @@
                        android:layout_width="match_parent"
                        android:layout_height="40dp"
                        android:orientation="horizontal"
-                       android:weightSum="2"
+                       android:weightSum="3"
                        android:padding="5dp">
                        <TextView
                            android:layout_width="0dp"
                            android:layout_height="match_parent"
-                           android:text="Day of Week "
+                           android:text="Day of Week : "
                            android:gravity="bottom"
-                           android:background="@drawable/borderbottom"
-                           android:layout_weight="0.95"/>
-                       <TextView
-                           android:layout_width="2dp"
-                           android:text=":"
-                           android:textColor="@color/blue"
-                           android:textAlignment="center"
-                           android:layout_weight="0.10"
-                           android:gravity="bottom"
-                           android:layout_height="match_parent"/>
+                           android:layout_weight="1"/>
+                       <CheckBox
+                           android:layout_width="0dp"
+                           android:layout_marginTop="5dp"
+                           android:layout_height="match_parent"
+                           android:layout_weight="1"
+                           android:id="@+id/Allday"
+                           android:checked="false"
+                           android:text="Allday"/>
                        <TextView
                            android:id="@+id/Dayofweek"
                            android:layout_width="0dp"
-                           android:layout_weight="0.95"
+                           android:layout_weight="1"
                            android:gravity="bottom"
                            android:layout_height="match_parent"
-                           android:background="@drawable/borderbottom"
                            android:hint=""/>
                    </LinearLayout>
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:background="@drawable/borderbottom"/>
                <!-- //////////////////////////////////////////////////// -->
                    <LinearLayout
                        android:layout_width="match_parent"
