@@ -348,6 +348,9 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
                 }
                 else{
                     if(timeExist==true){
+                        if(StrAlembefor.length()==0){
+                            StrAlembefor="00";
+                        }
                         AlertDialogShow(getStoreId, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
                     }
                     else {
@@ -385,7 +388,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
             else {
                 String SQLiteQueryWEEKTABLE = "INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + " ," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + StrSubject + "', '" + StrVenue + "' , '" + StrAlembefor + "');";
                 SQLITEDATABASE.execSQL(SQLiteQueryWEEKTABLE);
-                snackbar1 = Snackbar.make(getView(), "Insert Successfully", Snackbar.LENGTH_SHORT);
+                snackbar1 = Snackbar.make(getView(), "Inserted Successfully", Snackbar.LENGTH_SHORT);
                 snackbar1.show();
                 //Log.d("SQV", "days");
             }
@@ -554,7 +557,8 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
                             SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
 
                         }
-                        Toast.makeText(getContext(),"Ok",Toast.LENGTH_LONG).show();
+                        snackbar1 = Snackbar.make(getView(), "Updated Successfully!", Snackbar.LENGTH_SHORT);
+                        snackbar1.show();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
