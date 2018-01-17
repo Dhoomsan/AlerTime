@@ -121,15 +121,15 @@ public class SQLiteListAdapter extends BaseAdapter {
         }
         Random random = new Random();
         String cb = User_Alarm.get(position);
-        if (cb.equals("00")) {
+        if (cb.equals("00") || cb.equals("")) {
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
             holder.textviewsubject.setText(UserSubject.get(position));
             holder.textviewvenue.setText(User_Venue.get(position));
-            holder.textviewalarm.setText("");
         } else{
 
-            holder.textviewalarm.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
+            holder.textviewalarm.setBackgroundResource(R.drawable.ic_alarm);
+            holder.textviewalarm.setTextColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
             holder.textviewsubject.setText(UserSubject.get(position));

@@ -7,9 +7,8 @@
     <!-- TODO: Update blank fragment layout -->
     <ListView
         android:id="@+id/DynamiclistView"
-        android:listSelector="@color/underlinebar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

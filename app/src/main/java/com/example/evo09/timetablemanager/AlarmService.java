@@ -96,7 +96,7 @@ public class AlarmService extends Service  {
         @Override
         protected void onPreExecute() {
             SQLITEDATABASE = getApplicationContext().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-            String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
+            String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
             SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
             if(SQLITEDATABASE.isOpen()) {
                 //Log.d("SQ", "open");
@@ -107,50 +107,45 @@ public class AlarmService extends Service  {
         }
         @Override
         protected String doInBackground(String... params) {
-            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME , null);
+            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor + " != '" + "00" + "' OR " + SQLITEHELPER.KEY_AlermBefor + " = '" + "" + "' ", null);
             while (cursor != null && cursor.moveToNext()) {
                 Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
                 Abefore = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor));
                 Sday = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_DOWeek));
                 sub=cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Subject));
                 ven=cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Venue));
-                String[] SplitStime = Stime.split(" ");
-                StineSplitStime = SplitStime[0];
-                date1 = new Date();
-                date1.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-                date3 = new Date();
-                date3.setTime(date1.getTime() - (Integer.parseInt(Abefore) * 60000));
-                hour = date3.getHours();
-                mint = date3.getMinutes();
-                CSTime=String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM");
-                //Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
-                if ((dayOfTheWeek.equals(Sday)) && (ctime.equals(CSTime))){
-                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-                builder.setContentTitle(appname)
-                        .setContentText("Today Task is "+sub+" ( "+ven+" ) at "+Stime)
-                        .setVibrate(new long[] { 150, 300, 150, 600})
-                        .setSound(defaultSoundUri)
-                        .setSmallIcon(R.drawable.ic_alarm_clock)
-                        .setAutoCancel(true);
+                    String[] SplitStime = Stime.split(" ");
+                    StineSplitStime = SplitStime[0];
+                    date1 = new Date();
+                    date1.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
+                    date3 = new Date();
+                    date3.setTime(date1.getTime() - (Integer.parseInt(Abefore) * 60000));
+                    hour = date3.getHours();
+                    mint = date3.getMinutes();
+                    CSTime = String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM");
+                    //Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
+                    if ((dayOfTheWeek.equals(Sday)) && (ctime.equals(CSTime))) {
+                        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+                        builder.setContentTitle(appname)
+                                .setContentText("Today Task is " + sub + " ( " + ven + " ) at " + Stime)
+                                .setVibrate(new long[]{150, 300, 150, 600})
+                                .setSound(defaultSoundUri)
+                                .setSmallIcon(R.drawable.ic_alarm_clock)
+                                .setAutoCancel(true);
 
-                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
-                builder.setContentIntent(pendingIntent);
+                        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
+                        builder.setContentIntent(pendingIntent);
 
-                NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                manager.notify(NOTIFICATION_ID, builder.build());
-
-                //play current Ringtone
-                // currentRingtone.play();
+                        NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                        manager.notify(NOTIFICATION_ID, builder.build());
+                    }
                 }
-                ////Log.d("respresp", resp);
-            }
             return resp;
         }
         @Override
         protected void onPostExecute(String result ) {
-            // execution of result of Long time consuming operation
         }
         @Override
         protected void onProgressUpdate(String... text) {

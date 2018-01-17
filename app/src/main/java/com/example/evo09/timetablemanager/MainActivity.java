@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return ctx;
     }
 
+
+    MySchedules mySchedules;
     Fragment fragment=null;
     Fragment frag;
     FragmentManager fm1;
@@ -74,6 +76,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*Intent intent = getIntent();
+        String action = intent.getAction();
+        Uri data = intent.getData();
+        Log.d("onCreate", action);
+        Log.d("onCreate", data.toString());*/
+
+
         //Servises
         ctx = this;
         setContentView(R.layout.activity_main);
@@ -102,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SQLITEHELPER = new SQLiteHelper(this);
         DBCreate();
+        mySchedules=new MySchedules();
 
         csprogress = new ProgressDialog(this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -118,41 +129,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         if(permissiongrant=true) {
-            /*csprogress.setMessage("Fetching...");
-            csprogress.show();
-            csprogress.setCancelable(false);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {*/
-                    cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
-                    if(cursor.getCount()!=0) {
-                        fm1 = MainActivity.this.getSupportFragmentManager();
-                        ft1 = fm1.beginTransaction();
-                        frag = new MySchedules();
-                        ft1.replace(R.id.content_frame, frag);
-                        ft1.commit();
-                    }
-                    else {
-                        fm1 = MainActivity.this.getSupportFragmentManager();
-                        ft1 = fm1.beginTransaction();
-                        frag = new MyStaticSchedules();
-                        ft1.replace(R.id.content_frame, frag);
-                        ft1.commit();
-                    }
-                    /*new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            csprogress.dismiss();
-                        }
-                    }, 200);
-                }
-            }, 2000);//just mention the time when you want to launch your action*/
+            SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
+            if(cursor.getCount()!=0) {
+                fm1 = MainActivity.this.getSupportFragmentManager();
+                ft1 = fm1.beginTransaction();
+                frag = new MySchedules();
+                ft1.replace(R.id.content_frame, frag);
+                ft1.commit();
+            }
+            else {
+                fm1 = MainActivity.this.getSupportFragmentManager();
+                ft1 = fm1.beginTransaction();
+                frag = new MyStaticSchedules();
+                ft1.replace(R.id.content_frame, frag);
+                ft1.commit();
+            }
         }
-
-
-        //..............
-        //Autostartpermisssion();
-        //............
     }
     public void DBCreate(){
         SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
@@ -231,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch(item.getItemId()) {
             case R.id.action_LANDSCAPE: {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
                 fm1 = MainActivity.this.getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
                 frag = new MyScheduleLandScape();
@@ -254,9 +248,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 b.setText("Add");
                 layout.setVisibility(View.VISIBLE);
                 layout.startAnimation(slideUp);
+                mySchedules.Allday.setVisibility(View.VISIBLE);
                 break;
             }
             case R.id.action_createStatic: {
+                SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                 cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
                 if(cursor.getCount()!=0){
                     Toast.makeText(getApplicationContext(),"Record already existing!",Toast.LENGTH_LONG).show();
@@ -285,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 mEditor.commit();
 
                                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-                                csprogress.setMessage("Loading...");
+                                csprogress.setMessage("Deleting...");
                                 csprogress.show();
                                 csprogress.setCancelable(false);
                                 new Handler().postDelayed(new Runnable() {

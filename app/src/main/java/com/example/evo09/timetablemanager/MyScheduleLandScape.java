@@ -2,21 +2,20 @@ package com.example.evo09.timetablemanager;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,42 +24,55 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MyScheduleLandScape extends Fragment implements View.OnClickListener {
+public class MyScheduleLandScape extends Fragment {
     private ProgressDialog csprogress;
-
     Fragment fragment=null;
     Fragment frag;
     FragmentManager fm1;
     FragmentTransaction ft1;
 
-    static int t = 0, jump = 0, ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes;
+    static int t = 0,j, jump = 0, ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0,storDayId=0;
     static String[] Timedata, Mondata, Tuedata, Weddata, Thudata, Fridata, Satdata, Sundata, SplitMondSTCompare, SplitMonETCompare;
     static String[] MondST, MonET, TueST, TueET, WedST, WedET, ThuST, ThuET, FriST, FriET, SatST, SatET, SunST, SunET;
-    String MondSTCompare, MonETCompare, shourSplitMondSTCompare, shourSplitMonETCompare;
+    static String[] MonId, TueId, WedId, ThuId, FriId, SatId, SunId;
+    String DaySTCompare, MonETCompare, shourSplitMondSTCompare, shourSplitMonETCompare,strMondata,strDayId=null;
     Date dateSTime, date1, date2, dateETime;
     ArrayList<String> Timedatalist;
+
     SQLiteDatabase SQLITEDATABASE;
     SQLiteHelper SQLITEHELPER;
     Cursor cursor,cursortime, cursormon, cursortue, cursorwed, cursorthu, cursorfri, cursorsat, cursorsun;
+
     Toolbar.LayoutParams lp;
     LinearLayout.LayoutParams param1;
     LinearLayout Layouttime, LayoutMon, LayoutTue, LayoutWed, LayoutThu, LayoutFri, LayoutSat, LayoutSun, container1;
-    LinearLayout LTime, LMon, LTue, LWed, LThu, LFri, LSat, LSun;
-    TextView time, mon, tue, wed, thu, fri, sat, sun;
+    LinearLayout LDay,datafield;
+    TextView Day,gotoViewPager;
     Display display;
-    boolean refreshcheck = false;
-    String[] CStime, CEtime, CMon, CMonSTime, CMonETime, CTue, CTueETime, CTueTime, CWed, CWedTime, CWedETime, CThu, CThuTime, CThuETime, CFri, CFriTime, CFriETime, CSat, CSatTime, CSatETime, CSun, CSunTime, CSunETime;
-    private String tabtitles[] = new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    String[] CStimeId,CStime, CEtime,CMonId, CMon, CMonSTime, CMonETime,CTueId, CTue, CTueETime, CTueTime,CWedId, CWed, CWedTime, CWedETime,CThuId, CThu, CThuTime, CThuETime,CFriId, CFri, CFriTime, CFriETime,CSatId, CSat, CSatTime, CSatETime,CSunId, CSun, CSunTime, CSunETime;
+    String StrSubject,StrVenue,StrAlembefor,Error="Field Cannot be empty!";
+    android.support.v7.app.AlertDialog show;
 
+    Button ButtonAddUpdate,ButtonDelete;
+    static EditText AlermBefore;
+    static AutoCompleteTextView Subject,Venue;
+    static CheckBox AlermRepeat;
+    Snackbar snackbar1;
+    boolean refreshcheck = false;
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
@@ -69,8 +81,7 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        getActivity().setTitle("Schedules");
+        getActivity().setTitle("TableView");
         setHasOptionsMenu(true);
     }
 
@@ -94,15 +105,15 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
         if(cursor.getCount()!=0) {
             if (refreshcheck == false) {
                 refreshcheck = true;
-                csprogress.setMessage("Loading...");
+               csprogress.setMessage("Loading...");
                 csprogress.show();
                 csprogress.setCancelable(false);
                 new Handler().postDelayed(new Runnable() {
 
                     @Override
                     public void run() {
-                        AlarmDataShow();
-                        new Handler().postDelayed(new Runnable() {
+                             AlarmDataShow();
+                            new Handler().postDelayed(new Runnable() {
 
                             @Override
                             public void run() {
@@ -110,10 +121,9 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
                             }
                         }, 50);
                     }
-                }, 200);//just mention the time when you want to launch your action
+                }, 200);//just mention the Day when you want to launch your action*/
             }
-        }
-        else {
+        }else {
             fm1 = getActivity().getSupportFragmentManager();
             ft1 = fm1.beginTransaction();
             frag = new MyStaticSchedules();
@@ -132,9 +142,10 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
         MenuItem item3=main.findItem(R.id.action_createStatic);
         item3.setVisible(false);
     }
+
     public void DBCreate(){
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
+        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
         if(SQLITEDATABASE.isOpen()) {
             //Log.d("SQ", "open");
@@ -143,6 +154,7 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
             //Log.d("SLV", "not open");
         }
     }
+
     public void AlarmDataShow() {
         cursortime = SQLITEDATABASE.rawQuery("SELECT DISTINCT " + SQLITEHELPER.KEY_STime + " , " + SQLITEHELPER.KEY_ETime + " FROM " + SQLITEHELPER.TABLE_NAME + " ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
         cursormon = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = 'Monday' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
@@ -161,8 +173,10 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
         sizesat = cursorsat.getCount();
         sizesun = cursorsun.getCount();
 
+        CStimeId=new String[sizetime];
         CStime = new String[sizetime];
         CEtime = new String[sizetime];
+
         CMon = new String[sizemon];
         CTue = new String[sizetue];
         CWed = new String[sizewed];
@@ -171,27 +185,35 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
         CSat = new String[sizesat];
         CSun = new String[sizesun];
 
+        CMonId = new String[sizemon];
         CMonSTime = new String[sizemon];
         CMonETime = new String[sizemon];
 
+        CTueId = new String[sizetue];
         CTueTime = new String[sizetue];
         CTueETime = new String[sizetue];
 
+        CWedId = new String[sizewed];
         CWedTime = new String[sizewed];
         CWedETime = new String[sizewed];
 
+        CThuId = new String[sizethu];
         CThuTime = new String[sizethu];
         CThuETime = new String[sizethu];
 
+        CFriId = new String[sizefri];
         CFriTime = new String[sizefri];
         CFriETime = new String[sizefri];
 
+        CSatId = new String[sizesat];
         CSatTime = new String[sizesat];
         CSatETime = new String[sizesat];
 
+        CSunId = new String[sizesun];
         CSunTime = new String[sizesun];
         CSunETime = new String[sizesun];
 
+        //time
         int a = 0;
         while (cursortime != null && cursortime.moveToNext()) {
             String stime = cursortime.getString(cursortime.getColumnIndex(SQLiteHelper.KEY_STime));
@@ -201,89 +223,109 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
             a++;
 
         }
-        //mon
-        int b = 0;
+        //Mon
+        a = 0;
         while (cursormon != null && cursormon.moveToNext()) {
             String times = cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_STime));
             String timee = cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
-            CMonSTime[b] = times;
-            CMonETime[b] = timee;
-            CMon[b] = SubVen;
-            b++;
+            String id = cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_ID));
+           //Log.d("KEY_IDM",id);
+            CMonId[a]=id;
+            CMonSTime[a] = times;
+            CMonETime[a] = timee;
+            CMon[a] = SubVen;
+            a++;
         }
-        //tue
-        int c = 0;
+        //Tue
+        a = 0;
         while (cursortue != null && cursortue.moveToNext()) {
-            String time = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_STime));
+            String Day = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_STime));
             String timee = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
-            CTueTime[c] = time;
-            CTueETime[c] = timee;
-            CTue[c] = SubVen;
-            c++;
+            String id = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_ID));
+           //Log.d("KEY_IDT",id);
+            CTueId[a]=id;
+            CTueTime[a] = Day;
+            CTueETime[a] = timee;
+            CTue[a] = SubVen;
+            a++;
         }
-        //wed
-        int d = 0;
+        //Wed
+        a = 0;
         while (cursorwed != null && cursorwed.moveToNext()) {
-            String time = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_STime));
+            String Day = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_STime));
             String timee = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
-            CWedTime[d] = time;
-            CWed[d] = SubVen;
-            CWedETime[d] = timee;
-            d++;
+            String id = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_ID));
+           //Log.d("KEY_IDW",id);
+            CWedId[a]=id;
+            CWedTime[a] = Day;
+            CWed[a] = SubVen;
+            CWedETime[a] = timee;
+            a++;
         }
-        //thu
-        int e = 0;
+        //Thu
+        a = 0;
         while (cursorthu != null && cursorthu.moveToNext()) {
-            String time = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_STime));
+            String Day = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_STime));
             String timee = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
-            CThuTime[e] = time;
-            CThu[e] = SubVen;
-            CThuETime[e] = timee;
-            e++;
+            String id = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_ID));
+           //Log.d("KEY_IDTh",id);
+            CThuId[a]=id;
+            CThuTime[a] = Day;
+            CThu[a] = SubVen;
+            CThuETime[a] = timee;
+            a++;
         }
-        //fri
-        int f = 0;
+        //Fri
+        a = 0;
         while (cursorfri != null && cursorfri.moveToNext()) {
-            String time = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_STime));
+            String Day = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_STime));
             String timee = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
-            CFriTime[f] = time;
-            CFri[f] = SubVen;
-            CFriETime[f] = timee;
-            f++;
+            String id = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_ID));
+           //Log.d("KEY_IDF",id);
+            CFriId[a]=id;
+            CFriTime[a] = Day;
+            CFri[a] = SubVen;
+            CFriETime[a] = timee;
+            a++;
         }
-        //sat
-        int g = 0;
+        //Sat
+        a = 0;
         while (cursorsat != null && cursorsat.moveToNext()) {
-            String time = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_STime));
+            String Day = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_STime));
             String timee = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
-            CSatTime[g] = time;
-            CSat[g] = SubVen;
-            CSatETime[g] = timee;
+            String id = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_ID));
+           //Log.d("KEY_IDSa",id);
+            CSatId[a]=id;
+            CSatTime[a] = Day;
+            CSat[a] = SubVen;
+            CSatETime[a] = timee;
             //Log.d("ahdsfgahs",SubVen);
-            g++;
+            a++;
         }
-        //sun
-        int h = 0;
+        //Sun
+        a = 0;
         while (cursorsun != null && cursorsun.moveToNext()) {
-            String time = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_STime));
+            String Day = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_STime));
             String timee = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
-            CSunTime[h] = time;
-            CSun[h] = SubVen;
-            CSunETime[h] = timee;
-            h++;
+            String id = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_ID));
+           //Log.d("KEY_IDS",id);
+            CSunId[a]=id;
+            CSunTime[a] = Day;
+            CSun[a] = SubVen;
+            CSunETime[a] = timee;
+            a++;
         }
-        showdata(CStime, CEtime, CMonSTime, CMonETime, CMon, CTueTime, CTueETime, CTue, CWedTime, CWedETime, CWed, CThuTime, CThuETime, CThu, CFriTime, CFriETime, CFri, CSatTime, CSatETime, CSat, CSunTime, CSunETime, CSun);
+        showdata(CStime, CEtime,CMonId, CMonSTime, CMonETime, CMon,CTueId, CTueTime, CTueETime, CTue,CWedId, CWedTime, CWedETime, CWed,CThuId, CThuTime, CThuETime, CThu,CFriId, CFriTime, CFriETime, CFri,CSatId, CSatTime, CSatETime, CSat,CSunId, CSunTime, CSunETime, CSun);
     }
 
-
-    public void showdata(String[] CStime, String[] CEtime, String[] CMonSTime, String[] CMonETime, String[] CMon, String[] CTueTime, String[] CTueETime, String[] CTue, String[] CWedTime, String[] CWedETime, String[] CWed, String[] CThuTime, String[] CThuETime, String[] CThu, String[] CFriTime, String[] CFriETime, String[] CFri, String[] CSatTime, String[] CSatETime, String[] CSat, String[] CSunTime, String[] CSunETime, String[] CSun) {
+    public void showdata(String[] CStime, String[] CEtime,String[] CMonId, String[] CMonSTime, String[] CMonETime, String[] CMon,String[] CTueId, String[] CTueTime, String[] CTueETime, String[] CTue,String[] CWedId, String[] CWedTime, String[] CWedETime, String[] CWed,String[] CThuId, String[] CThuTime, String[] CThuETime, String[] CThu,String[] CFriId, String[] CFriTime, String[] CFriETime, String[] CFri,String[] CSatId, String[] CSatTime, String[] CSatETime, String[] CSat,String[] CSunId, String[] CSunTime, String[] CSunETime, String[] CSun) {
         if(CStime.length==0){
             Toast.makeText(getContext(),"Sorry !"+"\n"+"Create First.",Toast.LENGTH_SHORT).show();
         }
@@ -291,8 +333,8 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
             param1 = new LinearLayout.LayoutParams(50, 100);
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             display = ((WindowManager) getActivity().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-            int width = display.getWidth() / 8;
-            int height = 120;
+            width = display.getWidth() / 8;
+            height = 120;
             Layouttime = (LinearLayout) getActivity().findViewById(R.id.linearLayouttime);
             LayoutMon = (LinearLayout) getActivity().findViewById(R.id.linearLayoutmon);
             LayoutTue = (LinearLayout) getActivity().findViewById(R.id.linearLayouttue);
@@ -302,7 +344,7 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
             LayoutSat = (LinearLayout) getActivity().findViewById(R.id.linearLayoutsat);
             LayoutSun = (LinearLayout) getActivity().findViewById(R.id.linearLayoutsun);
             container1 = (LinearLayout) getActivity().findViewById(R.id.container1);
-            container1.setOnClickListener(this);
+            //container1.setOnClickListener(this);
 
             LinearLayout.LayoutParams Margin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             Margin.setMargins(0, 5, 0, 0);
@@ -318,6 +360,7 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
             SnextHour = date1.getHours() * 60 + 60;
 
             Timedatalist = new ArrayList<String>();
+
             String LastEndTime = CEtime[CEtime.length - 1];
             String[] SplitEtime = LastEndTime.split(" ");
             String SplitEtimeFirst = SplitEtime[0];
@@ -330,17 +373,17 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
             while (SST < SET-1) {
                 if (t == 0) {
                     if (SST >= Shour || SST < SnextHour) {
-                        LTime = new LinearLayout(getContext());
-                        time = new TextView(getContext());
-                        time.setText(StartFirstTime);
-                        time.setBackgroundResource(R.drawable.gradientbottom);
+                        LDay = new LinearLayout(getContext());
+                        Day = new TextView(getContext());
+                        Day.setText(StartFirstTime);
+                        Day.setBackgroundResource(R.drawable.gradientbottom);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             lp = new Toolbar.LayoutParams(width, height - Sminutes * 2);
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            LTime.addView(time, lp);
+                            LDay.addView(Day, lp);
                         }
-                        Layouttime.addView(LTime);
+                        Layouttime.addView(LDay);
                     }
                 }
                 else {
@@ -348,17 +391,17 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
                     int hour = date1.getHours();
                     int mint = date1.getMinutes();
                     if (mint == 0) {
-                        LTime = new LinearLayout(getContext());
-                        time = new TextView(getContext());
-                        time.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
-                        time.setBackgroundResource(R.drawable.gradientbottom);
+                        LDay = new LinearLayout(getContext());
+                        Day = new TextView(getContext());
+                        Day.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
+                        Day.setBackgroundResource(R.drawable.gradientbottom);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             lp = new Toolbar.LayoutParams(width, height);
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            LTime.addView(time, lp);
+                            LDay.addView(Day, lp);
                         }
-                        Layouttime.addView(LTime);
+                        Layouttime.addView(LDay);
                     }
                 }
                 Timedatalist.add(String.format("%02d:%02d %s", date1.getHours() == 0 ? 12 : date1.getHours(), date1.getMinutes(), date1.getHours() < 12 ? "AM" : "PM"));
@@ -367,458 +410,362 @@ public class MyScheduleLandScape extends Fragment implements View.OnClickListene
             }
 
 //''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+            /*Timedata = new String[Timedatalist.size()];
+            Timedata = Timedatalist.toArray(Timedata);*/
+
             Timedata = new String[Timedatalist.size()];
             Timedata = Timedatalist.toArray(Timedata);
 
+            //Monday
             Mondata = new String[Timedatalist.size()];
             MonET = new String[Timedatalist.size()];
             MondST = new String[Timedatalist.size()];
-
-            Tuedata = new String[Timedatalist.size()];
-            TueST = new String[Timedatalist.size()];
-            TueET = new String[Timedatalist.size()];
-
-            Weddata = new String[Timedatalist.size()];
-            WedST = new String[Timedatalist.size()];
-            WedET = new String[Timedatalist.size()];
-
-            Thudata = new String[Timedatalist.size()];
-            ThuST = new String[Timedatalist.size()];
-            ThuET = new String[Timedatalist.size()];
-
-            Fridata = new String[Timedatalist.size()];
-            FriST = new String[Timedatalist.size()];
-            FriET = new String[Timedatalist.size()];
-
-            Satdata = new String[Timedatalist.size()];
-            SatST = new String[Timedatalist.size()];
-            SatET = new String[Timedatalist.size()];
-
-            Sundata = new String[Timedatalist.size()];
-            SunST = new String[Timedatalist.size()];
-            SunET = new String[Timedatalist.size()];
-
-            //monday
-            for (int j = 0; j < Timedatalist.size(); j++) {
+            MonId = new String[Timedatalist.size()];
+            for (j = 0; j < Timedatalist.size(); j++) {
                 for (int i = 0; i < CMonSTime.length; i++) {
                     if (Timedata[j].equals(CMonSTime[i])) {
                         Mondata[j] = CMon[i];
                         MondST[j] = CMonSTime[i];
                         MonET[j] = CMonETime[i];
+                        MonId[j]=CMonId[i];
                     }
                 }
-                MondSTCompare = MondST[j];
-                if (MondSTCompare != null && MondSTCompare.length() != 0) {
-                    SplitMondSTCompare = MondSTCompare.split(" ");
-                    shourSplitMondSTCompare = SplitMondSTCompare[0];
-                    dateSTime = new Date();
-                    dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
-                    ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
-
+                DaySTCompare = MondST[j];
+                if (DaySTCompare != null && DaySTCompare.length() != 0) {
+                    strMondata = Mondata[j];
                     MonETCompare = MonET[j];
-                    SplitMonETCompare = MonETCompare.split(" ");
-                    shourSplitMonETCompare = SplitMonETCompare[0];
-                    dateETime = new Date();
-                    dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
-                    ET = dateETime.getHours() * 60 + dateETime.getMinutes();
-                    DStandEt = ((ET - ST) * 2);
-                    jump = DStandEt / height;
-                    LMon = new LinearLayout(getContext());
-                    mon = new TextView(getContext());
-                    //mon.setId(j);
-                    mon.setText(Html.fromHtml("<small><font color=\"#47a842\">" + MondST[j] + "</font></small>" + "<br>" + Mondata[j]));
-                    mon.setGravity(Gravity.CENTER_HORIZONTAL);
-                    mon.setBackgroundResource(R.drawable.gradientbottom);
-                    mon.setEllipsize(TextUtils.TruncateAt.END);
-                    mon.setMaxLines(DStandEt / 30);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, DStandEt);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LMon.addView(mon, lp);
-                    }
-                    LayoutMon.addView(LMon);
+                    strDayId=MonId[j];
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width, LayoutMon);
                     j = j + (DStandEt / 2) - 1;
                 } else {
-                    LMon = new LinearLayout(getContext());
-                    mon = new TextView(getContext());
-                    mon.setText(" ");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, 2);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LMon.addView(mon, lp);
-                    }
-                    LayoutMon.addView(LMon);
+                    AddSpaceInLandscape(LayoutMon);
                 }
             }
 
+
             //Tuesday
-            for (int j = 0; j < Timedatalist.size(); j++) {
+            Tuedata = new String[Timedatalist.size()];
+            TueST = new String[Timedatalist.size()];
+            TueET = new String[Timedatalist.size()];
+            TueId = new String[Timedatalist.size()];
+            for (j = 0; j < Timedatalist.size(); j++) {
                 for (int i = 0; i < CTueTime.length; i++) {
                     if (Timedata[j].equals(CTueTime[i])) {
                         Tuedata[j] = CTue[i];
                         TueST[j] = CTueTime[i];
                         TueET[j] = CTueETime[i];
+                        TueId[j] = CTueId[i];
                     }
                 }
-                MondSTCompare = TueST[j];
-                if (MondSTCompare != null && MondSTCompare.length() != 0) {
-                    SplitMondSTCompare = MondSTCompare.split(" ");
-                    shourSplitMondSTCompare = SplitMondSTCompare[0];
-                    dateSTime = new Date();
-                    dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
-                    ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
 
+                DaySTCompare = TueST[j];
+                if (DaySTCompare != null && DaySTCompare.length() != 0) {
+                    strMondata=Tuedata[j];
                     MonETCompare = TueET[j];
-                    SplitMonETCompare = MonETCompare.split(" ");
-                    shourSplitMonETCompare = SplitMonETCompare[0];
-                    dateETime = new Date();
-                    dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
-                    ET = dateETime.getHours() * 60 + dateETime.getMinutes();
-                    DStandEt = ((ET - ST) * 2);
-                    jump = DStandEt / height;
-                    LTue = new LinearLayout(getContext());
-                    tue = new TextView(getContext());
-                    tue.setText(Html.fromHtml("<small><font color=\"#47a842\">" + TueST[j] + "</font></small>" + "<br>" + Tuedata[j]));
-                    tue.setGravity(Gravity.CENTER_HORIZONTAL);
-                    tue.setBackgroundResource(R.drawable.gradientbottom);
-                    tue.setEllipsize(TextUtils.TruncateAt.END);
-                    tue.setMaxLines(DStandEt / 30);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, DStandEt);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LTue.addView(tue, lp);
-                    }
-                    LayoutTue.addView(LTue);
+                    strDayId=TueId[j];
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutTue);
                     j = j + (DStandEt / 2) - 1;
-                    ////Log.d("JumpCheck",DStandEt+"-"+jump+"-"+ET+"-"+ST+"-"+j);
                 } else {
-                    LTue = new LinearLayout(getContext());
-                    tue = new TextView(getContext());
-                    tue.setText(" ");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, 2);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LTue.addView(tue, lp);
-                    }
-                    LayoutTue.addView(LTue);
+                    AddSpaceInLandscape(LayoutTue);
                 }
             }
             //........................
 
 
             //Wednesday
-            for (int j = 0; j < Timedatalist.size(); j++) {
+            Weddata = new String[Timedatalist.size()];
+            WedST = new String[Timedatalist.size()];
+            WedET = new String[Timedatalist.size()];
+            WedId = new String[Timedatalist.size()];
+            for (j = 0; j < Timedatalist.size(); j++) {
                 for (int i = 0; i < CWedTime.length; i++) {
                     if (Timedata[j].equals(CWedTime[i])) {
                         Weddata[j] = CWed[i];
                         WedST[j] = CWedTime[i];
                         WedET[j] = CWedETime[i];
+                        WedId[j]=CWedId[i];
                     }
                 }
-                MondSTCompare = WedST[j];
-                if (MondSTCompare != null && MondSTCompare.length() != 0) {
-                    SplitMondSTCompare = MondSTCompare.split(" ");
-                    shourSplitMondSTCompare = SplitMondSTCompare[0];
-                    dateSTime = new Date();
-                    dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
-                    ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
-
+                DaySTCompare = WedST[j];
+                if (DaySTCompare != null && DaySTCompare.length() != 0) {
+                    strMondata=Weddata[j];
                     MonETCompare = WedET[j];
-                    SplitMonETCompare = MonETCompare.split(" ");
-                    shourSplitMonETCompare = SplitMonETCompare[0];
-                    dateETime = new Date();
-                    dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
-                    ET = dateETime.getHours() * 60 + dateETime.getMinutes();
-                    DStandEt = ((ET - ST) * 2);
-                    jump = DStandEt / height;
-                    LWed = new LinearLayout(getContext());
-                    wed = new TextView(getContext());
-                    wed.setText(Html.fromHtml("<small><font color=\"#47a842\">" + WedST[j] + "</font></small>" + "<br>" + Weddata[j]));
-                    wed.setGravity(Gravity.CENTER_HORIZONTAL);
-                    wed.setBackgroundResource(R.drawable.gradientbottom);
-                    wed.setEllipsize(TextUtils.TruncateAt.END);
-                    wed.setMaxLines(DStandEt / 30);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, DStandEt);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LWed.addView(wed, lp);
-                    }
-                    LayoutWed.addView(LWed);
+                    strDayId=WedId[j];
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutWed);
                     j = j + (DStandEt / 2) - 1;
-                    ////Log.d("JumpCheck",DStandEt+"-"+jump+"-"+ET+"-"+ST+"-"+j);
                 } else {
-                    LWed = new LinearLayout(getContext());
-                    wed = new TextView(getContext());
-                    wed.setText(" ");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, 2);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LWed.addView(wed, lp);
-                    }
-                    LayoutWed.addView(LWed);
+                    AddSpaceInLandscape(LayoutWed);
                 }
             }
             //........................
 
 
             //Thursday
-            for (int j = 0; j < Timedatalist.size(); j++) {
+            Thudata = new String[Timedatalist.size()];
+            ThuST = new String[Timedatalist.size()];
+            ThuET = new String[Timedatalist.size()];
+            ThuId = new String[Timedatalist.size()];
+            for (j = 0; j < Timedatalist.size(); j++) {
                 for (int i = 0; i < CThuTime.length; i++) {
                     if (Timedata[j].equals(CThuTime[i])) {
                         Thudata[j] = CThu[i];
                         ThuST[j] = CThuTime[i];
                         ThuET[j] = CThuETime[i];
+                        ThuId[j]=CThuId[i];
                     }
                 }
-                MondSTCompare = ThuST[j];
-                if (MondSTCompare != null && MondSTCompare.length() != 0) {
-                    SplitMondSTCompare = MondSTCompare.split(" ");
-                    shourSplitMondSTCompare = SplitMondSTCompare[0];
-                    dateSTime = new Date();
-                    dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
-                    ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
-
+                DaySTCompare = ThuST[j];
+                if (DaySTCompare != null && DaySTCompare.length() != 0) {
+                    strMondata=Thudata[j];
                     MonETCompare = ThuET[j];
-                    SplitMonETCompare = MonETCompare.split(" ");
-                    shourSplitMonETCompare = SplitMonETCompare[0];
-                    dateETime = new Date();
-                    dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
-                    ET = dateETime.getHours() * 60 + dateETime.getMinutes();
-                    DStandEt = ((ET - ST) * 2);
-                    jump = DStandEt / height;
-                    LThu = new LinearLayout(getContext());
-                    thu = new TextView(getContext());
-                    thu.setText(Html.fromHtml("<small><font color=\"#47a842\">" + ThuST[j] + "</font></small>" + "<br>" + Thudata[j]));
-                    thu.setGravity(Gravity.CENTER_HORIZONTAL);
-                    thu.setBackgroundResource(R.drawable.gradientbottom);
-                    thu.setEllipsize(TextUtils.TruncateAt.END);
-                    thu.setMaxLines(DStandEt / 30);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, DStandEt);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LThu.addView(thu, lp);
-                    }
-                    LayoutThu.addView(LThu);
+                    strDayId=ThuId[j];
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutThu);
                     j = j + (DStandEt / 2) - 1;
-                    // //Log.d("JumpCheck",DStandEt+"-"+jump+"-"+ET+"-"+ST+"-"+j);
                 } else {
-                    LThu = new LinearLayout(getContext());
-                    tue = new TextView(getContext());
-                    tue.setText(" ");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, 2);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LThu.addView(tue, lp);
-                    }
-                    LayoutThu.addView(LThu);
+                    AddSpaceInLandscape(LayoutThu);
                 }
             }
             //........................
 
             //Frieday
-            for (int j = 0; j < Timedatalist.size(); j++) {
+            Fridata = new String[Timedatalist.size()];
+            FriST = new String[Timedatalist.size()];
+            FriET = new String[Timedatalist.size()];
+            FriId = new String[Timedatalist.size()];
+
+            for (j = 0; j < Timedatalist.size(); j++) {
                 for (int i = 0; i < CFriTime.length; i++) {
                     if (Timedata[j].equals(CFriTime[i])) {
                         Fridata[j] = CFri[i];
                         FriST[j] = CFriTime[i];
                         FriET[j] = CFriETime[i];
+                        FriId[j]=CFriId[i];
                     }
                 }
-                MondSTCompare = FriST[j];
-                if (MondSTCompare != null && MondSTCompare.length() != 0) {
-                    SplitMondSTCompare = MondSTCompare.split(" ");
-                    shourSplitMondSTCompare = SplitMondSTCompare[0];
-                    dateSTime = new Date();
-                    dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
-                    ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
-
+                DaySTCompare = FriST[j];
+                if (DaySTCompare != null && DaySTCompare.length() != 0) {
+                    strMondata=Fridata[j];
                     MonETCompare = FriET[j];
-                    SplitMonETCompare = MonETCompare.split(" ");
-                    shourSplitMonETCompare = SplitMonETCompare[0];
-                    dateETime = new Date();
-                    dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
-                    ET = dateETime.getHours() * 60 + dateETime.getMinutes();
-                    DStandEt = ((ET - ST) * 2);
-                    jump = DStandEt / height;
-                    LFri = new LinearLayout(getContext());
-                    fri = new TextView(getContext());
-                    fri.setText(Html.fromHtml("<small><font color=\"#47a842\">" + FriST[j] + "</font></small>" + "<br>" + Fridata[j]));
-                    fri.setGravity(Gravity.CENTER_HORIZONTAL);
-                    fri.setBackgroundResource(R.drawable.gradientbottom);
-                    fri.setEllipsize(TextUtils.TruncateAt.END);
-                    fri.setMaxLines(DStandEt / 30);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, DStandEt);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LFri.addView(fri, lp);
-                    }
-                    LayoutFri.addView(LFri);
+                    strDayId=FriId[j];
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutFri);
                     j = j + (DStandEt / 2) - 1;
-                    ////Log.d("JumpCheck",DStandEt+"-"+jump+"-"+ET+"-"+ST+"-"+j);
                 } else {
-                    LFri = new LinearLayout(getContext());
-                    fri = new TextView(getContext());
-                    fri.setText(" ");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, 2);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LFri.addView(fri, lp);
-                    }
-                    LayoutFri.addView(LFri);
+                    AddSpaceInLandscape(LayoutFri);
                 }
             }
             //........................
 
             //Saturday
-            for (int j = 0; j < Timedatalist.size(); j++) {
+            Satdata = new String[Timedatalist.size()];
+            SatST = new String[Timedatalist.size()];
+            SatET = new String[Timedatalist.size()];
+            SatId = new String[Timedatalist.size()];
+            for (j = 0; j < Timedatalist.size(); j++) {
                 for (int i = 0; i < CSatTime.length; i++) {
                     if (Timedata[j].equals(CSatTime[i])) {
                         Satdata[j] = CSat[i];
                         SatST[j] = CSatTime[i];
                         SatET[j] = CSatETime[i];
+                        SatId[j]=CSatId[i];
                     }
                 }
-                MondSTCompare = SatST[j];
-                if (MondSTCompare != null && MondSTCompare.length() != 0) {
-                    SplitMondSTCompare = MondSTCompare.split(" ");
-                    shourSplitMondSTCompare = SplitMondSTCompare[0];
-                    dateSTime = new Date();
-                    dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
-                    ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
-
+                DaySTCompare = SatST[j];
+                if (DaySTCompare != null && DaySTCompare.length() != 0) {
+                    strMondata=Satdata[j];
                     MonETCompare = SatET[j];
-                    SplitMonETCompare = MonETCompare.split(" ");
-                    shourSplitMonETCompare = SplitMonETCompare[0];
-                    dateETime = new Date();
-                    dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
-                    ET = dateETime.getHours() * 60 + dateETime.getMinutes();
-                    DStandEt = ((ET - ST) * 2);
-                    jump = DStandEt / height;
-                    LSat = new LinearLayout(getContext());
-                    sat = new TextView(getContext());
-                    sat.setText(Html.fromHtml("<small><font color=\"#47a842\">" + SatST[j] + "</font></small>" + "<br>" + Satdata[j]));
-                    Log.d("ahdsfgahs", String.valueOf(Satdata[j]));
-                    sat.setGravity(Gravity.CENTER_HORIZONTAL);
-                    sat.setBackgroundResource(R.drawable.gradientbottom);
-                    sat.setEllipsize(TextUtils.TruncateAt.END);
-                    sat.setMaxLines(DStandEt / 30);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, DStandEt);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LSat.addView(sat, lp);
-                    }
-                    LayoutSat.addView(LSat);
+                    strDayId=SatId[j];
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutSat);
                     j = j + (DStandEt / 2) - 1;
-                    ////Log.d("JumpCheck",DStandEt+"-"+jump+"-"+ET+"-"+ST+"-"+j);
                 } else {
-                    LSat = new LinearLayout(getContext());
-                    sat = new TextView(getContext());
-                    sat.setText(" ");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, 2);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LSat.addView(sat, lp);
-                    }
-                    LayoutSat.addView(LSat);
+                    AddSpaceInLandscape(LayoutSat);
                 }
             }
             //........................
 
 
             //Sunday
-            for (int j = 0; j < Timedatalist.size(); j++) {
+            Sundata = new String[Timedatalist.size()];
+            SunST = new String[Timedatalist.size()];
+            SunET = new String[Timedatalist.size()];
+            SunId = new String[Timedatalist.size()];
+            for (j = 0; j < Timedatalist.size(); j++) {
                 for (int i = 0; i < CSunTime.length; i++) {
                     if (Timedata[j].equals(CSunTime[i])) {
                         Sundata[j] = CSun[i];
                         SunST[j] = CSunTime[i];
                         SunET[j] = CSunETime[i];
+                        SunId[j]=CSunId[i];
                     }
                 }
-                MondSTCompare = SunST[j];
-                if (MondSTCompare != null && MondSTCompare.length() != 0) {
-                    SplitMondSTCompare = MondSTCompare.split(" ");
-                    shourSplitMondSTCompare = SplitMondSTCompare[0];
-                    dateSTime = new Date();
-                    dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
-                    ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
-
+                DaySTCompare = SunST[j];
+                if (DaySTCompare != null && DaySTCompare.length() != 0) {
+                    strMondata=Sundata[j];
                     MonETCompare = SunET[j];
-                    SplitMonETCompare = MonETCompare.split(" ");
-                    shourSplitMonETCompare = SplitMonETCompare[0];
-                    dateETime = new Date();
-                    dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
-                    ET = dateETime.getHours() * 60 + dateETime.getMinutes();
-                    DStandEt = ((ET - ST) * 2);
-                    jump = DStandEt / height;
-                    LSun = new LinearLayout(getContext());
-                    sun = new TextView(getContext());
-                    sun.setText(Html.fromHtml("<small><font color=\"#008CBA\">" + SunST[j] + "</font></small>" + "<br>" + Sundata[j]));
-                    sun.setGravity(Gravity.CENTER_HORIZONTAL);
-                    sun.setBackgroundResource(R.drawable.gradientbottom);
-                    sun.setEllipsize(TextUtils.TruncateAt.END);
-                    sun.setMaxLines(DStandEt / 30);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, DStandEt);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LSun.addView(sun, lp);
-                    }
-                    LayoutSun.addView(LSun);
+                    strDayId=SunId[j];
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutSun);
                     j = j + (DStandEt / 2) - 1;
-                    ////Log.d("JumpCheck",DStandEt+"-"+jump+"-"+ET+"-"+ST+"-"+j);
                 } else {
-                    LSun = new LinearLayout(getContext());
-                    sun = new TextView(getContext());
-                    sun.setText(" ");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        lp = new Toolbar.LayoutParams(width, 2);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        LSun.addView(sun, lp);
-                    }
-                    LayoutSun.addView(LSun);
+                    AddSpaceInLandscape(LayoutSun);
                 }
             }
         }
         //........................
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.container1: {
-                // Add  dialog for confirmation to delete selected item
-                // record.
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                        .setMessage("Add click on +Plus icon"+"\n"+"  or  "+"\n"+"Update click on list below !")
-                        .setPositiveButton(Html.fromHtml("<font color=\"#47a842\">Add  / Update</font>"), new DialogInterface.OnClickListener() {
+    public void AddDataInLandscape(String DaySTCompare,String strMondata,String MonETCompare,String strDayId,int height,int width,LinearLayout LayoutDay) {
+        Random random = new Random();
+        SplitMondSTCompare = DaySTCompare.split(" ");
+        shourSplitMondSTCompare = SplitMondSTCompare[0];
+        dateSTime = new Date();
+        dateSTime.setTime((((Integer.parseInt(shourSplitMondSTCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMondSTCompare.split(":")[1]))) + dateSTime.getTimezoneOffset()) * 60000);
+        ST = dateSTime.getHours() * 60 + dateSTime.getMinutes();
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+        SplitMonETCompare = MonETCompare.split(" ");
+        shourSplitMonETCompare = SplitMonETCompare[0];
+        dateETime = new Date();
+        dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
+        ET = dateETime.getHours() * 60 + dateETime.getMinutes();
+        DStandEt = ((ET - ST) * 2);
+        jump = DStandEt / height;
+        LDay = new LinearLayout(getContext());
+        Day = new TextView(getContext());
+        LDay.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
+        Day.setId(Integer.parseInt(strDayId));
+       //Log.d("strDayId",strDayId);
+        Day.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView ss=(TextView) view;
+                ConfirmUpdate(ss.getId());
+            }
+        });
+        Day.setPadding(0,5,0,5);
+        Day.setText(Html.fromHtml("<small><font color=\"#ffffff\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
+        Day.setGravity(Gravity.CENTER_HORIZONTAL);
+        //Day.setBackgroundResource(R.drawable.gradientbottom);
+        Day.setEllipsize(TextUtils.TruncateAt.END);
+        Day.setMaxLines(DStandEt / 30);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            lp = new Toolbar.LayoutParams(width, DStandEt);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            LDay.addView(Day, lp);
+        }
+        LayoutDay.addView(LDay);
+
+    }
+
+    public void AddSpaceInLandscape(LinearLayout LayoutDay) {
+        LDay = new LinearLayout(getContext());
+        Day = new TextView(getContext());
+        Day.setText(" ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            lp = new Toolbar.LayoutParams(width, 2);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            LDay.addView(Day, lp);
+        }
+        LayoutDay.addView(LDay);
+    }
+
+    public void ConfirmUpdate(final int storDayId){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
+        LayoutInflater li = LayoutInflater.from(getContext());
+        final View promptsView = li.inflate(R.layout.updatelandscapedata, null);
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+        show = alertDialogBuilder.show();
+
+        datafield=(LinearLayout)promptsView.findViewById(R.id.datafield);
+        datafield.setVisibility(promptsView.GONE);
+        ButtonAddUpdate=(Button) promptsView.findViewById(R.id.ButtonAddUpdate);
+        ButtonDelete=(Button)promptsView.findViewById(R.id.ButtonDelete);
+        Subject=(AutoCompleteTextView) promptsView.findViewById(R.id.Subject);
+        Venue=(AutoCompleteTextView) promptsView.findViewById(R.id.Venue);
+        AlermBefore=(EditText)promptsView.findViewById(R.id.AlermBefore);
+        AlermRepeat=(CheckBox)promptsView.findViewById(R.id.AlermRepeat);
+        gotoViewPager=(TextView)promptsView.findViewById(R.id.gotoViewPager);
+        ButtonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
+                builder.setMessage("Are you sure you want to Delete?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+                                SQLITEDATABASE.execSQL("DELETE FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_ID + " = '" + storDayId + "'");
+
                                 fm1 = getActivity().getSupportFragmentManager();
                                 ft1 = fm1.beginTransaction();
-                                frag = new MyStaticSchedules();
+                                frag = new MyScheduleLandScape();
                                 ft1.replace(R.id.content_frame, frag);
                                 ft1.commit();
+
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
                             }
                         });
-                AlertDialog alert = builder.create();
-                alert.setIcon(R.drawable.ic_alarm_clock);// dialog  Icon
-                alert.setTitle("Change"); // dialog  Title
+                android.support.v7.app.AlertDialog alert = builder.create();
                 alert.show();
+
+                show.dismiss();
             }
-        }
+        });
+        gotoViewPager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fm1 = getActivity().getSupportFragmentManager();
+                ft1 = fm1.beginTransaction();
+                frag = new MySchedules();
+                ft1.replace(R.id.content_frame, frag);
+                ft1.commit();
+                show.dismiss();
+            }
+        });
+        ButtonAddUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ButtonDelete.setVisibility(promptsView.GONE);
+                datafield.setVisibility(promptsView.VISIBLE);
+                StrSubject=Subject.getText().toString();
+                StrVenue=Venue.getText().toString();
+                StrAlembefor=AlermBefore.getText().toString();
+                if(StrSubject.length()==0) {
+                    Subject.requestFocus();
+                    Subject.setError(Error);
+                }
+                else if(StrVenue.length()==0) {
+                    Venue.requestFocus();
+                    Venue.setError(Error);
+                }
+                else if((StrAlembefor.length()==0) &&(AlermRepeat.isChecked())) {
+                    AlermBefore.requestFocus();
+                    AlermBefore.setError(Error);
+                }
+                else if(!StrAlembefor.equals("") && !AlermRepeat.isChecked()){
+                    snackbar1 = Snackbar.make(getView(), "Tick Checkbox!", Snackbar.LENGTH_SHORT);
+                    snackbar1.show();
+                }
+                else {
+                    if(StrAlembefor.length()==0){
+                        StrAlembefor="00";
+                    }
+                    SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+                    SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET "  + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + storDayId + "'");
+
+                    fm1 = getActivity().getSupportFragmentManager();
+                    ft1 = fm1.beginTransaction();
+                    frag = new MyScheduleLandScape();
+                    ft1.replace(R.id.content_frame, frag);
+                    ft1.commit();
+
+                    show.dismiss();
+                }
+            }
+        });
     }
 }

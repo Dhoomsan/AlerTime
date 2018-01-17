@@ -94,7 +94,7 @@ public class F5Friday extends Fragment implements AdapterView.OnItemClickListene
     }
     private void ShowSQLiteDBdata() {
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
+        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
 
 
@@ -105,6 +105,7 @@ public class F5Friday extends Fragment implements AdapterView.OnItemClickListene
         ETIME_ArrayList.clear();
         SUBJECT_ArrayList.clear();
         VENUE_ArrayList.clear();
+        ALARM_ArrayList.clear();
 
         if (cursor != null && cursor.moveToFirst()) {
             //Log.d("tabledata","ok");
@@ -149,6 +150,7 @@ public class F5Friday extends Fragment implements AdapterView.OnItemClickListene
         mySchedules.Venue.setText(((TextView)view.findViewById(R.id.textViewVenue)).getText().toString());
         mySchedules.StartTime.setText(((TextView)view.findViewById(R.id.textViewSTime)).getText().toString());
         mySchedules.EndTime.setText(((TextView)view.findViewById(R.id.textViewETime)).getText().toString());
+        mySchedules.Allday.setVisibility(View.GONE);
 
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor+ " != '" + "00" + "' AND " + SQLITEHELPER.KEY_ID + " = '"+ data +"'" , null);
         mySchedules.AlermBefore.setText("");

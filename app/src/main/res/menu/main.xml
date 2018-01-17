@@ -19,7 +19,7 @@
     <item
         android:id="@+id/action_createStatic"
         android:icon="@drawable/ic_deleteicon"
-        android:title="Table"
+        android:title="Create Table"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_deleteStatic"

@@ -3,7 +3,6 @@ package com.example.evo09.timetablemanager;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -17,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,9 +46,9 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     FragmentTransaction ft1;
 
     private ProgressDialog csprogress;
-    Button ButtonAddUpdate,ButtonCancel;
-    static TextView Dayofweek,StartTime,EndTime;
-    int[] EStime,EEtime;
+    Button ButtonAddUpdate,ButtonCancel,promptPush;
+    static TextView Dayofweek,StartTime,EndTime,promptMessage,promptWarning;
+    int[] intEStime,intEEtime;
 
     Boolean timeExist;
 
@@ -74,7 +72,6 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
-    private SharedPreferences.Editor editor;
     public static final String StoreId = "StoreId";
     public static final String AddUpdateFlag = "AddUpdateFlag";
     private final String DefaultUnameValue = "";
@@ -86,6 +83,8 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
     private String tabtitles[] = new String[] { "Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday" };
     String cday;
+    int a,updatestart=0,updateend=0,storeupdateend=0,storeupdatestart=0, hour,minute ;
+    String Stimeid = null,Etimeid=null;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -95,7 +94,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Schedules");
+        getActivity().setTitle("DayView");
         setHasOptionsMenu(true);
     }
 
@@ -220,7 +219,6 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         switch (view.getId())
         {
             case R.id.ButtonAddUpdate:{
-                //Log.d("val","en");
                 AddorUpdateData();
                 break;
             }
@@ -259,9 +257,31 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         }
     }
     public void SetTime(){
-        final Calendar mcurrentTime = Calendar.getInstance();
-        final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-        int minute = mcurrentTime.get(Calendar.MINUTE);
+
+        StrStartTime=StartTime.getText().toString();
+        StrEndTime=EndTime.getText().toString();
+        String[] SplitStrStartTime = StrStartTime.split(" ");
+        String[] SplitStrEndTime = StrEndTime.split(" ");
+        String SStrStartTime = SplitStrStartTime[0];
+        String SStrEndTime= SplitStrEndTime[0];
+        if(TimeFlag==789) {
+            Date dateStrStartTime = new Date();
+            dateStrStartTime.setTime((((Integer.parseInt(SStrStartTime.split(":")[0])) * 60 + (Integer.parseInt(SStrStartTime.split(":")[1]))) + dateStrStartTime.getTimezoneOffset()) * 60000);
+            hour =dateStrStartTime.getHours();
+            minute = dateStrStartTime.getMinutes();
+        }
+        else if(TimeFlag==456) {
+            Date dateStrEndTime = new Date();
+            dateStrEndTime.setTime((((Integer.parseInt(SStrEndTime.split(":")[0])) * 60 + (Integer.parseInt(SStrEndTime.split(":")[1]))) + dateStrEndTime.getTimezoneOffset()) * 60000);
+            hour =dateStrEndTime.getHours();
+            minute = dateStrEndTime.getMinutes();
+        }
+        else {
+            final Calendar mcurrentTime = Calendar.getInstance();
+            hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+            minute = mcurrentTime.get(Calendar.MINUTE);
+        }
+
         TimePickerDialog mTimePicker= new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -269,14 +289,10 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
                 int minute=selectedMinute;
                 getTime=String.format("%02d:%02d %s", hour == 0 ? 12 : hour, selectedMinute, selectedHour < 12 ? "AM" : "PM");
                 if(TimeFlag==789) {
-                        StartTime.setText(getTime);
-                        intstart = hour * 60 + minute;
-                   // //Log.d("hour", String.valueOf(intstart)+"  "+getTime);
+                    StartTime.setText(getTime);
                 }
                 if(TimeFlag==456) {
                     EndTime.setText(getTime);
-                    intend=hour*60+minute;
-                    //Log.d("hour", String.valueOf(intend));
                 }
 
             }
@@ -286,18 +302,27 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     }
     public void AddorUpdateData() {
         getStoreId="";
-        Log.d("getStoreIds",getStoreId);
         getStoreId= sharedpreferences.getString(StoreId, DefaultUnameValue);
         InsertUpdateStoreId= sharedpreferences.getString(AddUpdateFlag, DefaultInsertUpdateValue);
 
-        Log.d("getStoreId",getStoreId);
         Strday=Dayofweek.getText().toString();
         StrStartTime=StartTime.getText().toString();
         StrEndTime=EndTime.getText().toString();
         StrSubject=Subject.getText().toString();
         StrVenue=Venue.getText().toString();
         StrAlembefor=AlermBefore.getText().toString();
-        //Log.d("val","yes");
+        String[] SplitStrStartTime = StrStartTime.split(" ");
+        String[] SplitStrEndTime = StrEndTime.split(" ");
+        String SStrStartTime = SplitStrStartTime[0];
+        String SStrEndTime= SplitStrEndTime[0];
+
+        Date dateStrStartTime = new Date();
+        dateStrStartTime.setTime((((Integer.parseInt(SStrStartTime.split(":")[0])) * 60 + (Integer.parseInt(SStrStartTime.split(":")[1]))) + dateStrStartTime.getTimezoneOffset()) * 60000);
+        Date dateStrEndTime = new Date();
+        dateStrEndTime.setTime((((Integer.parseInt(SStrEndTime.split(":")[0])) * 60 + (Integer.parseInt(SStrEndTime.split(":")[1]))) + dateStrEndTime.getTimezoneOffset()) * 60000);
+        intstart = dateStrStartTime.getHours()*60+dateStrStartTime.getMinutes();
+        intend = dateStrEndTime.getHours()*60+dateStrEndTime.getMinutes();
+
         if(Strday.length()==0){
             snackbar1 = Snackbar.make(getView(), "Day of Week Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
@@ -327,18 +352,17 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
             snackbar1.show();
         }
         else {
-           TimeExistOrNot(intstart,intend,StrStartTime,StrEndTime,InsertUpdateStoreId);
+            if(StrAlembefor.length()==0){
+                StrAlembefor="00";
+            }
+            TimeExistOrNot(intstart,intend);
             if (insertdata.equals(InsertUpdateStoreId)) {
                 if(timeExist==true){
                     Toast.makeText(getActivity(),"Timing  Already Exists in Table update it.", Toast.LENGTH_LONG).show();
                 }
                 else {
-                    DBCreate();
                     InsertDataInTable(Strday, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
-                    layout.startAnimation(slideDown);
-                    layout.setVisibility(View.GONE);
-                    pager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
-                    pager.setCurrentItem(pageposition);
+                    changeoccur();
                 }
             }
             else if (updatedata.equals(InsertUpdateStoreId)) {
@@ -346,27 +370,30 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
                     snackbar1 = Snackbar.make(getView(), "Error Add data first!", Snackbar.LENGTH_SHORT);
                     snackbar1.show();
                 }
-                else{
+                else {
                     if(timeExist==true){
-                        if(StrAlembefor.length()==0){
-                            StrAlembefor="00";
-                        }
-                        AlertDialogShow(getStoreId, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
+
+                        allertdilog(intstart, intend, getStoreId, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
                     }
                     else {
+
                         UpdateDataInTable(getStoreId, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
-                        layout.startAnimation(slideDown);
-                        layout.setVisibility(View.GONE);
-                        pager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
-                        pager.setCurrentItem(pageposition);
+                        changeoccur();
+
                     }
                 }
             }
         }
     }
+    public void changeoccur(){
+        layout.startAnimation(slideDown);
+        layout.setVisibility(View.GONE);
+        pager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
+        pager.setCurrentItem(pageposition);
+    }
     public void DBCreate(){
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
+        String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
         if(SQLITEDATABASE.isOpen()) {
             //Log.d("SQ", "open");
@@ -376,9 +403,6 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         }
     }
     public void InsertDataInTable(String Strday,String StrStartTime,String StrEndTime,String StrSubject,String StrVenue,String StrAlembefor) {
-        if(StrAlembefor.length()==0){
-            StrAlembefor="00";
-        }
         if(Allday.isChecked()){
                 for(int i=0;i<7;i++) {
                     String SQLiteQueryWEEKTABLE = "INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + tabtitles[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + StrSubject + "', '" + StrVenue + "' , '" + StrAlembefor + "');";
@@ -390,27 +414,10 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
                 SQLITEDATABASE.execSQL(SQLiteQueryWEEKTABLE);
                 snackbar1 = Snackbar.make(getView(), "Inserted Successfully", Snackbar.LENGTH_SHORT);
                 snackbar1.show();
-                //Log.d("SQV", "days");
             }
     }
     public void UpdateDataInTable(String getStoreId,String StrStartTime,String StrEndTime,String StrSubject,String StrVenue,String StrAlembefor) {
-        if(StrAlembefor.length()==0){
-            StrAlembefor="00";
-        }
-        String St=StartTime.getText().toString();
-        if(Allday.isChecked()){
-            for(int i=0;i<7;i++) {
-                SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-                SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_STime + " = '" + St + "'");
-            }
-        }
-        else {
-            SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-            SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
-            snackbar1 = Snackbar.make(getView(), "Updation Successful", Snackbar.LENGTH_SHORT);
-            snackbar1.show();
-            SQLITEDATABASE.close();
-        }
+        updateScheduleTimeId(StrStartTime, StrEndTime,StrSubject,StrVenue,StrAlembefor, getStoreId);
     }
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -431,17 +438,18 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     }
     public void autocomplete() {
         DBCreate();
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         cursor = SQLITEDATABASE.rawQuery("SELECT " + SQLITEHELPER.KEY_Subject +"," + SQLITEHELPER.KEY_Venue + " FROM " + SQLITEHELPER.TABLE_NAME+" GROUP BY " + SQLITEHELPER.KEY_Subject + " ORDER BY " + SQLITEHELPER.KEY_Subject + " DESC", null);
         autosub.clear();
         autoven.clear();
         while (cursor != null && cursor.moveToNext()) {
             autosub.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Subject)));
             autoven.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Venue)));
-            //Log.d("auto", String.valueOf(autoven)+"\n");
         }
     }
     public void AddData() {
         DBCreate();
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
         while (cursor != null && cursor.moveToNext()) {
             String Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
@@ -462,13 +470,11 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
             int Ediff = ehour * 60 + emint;
             int diff = Ediff - sdiff;
             Date date3 = new Date();
-           // //Log.d("Diff", String.valueOf(diff));
             date3.setTime(date2.getTime() + (diff * 60000));
             int hour = date3.getHours();
             int mint = date3.getMinutes();
             intstart = shour * 60 + smint;
             intend = hour * 60 + mint;
-           // //Log.d("split", String.valueOf(hour));
             StartTime.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime)));
             EndTime.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
             Subject.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Subject)));
@@ -476,12 +482,12 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
 
         }
     }
-    public void TimeExistOrNot(int intstart, int intend, String StrStartTime,String StrEndTime,String InsertUpdateStoreId) {
-        DBCreate();
+    public void TimeExistOrNot(int intstart, int intend) {
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
-        EStime=new int[cursor.getCount()];
-        EEtime=new int[cursor.getCount()];
-        int a = 0;
+        intEStime=new int[cursor.getCount()];
+        intEEtime=new int[cursor.getCount()];
+        a = 0;
         while (cursor != null && cursor.moveToNext()) {
             String Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
             String Etime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
@@ -489,84 +495,202 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
             String[] SplitEtime = Etime.split(" ");
             String StineSplitStime = SplitStime[0];
             String EtineSplitEtime = SplitEtime[0];
-            Date date1 = new Date();
-            date1.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-            Date date2 = new Date();
-            date2.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + date2.getTimezoneOffset()) * 60000);
-            int shour = date1.getHours();
-            int smint = date1.getMinutes();
-            int ehour = date2.getHours();
-            int emint = date2.getMinutes();
-            int sdiff = shour * 60 + smint;
-            int Ediff = ehour * 60 + emint;
-            EStime[a]=sdiff;
-            EEtime[a]=Ediff;
+            Date dateStime = new Date();
+            dateStime.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + dateStime.getTimezoneOffset()) * 60000);
+            Date dateEtime = new Date();
+            dateEtime.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + dateEtime.getTimezoneOffset()) * 60000);
+            intEStime[a]=dateStime.getHours()*60+dateStime.getMinutes();
+            intEEtime[a]=dateEtime.getHours()*60+dateEtime.getMinutes();
             a++;
         }
         if(cursor.getCount()==0){
-            //Log.d("dhfdhf5", "on");
             timeExist = false;
         }
-        /*else if(InsertUpdateStoreId.equals(updatedata)){
-
-        }*/
         else {
-
-            String[] SplitStime = StrStartTime.split(" ");
-            String[] SplitEtime = StrEndTime.split(" ");
-            String StineSplitStime = SplitStime[0];
-            String EtineSplitEtime = SplitEtime[0];
-            Date date1 = new Date();
-            date1.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-            Date date2 = new Date();
-            date2.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + date2.getTimezoneOffset()) * 60000);
-            intstart = date1.getHours()*60+date1.getMinutes();
-            intend = date2.getHours()*60+date2.getMinutes();
-
-            for (int j = 0; j < EStime.length; j++) {
-                if (intstart >= EStime[j] && intstart < EEtime[j]) {
-                    //Log.d("dhfdhf1", String.valueOf(intstart) + " >=" + EStime[j] + " && " + String.valueOf(intstart) + "<" + EEtime[j]);
+            for (int j = 0; j < intEStime.length; j++) {
+                if (intstart >= intEStime[j] && intstart < intEEtime[j]) {
                     timeExist = true;
                     break;
-                } else if (intend > EStime[j] && intend < EEtime[j]) {
-                   // Log.d("dhfdhf2", String.valueOf(intstart) + " >=" + EStime[j] + " && " + String.valueOf(intstart) + "<" + EEtime[j]);
+                } else if (intend > intEStime[j] && intend < intEEtime[j]) {
                     timeExist = true;
                     break;
-                } else if (intstart < EStime[j] && intend > EEtime[j]) {
-                   // Log.d("dhfdhf3", String.valueOf(intstart) + " >=" + EStime[j] + " && " + String.valueOf(intstart) + "<" + EEtime[j]);
+                } else if (intstart < intEStime[j] && intend > intEEtime[j]) {
                     timeExist = true;
                     break;
-                } else {
-                    //Log.d("dhfdhf4", "one");
+                } else{
                     timeExist = false;
                 }
             }
         }
     }
-    public void AlertDialogShow(final String getStoreId, final String StrStartTime, final String StrEndTime, final String StrSubject, final String StrVenue, final String StrAlembefor){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Timing  Already Existing"+"\n"+"click ' Yes' to Push Timing below")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        DBCreate();
-                        String getdataposition=Dayofweek.getText().toString();
-                        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND " + SQLITEHELPER.KEY_STime + " >= '"+ StrStartTime +"' ", null);
-                        while (cursor != null && cursor.moveToNext()) {
-                            SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-                            SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
 
-                        }
-                        snackbar1 = Snackbar.make(getView(), "Updated Successfully!", Snackbar.LENGTH_SHORT);
-                        snackbar1.show();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+    public void UpdateDataInTableValidate(int intstart,int intend,String getStoreId, String StrStartTime, String StrEndTime, String StrSubject, String StrVenue, String StrAlembefor){
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        cursor= SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
+        while (cursor != null && cursor.moveToNext()) {
+            Stimeid= cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
+            Etimeid= cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
+            String[] SplitStime = Stimeid.split(" ");
+            String[] SplitEtime=Etimeid.split(" ");
+            String StineSplitStime = SplitStime[0];
+            String EtineSplitEtime = SplitEtime[0];
+            Date dateStime = new Date();
+            dateStime.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + dateStime.getTimezoneOffset()) * 60000);
+            updatestart = dateStime.getHours()*60+dateStime.getMinutes();
+
+            Date dateEtime = new Date();
+            dateEtime.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + dateEtime.getTimezoneOffset()) * 60000);
+            updateend = dateEtime.getHours()*60+dateEtime.getMinutes();
+        }
+            int i=0;
+            if (((intstart >= updatestart && intstart < updateend) && (intend > updatestart && intend <=updateend)) ) {
+                updateScheduleTimeId(StrStartTime, StrEndTime,StrSubject,StrVenue,StrAlembefor, getStoreId);
+            }
+            //Above
+            else if(intstart < updatestart && intend<=updateend){
+                cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND " + SQLITEHELPER.KEY_STime + " < '" + Stimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
+                while (cursor != null && cursor.moveToNext()) {
+                    storeupdatestart = updatestart - intstart;
+                    String Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
+                    String Etime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
+                    String strId = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ID));
+
+                    String[] SplitStime = Stime.split(" ");
+                    String[] SplitEtime = Etime.split(" ");
+                    String StineSplitStime = SplitStime[0];
+                    String EtineSplitEtime = SplitEtime[0];
+
+                    Date dateStime = new Date();
+                    dateStime.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + dateStime.getTimezoneOffset()) * 60000);
+                    dateStime.setTime(dateStime.getTime() - (storeupdatestart * 60000));
+                    String ust = String.format("%02d:%02d %s", dateStime.getHours() == 0 ? 12 : dateStime.getHours(), dateStime.getMinutes(), dateStime.getHours() < 12 ? "AM" : "PM");
+
+                    Date dateEtime = new Date();
+                    dateEtime.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + dateEtime.getTimezoneOffset()) * 60000);
+                    dateEtime.setTime(dateEtime.getTime() - (storeupdatestart * 60000));
+                    String uet = String.format("%02d:%02d %s", dateEtime.getHours() == 0 ? 12 : dateEtime.getHours(), dateEtime.getMinutes(), dateEtime.getHours() < 12 ? "AM" : "PM");
+
+                    updateScheduleTime(ust, uet, strId);
+                }
+                if (cursor.getCount() != 0) {
+                    updateScheduleTimeId(StrStartTime, StrEndTime,StrSubject,StrVenue,StrAlembefor, getStoreId);
+                }
+
+            }
+            //below
+            else if(intstart >= updatestart && intend>updateend){
+                cursor= SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND "+ SQLITEHELPER.KEY_STime + " >= '" + Etimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
+                while (cursor != null && cursor.moveToNext()) {
+                    storeupdateend=intend-updateend;
+                    String Stime= cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
+                    String Etime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
+                    String strId = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ID));
+                    String[] SplitStime = Stime.split(" ");
+                    String[] SplitEtime = Etime.split(" ");
+                    String StineSplitStime = SplitStime[0];
+                    String EtineSplitEtime = SplitEtime[0];
+                    Date dateStime = new Date();
+                    dateStime.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + dateStime.getTimezoneOffset()) * 60000);
+                    dateStime.setTime(dateStime.getTime()+(storeupdateend*60000));
+                    String ust=String.format("%02d:%02d %s", dateStime.getHours() == 0 ? 12 : dateStime.getHours(), dateStime.getMinutes(), dateStime.getHours() < 12 ? "AM" : "PM");
+
+                    Date dateEtime = new Date();
+                    dateEtime.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + dateEtime.getTimezoneOffset()) * 60000);
+                    dateEtime.setTime(dateEtime.getTime()+(storeupdateend*60000));
+                    String uet=String.format("%02d:%02d %s", dateEtime.getHours() == 0 ? 12 : dateEtime.getHours(), dateEtime.getMinutes(), dateEtime.getHours() < 12 ? "AM" : "PM");
+
+                    updateScheduleTime(ust, uet, strId);
+                }
+                if(cursor.getCount()!=0) {
+                    updateScheduleTimeId(StrStartTime, StrEndTime,StrSubject,StrVenue,StrAlembefor, getStoreId);
+                }
+            }
+
+
+            //belowAbove
+            else if(intstart < updatestart && intend>updateend){
+               //belowAbove above
+                cursor= SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND "+ SQLITEHELPER.KEY_STime + " < '" + Stimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
+                while (cursor != null && cursor.moveToNext()) {
+                    storeupdatestart=updatestart-intstart;
+                    String Stime= cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
+                    String Etime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
+                    String strId = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ID));
+                    String[] SplitStime = Stime.split(" ");
+                    String[] SplitEtime = Etime.split(" ");
+                    String StineSplitStime = SplitStime[0];
+                    String EtineSplitEtime = SplitEtime[0];
+                    Date dateStime = new Date();
+                    dateStime.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + dateStime.getTimezoneOffset()) * 60000);
+                    dateStime.setTime(dateStime.getTime()-(storeupdatestart*60000));
+                    String ust=String.format("%02d:%02d %s", dateStime.getHours() == 0 ? 12 : dateStime.getHours(), dateStime.getMinutes(), dateStime.getHours() < 12 ? "AM" : "PM");
+
+                    Date dateEtime = new Date();
+                    dateEtime.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + dateEtime.getTimezoneOffset()) * 60000);
+                    dateEtime.setTime(dateEtime.getTime()-(storeupdatestart*60000));
+                    String uet=String.format("%02d:%02d %s", dateEtime.getHours() == 0 ? 12 : dateEtime.getHours(), dateEtime.getMinutes(), dateEtime.getHours() < 12 ? "AM" : "PM");
+
+                    updateScheduleTime(ust, uet, strId);
+                }
+                //belowAbove below
+                cursor= SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND "+ SQLITEHELPER.KEY_STime + " >= '" + Etimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
+                while (cursor != null && cursor.moveToNext()) {
+                    storeupdateend=intend-updateend;
+                    String Stime= cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
+                    String Etime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
+                    String strId = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ID));
+                    String[] SplitStime = Stime.split(" ");
+                    String[] SplitEtime = Etime.split(" ");
+                    String StineSplitStime = SplitStime[0];
+                    String EtineSplitEtime = SplitEtime[0];
+                    Date dateStime = new Date();
+                    dateStime.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + dateStime.getTimezoneOffset()) * 60000);
+                    dateStime.setTime(dateStime.getTime()+(storeupdateend*60000));
+                    String ust=String.format("%02d:%02d %s", dateStime.getHours() == 0 ? 12 : dateStime.getHours(), dateStime.getMinutes(), dateStime.getHours() < 12 ? "AM" : "PM");
+
+                    Date dateEtime = new Date();
+                    dateEtime.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + dateEtime.getTimezoneOffset()) * 60000);
+                    dateEtime.setTime(dateEtime.getTime()+(storeupdateend*60000));
+                    String uet=String.format("%02d:%02d %s", dateEtime.getHours() == 0 ? 12 : dateEtime.getHours(), dateEtime.getMinutes(), dateEtime.getHours() < 12 ? "AM" : "PM");
+
+                    updateScheduleTime(ust, uet, strId);
+                }
+                if(cursor.getCount()!=0) {
+                    updateScheduleTimeId(StrStartTime, StrEndTime,StrSubject,StrVenue,StrAlembefor, getStoreId);
+                }
+            }
+            else {
+                Toast.makeText(getContext(),"Oops! Something went wrong",Toast.LENGTH_LONG).show();
+            }
+            changeoccur();
+   }
+    private void updateScheduleTimeId(String StrStartTime, String StrEndTime, String StrSubject, String  StrVenue, String StrAlembefor,String getStoreId) {
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + StrStartTime + "' ," + SQLITEHELPER.KEY_ETime + "= '" + StrEndTime + "' ," + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + getStoreId + "'");
+    }
+
+    private void updateScheduleTime(String ust, String uet, String strId ) {
+        SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + ust + "' ," + SQLITEHELPER.KEY_ETime + "= '" + uet + "'  WHERE " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND " + SQLITEHELPER.KEY_ID + " = '" + strId + "'");
+
+    }
+
+   public void allertdilog(final int intstart, final int intend, final String getStoreId, final String StrStartTime, final String StrEndTime, final String StrSubject, final String StrVenue, final String StrAlembefor) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        LayoutInflater li = LayoutInflater.from(getContext());
+        View promptsView = li.inflate(R.layout.prompts, null);
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+        final AlertDialog show = alertDialogBuilder.show();
+       promptMessage=(TextView)promptsView.findViewById(R.id.promptMessage);
+       promptWarning=(TextView)promptsView.findViewById(R.id.promptWarning);
+        promptPush = (Button) promptsView.findViewById(R.id.promptPush);
+        promptPush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UpdateDataInTableValidate(intstart, intend, getStoreId, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
+                show.dismiss();
+            }
+        });
     }
 }
