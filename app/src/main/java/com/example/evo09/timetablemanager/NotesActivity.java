@@ -84,7 +84,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
     }
     public void AlarmDataShow(){
         tts = new TextToSpeech(getActivity(), this);
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         newButton=(Button)getActivity().findViewById(R.id.newButton);
         saveButton=(Button)getActivity().findViewById(R.id.saveButton);
         openButton=(Button) getActivity().findViewById(R.id.openButton);

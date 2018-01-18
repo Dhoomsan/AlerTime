@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -39,9 +40,11 @@
         <receiver android:name="com.example.evo09.timetablemanager.AlermNotificationReciever"
             android:enabled="true"
             android:exported="true"
-            android:label="RestartServiceWhenStopped">
+            android:label="RestartServiceWhenStopped"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="com.example.evo09.timetablemanager.RestartSensor"/>
+                <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
             </intent-filter>
         </receiver>

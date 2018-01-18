@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,7 +18,7 @@
                 android:orientation="horizontal"
                 android:weightSum="2"
                 android:layout_gravity="center"
-                android:background="@color/underlinebar">
+                android:background="@color/colorPrimaryDark">
                 <ImageView
                     android:id="@+id/image"
                     android:layout_width="0dp"
@@ -69,7 +70,7 @@
                             android:textColorHighlight="@android:color/black"
                             android:singleLine="true"
                             android:completionThreshold="1"
-                            android:imeOptions="actionNext"
+                            android:imeOptions="flagNoExtractUi"
                             android:inputType="textCapWords">
                             <requestFocus/>
                         </AutoCompleteTextView>
@@ -99,8 +100,8 @@
                             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                             android:textColorHighlight="@android:color/black"
                             android:singleLine="true"
+                            android:imeOptions="flagNoExtractUi"
                             android:completionThreshold="1"
-                            android:imeOptions="actionNext"
                             android:inputType="textCapWords">
                             <requestFocus/>
                         </AutoCompleteTextView>
@@ -124,7 +125,7 @@
                             android:hint="Alerm Before Ex:10M "
                             android:inputType="number"
                             android:maxLength="2"
-                            android:imeOptions="actionGo"
+                            android:imeOptions="flagNoExtractUi"
                             android:textSize="16dp" >
                             <requestFocus/>
                         </EditText>

@@ -87,7 +87,7 @@ public class MyScheduleLandScape extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_landscape_layout, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         csprogress = new ProgressDialog(getActivity());
         SQLITEHELPER = new SQLiteHelper(getActivity());
         return view;
@@ -375,7 +375,7 @@ public class MyScheduleLandScape extends Fragment {
                         Day.setText(StartFirstTime);
                         Day.setBackgroundResource(R.drawable.gradientbottom);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            lp = new Toolbar.LayoutParams(width, height - Sminutes * 2);
+                            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height - Sminutes * 2);
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             LDay.addView(Day, lp);
@@ -393,7 +393,7 @@ public class MyScheduleLandScape extends Fragment {
                         Day.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
                         Day.setBackgroundResource(R.drawable.gradientbottom);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            lp = new Toolbar.LayoutParams(width, height);
+                            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             LDay.addView(Day, lp);
@@ -407,8 +407,6 @@ public class MyScheduleLandScape extends Fragment {
             }
 
 //''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-            /*Timedata = new String[Timedatalist.size()];
-            Timedata = Timedatalist.toArray(Timedata);*/
 
             Timedata = new String[Timedatalist.size()];
             Timedata = Timedatalist.toArray(Timedata);
@@ -641,7 +639,7 @@ public class MyScheduleLandScape extends Fragment {
         Day.setEllipsize(TextUtils.TruncateAt.END);
         Day.setMaxLines(DStandEt / 30);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            lp = new Toolbar.LayoutParams(width, DStandEt);
+            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DStandEt);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             LDay.addView(Day, lp);
@@ -655,7 +653,7 @@ public class MyScheduleLandScape extends Fragment {
         Day = new TextView(getContext());
         Day.setText(" ");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            lp = new Toolbar.LayoutParams(width, 2);
+            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             LDay.addView(Day, lp);

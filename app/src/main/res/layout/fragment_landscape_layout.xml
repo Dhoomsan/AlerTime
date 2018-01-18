@@ -26,7 +26,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp" />
+                android:padding="5dp" />
             <TextView
                 android:id="@+id/textmo"
                 android:layout_weight="1"
@@ -36,7 +36,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp"/>
+                android:padding="5dp"/>
             <TextView
                 android:id="@+id/texttu"
                 android:layout_weight="1"
@@ -46,7 +46,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp"/>
+                android:padding="5dp"/>
             <TextView
                 android:id="@+id/textwe"
                 android:layout_weight="1"
@@ -56,7 +56,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp" />
+                android:padding="5dp" />
             <TextView
                 android:id="@+id/textth"
                 android:layout_weight="1"
@@ -66,7 +66,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp"/>
+                android:padding="5dp"/>
             <TextView
                 android:id="@+id/textfr"
                 android:layout_weight="1"
@@ -76,7 +76,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp"/>
+                android:padding="5dp"/>
             <TextView
                 android:id="@+id/textsa"
                 android:layout_weight="1"
@@ -86,7 +86,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp"/>
+                android:padding="5dp"/>
             <TextView
                 android:id="@+id/textsu"
                 android:layout_weight="1"
@@ -96,7 +96,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:layout_margin="5dp"/>
+                android:padding="5dp"/>
         </LinearLayout>
     </RelativeLayout>
     <ScrollView

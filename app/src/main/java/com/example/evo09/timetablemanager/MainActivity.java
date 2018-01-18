@@ -1,23 +1,28 @@
 package com.example.evo09.timetablemanager;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -36,11 +41,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 
 //#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end #parse("File Header.java") public class ${NAME} { }
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    public static final int RequestPermissionCode1 = 2;
 
     private ProgressDialog csprogress;
     SQLiteDatabase SQLITEDATABASE;
@@ -68,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
     public static final String AddUpdateFlag = "AddUpdateFlag";
     String insertdata="INSERTDATA";
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //permissions
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1);
        /* ActionBar menu = getSupportActionBar();
         menu.setDisplayShowHomeEnabled(true);
         menu.setIcon(R.drawable.ic_clock);*/
@@ -146,7 +152,81 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft1.commit();
             }
         }
+        else if(isRunning()==false) {
+            autoStartPermission();
+        }
     }
+// autostart permission
+    public void autoStartPermission(){
+        try {
+            Intent intent = new Intent();
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+            } else if("oneplus".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.oneplus.security", "com.oneplus.security.chainlaunch.view.ChainLaunchAppListAct‌​ivity")); }
+
+            List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if  (list.size() > 0) {
+                startActivityForResult(intent,224);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(requestCode==224)
+        {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 2);
+                    int p = ContextCompat.checkSelfPermission(ctx, Manifest.permission.RECEIVE_BOOT_COMPLETED);
+                    if (p == PackageManager.PERMISSION_GRANTED) {
+                        //Yay, you have the receive boot completed (= Autostart) permission!
+                    }
+                }
+            }, 2000);
+
+        }
+        else {
+            autoStartPermission();
+        }
+    }
+    private boolean isRunning() {
+        boolean isInBackground = true;
+        ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    for (String activeProcess : processInfo.pkgList) {
+                        if (activeProcess.equals(ctx.getPackageName())) {
+                            isInBackground = false;
+                        }
+                    }
+                }
+            }
+        } else {
+            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+            ComponentName componentInfo = taskInfo.get(0).topActivity;
+            if (componentInfo.getPackageName().equals(ctx.getPackageName())) {
+                isInBackground = false;
+            }
+        }
+
+        return isInBackground;
+    }
+//..........................................
     public void DBCreate(){
         SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
@@ -158,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Log.d("SLV", "not open");
         }
     }
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -177,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i ("isMyServiceRunning?", false+"");
         return false;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -186,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                    permissiongrant=true;
+                            permissiongrant=true;
                         }
                     }, 2000);
                 } else {
@@ -195,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                                 }
                             });
                     AlertDialog alert = builder.create();
@@ -224,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch(item.getItemId()) {
             case R.id.action_LANDSCAPE: {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
                 fm1 = MainActivity.this.getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
                 frag = new MyScheduleLandScape();

@@ -102,7 +102,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View views= inflater.inflate(R.layout.fragment_my_schedules, container, false);
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         csprogress=new ProgressDialog(getActivity());
