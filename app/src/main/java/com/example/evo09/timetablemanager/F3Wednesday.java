@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -52,6 +53,8 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
     String updatedata="UPDATE";
     LinearLayout layout;
     Animation slideUp,slideDown;
+
+    View previousSelectedItem;
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
@@ -130,6 +133,7 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
     }
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
         layout = (LinearLayout) getActivity().findViewById(R.id.updatelayout);
         slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
         slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);

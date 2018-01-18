@@ -30,9 +30,10 @@ public class AlarmService extends Service  {
     Cursor cursor;
     private static final int NOTIFICATION_ID = 1;
     public int counter=0;
+
     public AlarmService(Context applicationContext) {
         super();
-        Log.i("HERE", "here I am!");
+        //Log.i("HERE", "here I am!");
     }
 
     public AlarmService() {
@@ -48,7 +49,7 @@ public class AlarmService extends Service  {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i("EXIT", "ondestroy!");
+        //Log.i("EXIT", "ondestroy!");
         Intent broadcastIntent = new Intent("com.example.evo09.timetablemanager.RestartSensor");
         sendBroadcast(broadcastIntent);
         stoptimertask();
@@ -74,16 +75,14 @@ public class AlarmService extends Service  {
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                Log.i("in timer", "in timer ++++  "+ (counter++));
+                //Log.i("in timer", "in timer ++++  "+ (counter++));
                 new AsyncTaskRunner().execute();
             }
         };
     }
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         private String resp;
-        private String Stime,Abefore,Sday,sub,ven,StineSplitStime,CSTime,tableTime,tableAlerm,tableId,CREATE_WEEKTABLE,CREATE_ALERMTABLE;
-        String appname = getString(R.string.app_name);
-        int notificationStatus=0;
+        private String Stime,Abefore,Sday,sub,ven,StineSplitStime,CSTime;
         private int hour,mint;
         Date date1,date3;
         Calendar cal = Calendar.getInstance();
@@ -99,21 +98,22 @@ public class AlarmService extends Service  {
             String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
             SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
             if(SQLITEDATABASE.isOpen()) {
-                //Log.d("SQ", "open");
+                ////Log.d("SQ", "open");
             }
             else {
-                //Log.d("SLV", "not open");
+                ////Log.d("SLV", "not open");
             }
         }
         @Override
         protected String doInBackground(String... params) {
-            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor + " != '" + "00" + "' OR " + SQLITEHELPER.KEY_AlermBefor + " = '" + "" + "' ", null);
+            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor + " != '" + "00" + "' AND " + SQLITEHELPER.KEY_DOWeek + " = '"+ dayOfTheWeek +"'" , null);
             while (cursor != null && cursor.moveToNext()) {
                 Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
                 Abefore = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor));
                 Sday = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_DOWeek));
                 sub=cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Subject));
                 ven=cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Venue));
+                if(!Abefore.equals("00") || Abefore.length()!=0){
                     String[] SplitStime = Stime.split(" ");
                     StineSplitStime = SplitStime[0];
                     date1 = new Date();
@@ -123,25 +123,13 @@ public class AlarmService extends Service  {
                     hour = date3.getHours();
                     mint = date3.getMinutes();
                     CSTime = String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM");
-                    //Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
+                    Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
                     if ((dayOfTheWeek.equals(Sday)) && (ctime.equals(CSTime))) {
-                        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-                        builder.setContentTitle(appname)
-                                .setContentText("Today Task is " + sub + " ( " + ven + " ) at " + Stime)
-                                .setVibrate(new long[]{150, 300, 150, 600})
-                                .setSound(defaultSoundUri)
-                                .setSmallIcon(R.drawable.ic_alarm_clock)
-                                .setAutoCancel(true);
-
-                        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
-                        builder.setContentIntent(pendingIntent);
-
-                        NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                        manager.notify(NOTIFICATION_ID, builder.build());
+                        notification(sub,ven,Stime);
                     }
                 }
+            }
+            Log.d("TodayTask",".............................");
             return resp;
         }
         @Override
@@ -152,7 +140,24 @@ public class AlarmService extends Service  {
 
         }
     }
+    private void notification(String sub,String ven,String Stime){
+        String appname = getString(R.string.app_name);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+        builder.setContentTitle(appname)
+                .setContentText("Today Task is " + sub + " ( " + ven + " ) \n at " + Stime)
+                .setVibrate(new long[]{150, 300, 150, 600})
+                .setSound(defaultSoundUri)
+                .setSmallIcon(R.drawable.ic_alarm_clock)
+                .setAutoCancel(true);
 
+        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
+        builder.setContentIntent(pendingIntent);
+
+        NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(NOTIFICATION_ID, builder.build());
+    }
     @Override
     public void onTaskRemoved(Intent rootIntent){
         Intent restartServiceIntent = new Intent(getApplicationContext(), AlarmService.class);

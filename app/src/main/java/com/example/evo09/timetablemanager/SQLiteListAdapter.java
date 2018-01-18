@@ -116,11 +116,21 @@ public class SQLiteListAdapter extends BaseAdapter {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
         Date d = new Date();
         final String dayOfTheWeek = sdf.format(d);
-        if (ctime >= storestime && ctime < storeetime) {
+        if (ctime > storestime && ctime < storeetime) {
             child.setBackgroundColor(Color.parseColor("#E6E8FA"));
         }
-        Random random = new Random();
+        //Random random = new Random();
         String cb = User_Alarm.get(position);
+        /*if(position %2 == 1)
+        {
+            // Set a background color for ListView regular row/item
+            child.setBackgroundColor(Color.parseColor("#FFB6B546"));
+        }
+        else
+        {
+            // Set the background color for alternate row/item
+            child.setBackgroundColor(Color.parseColor("#FFCCCB4C"));
+        }*/
         if (cb.equals("00") || cb.equals("")) {
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
@@ -129,7 +139,7 @@ public class SQLiteListAdapter extends BaseAdapter {
         } else{
 
             holder.textviewalarm.setBackgroundResource(R.drawable.ic_alarm);
-            holder.textviewalarm.setTextColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
+           // holder.textviewalarm.setTextColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
             holder.textviewsubject.setText(UserSubject.get(position));

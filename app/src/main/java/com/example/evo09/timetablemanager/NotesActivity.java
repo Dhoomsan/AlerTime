@@ -43,7 +43,6 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
     private int result=0;
     TextView titlefile;
     private TextToSpeech tts;
-    private static final String DNAME = "TimeScheduler";
     Intent intent ;
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -106,6 +105,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
     }
     @Override
     public void onClick(View v ) {
+        String DNAME = getString(R.string.app_name);
         final File extStore =new File( Environment.getExternalStorageDirectory(), DNAME);
         // ==> /storage/emulated/0/note.txt
         final EditText fileName = new EditText(getActivity());
@@ -120,7 +120,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
                 ad.setMessage("Save File");
                 final String str = text.getText().toString().trim();
                 if (TextUtils.isEmpty(str)) {
-                    Snackbar snackbar = Snackbar.make(getView(), "No data to Save", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(getView(), "Oops! Nothing to Save.", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
                     ad.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -130,7 +130,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
                                 extStore.mkdirs();
                             }
                             String path = extStore.getAbsolutePath() + "/" + fileName.getText().toString() + ".txt";
-                            Log.i("ExternalStorageDemo", "Save to: " + path);
+                            //Log.i("ExternalStorageDemo", "Save to: " + path);
                             try {
                                 File myFile = new File(path);
                                 myFile.createNewFile();
@@ -166,7 +166,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String path = extStore.getAbsolutePath() + "/" + fileName.getText().toString() + ".txt";
-                        Log.i("ExternalStorageDemo", "Save to: " + path);
+                        //Log.i("ExternalStorageDemo", "Save to: " + path);
                         int c;
                         text.setText("");
                         String s = "";
@@ -186,7 +186,8 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
                             text.setText(fileContent);
                             titlefile.setText(fileName.getText().toString());
                         } catch (Exception e) {
-                            createNetErrorDialog();
+                            Snackbar snackbar = Snackbar.make(getView(), "Oops! Something went wrong.", Snackbar.LENGTH_LONG);
+                            snackbar.show();
                         }
                     }
                 });
@@ -208,7 +209,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
             case R.id.readButton:
                 String str1 = text.getText().toString().trim();
                 if (TextUtils.isEmpty(str1)) {
-                    Snackbar snackbar = Snackbar.make(getView(), "No data to read", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(getView(), "Oops! Nothing to Read.", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
                     speakOut();
@@ -221,7 +222,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
         String txtText = text.getText().toString();
         if(result!=tts.setLanguage(Locale.US))
         {
-            Snackbar snackbar1 = Snackbar.make(getView(), "Enter right Words...... ", Snackbar.LENGTH_SHORT);
+            Snackbar snackbar1 = Snackbar.make(getView(), "Oops! Enter right Words.", Snackbar.LENGTH_SHORT);
             snackbar1.show();
         }else
         {
@@ -254,7 +255,7 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
             //check language is supported or not
             //check language data is available or not
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Snackbar snackbar1 = Snackbar.make(getView(), "Missing data", Snackbar.LENGTH_SHORT);
+                Snackbar snackbar1 = Snackbar.make(getView(), "Oops! Missing data.", Snackbar.LENGTH_SHORT);
                 snackbar1.show();
                 //disable button
                 readButton.setEnabled(false);
@@ -262,8 +263,6 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
                 //if all is good than enable button convert text to speech
                 readButton.setEnabled(true);
             }
-        } else {
-            Log.e("TTS", "Initilization Failed");
         }
     }
     @Override
@@ -277,10 +276,11 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
                 if(resultCode==RESULT_OK){
                     String state = Environment.getExternalStorageState();
                     if (!(state.equals(Environment.MEDIA_MOUNTED))) {
-                        Toast.makeText(getActivity(), "There is no any sd card", Toast.LENGTH_LONG).show();
+                        Snackbar snackbar = Snackbar.make(getView(),"Oops! Something went wrong.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
                     }
                     String path = data.getData().getPath();
-                    Log.i("ExternalStorageDemo", "Save to: " + path);
+                    //Log.i("ExternalStorageDemo", "Save to: " + path);
                     int c;
                     text.setText("");
                     String s = "";
@@ -303,6 +303,10 @@ public class NotesActivity extends Fragment implements View.OnClickListener,Text
                         createNetErrorDialog();
                     }
 
+                }
+                else {
+                    Snackbar snackbar = Snackbar.make(getView(),"Oops! File not Exist.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
             break;
             case 5:

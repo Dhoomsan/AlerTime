@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,8 +33,6 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Random;
-
 import static android.content.Context.MODE_PRIVATE;
 
 public class MyScheduleLandScape extends Fragment {
@@ -613,7 +610,6 @@ public class MyScheduleLandScape extends Fragment {
     }
 
     public void AddDataInLandscape(String DaySTCompare,String strMondata,String MonETCompare,String strDayId,int height,int width,LinearLayout LayoutDay) {
-        Random random = new Random();
         SplitMondSTCompare = DaySTCompare.split(" ");
         shourSplitMondSTCompare = SplitMondSTCompare[0];
         dateSTime = new Date();
@@ -629,7 +625,7 @@ public class MyScheduleLandScape extends Fragment {
         jump = DStandEt / height;
         LDay = new LinearLayout(getContext());
         Day = new TextView(getContext());
-        LDay.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
+        Day.setBackgroundResource(R.drawable.gradientbottom);
         Day.setId(Integer.parseInt(strDayId));
        //Log.d("strDayId",strDayId);
         Day.setOnClickListener(new View.OnClickListener() {
@@ -640,9 +636,8 @@ public class MyScheduleLandScape extends Fragment {
             }
         });
         Day.setPadding(0,5,0,5);
-        Day.setText(Html.fromHtml("<small><font color=\"#ffffff\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
+        Day.setText(Html.fromHtml("<small><font size=\"10 \" color=\"#008080\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
         Day.setGravity(Gravity.CENTER_HORIZONTAL);
-        //Day.setBackgroundResource(R.drawable.gradientbottom);
         Day.setEllipsize(TextUtils.TruncateAt.END);
         Day.setMaxLines(DStandEt / 30);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

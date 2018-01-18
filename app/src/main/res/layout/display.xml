@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".5"
                 android:textSize="16dp"
-                android:textColor="@color/blue"
+                android:textColor="@color/colorPrimary"
                 android:text="Venue"
                 android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -90,6 +90,7 @@
                 android:layout_height="25dp"
                 android:text=""
                 android:gravity="center"
+                android:textColor="@color/underlinebar"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
     </LinearLayout>
