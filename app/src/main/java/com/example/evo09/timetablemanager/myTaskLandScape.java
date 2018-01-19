@@ -3,9 +3,9 @@ package com.example.evo09.timetablemanager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import static android.content.Context.MODE_PRIVATE;
 
-public class MyScheduleLandScape extends Fragment {
+public class myTaskLandScape extends Fragment {
     private ProgressDialog csprogress;
     Fragment fragment=null;
     Fragment frag;
@@ -61,7 +61,7 @@ public class MyScheduleLandScape extends Fragment {
     TextView Day,gotoViewPager;
     Display display;
     String[] CStimeId,CStime, CEtime,CMonId, CMon, CMonSTime, CMonETime,CTueId, CTue, CTueETime, CTueTime,CWedId, CWed, CWedTime, CWedETime,CThuId, CThu, CThuTime, CThuETime,CFriId, CFri, CFriTime, CFriETime,CSatId, CSat, CSatTime, CSatETime,CSunId, CSun, CSunTime, CSunETime;
-    String StrSubject,StrVenue,StrAlembefor,Error="Field Cannot be empty!";
+    String StrSubject,StrVenue,StrAlembefor,Error="All Field Are Required !";
     android.support.v7.app.AlertDialog show;
 
     Button ButtonAddUpdate,ButtonDelete;
@@ -123,7 +123,7 @@ public class MyScheduleLandScape extends Fragment {
         }else {
             fm1 = getActivity().getSupportFragmentManager();
             ft1 = fm1.beginTransaction();
-            frag = new MyStaticSchedules();
+            frag = new myTaskStatic();
             ft1.replace(R.id.content_frame, frag);
             ft1.commit();
         }
@@ -374,6 +374,7 @@ public class MyScheduleLandScape extends Fragment {
                         Day = new TextView(getContext());
                         Day.setText(StartFirstTime);
                         Day.setBackgroundResource(R.drawable.gradientbottom);
+                        Day.setTextColor(Color.parseColor("#4a5a71"));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height - Sminutes * 2);
                         }
@@ -391,6 +392,7 @@ public class MyScheduleLandScape extends Fragment {
                         LDay = new LinearLayout(getContext());
                         Day = new TextView(getContext());
                         Day.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
+                        Day.setTextColor(Color.parseColor("#4a5a71"));
                         Day.setBackgroundResource(R.drawable.gradientbottom);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
@@ -651,6 +653,7 @@ public class MyScheduleLandScape extends Fragment {
     public void AddSpaceInLandscape(LinearLayout LayoutDay) {
         LDay = new LinearLayout(getContext());
         Day = new TextView(getContext());
+        Day.setBackgroundColor(Color.parseColor("#669999"));
         Day.setText(" ");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
@@ -691,7 +694,7 @@ public class MyScheduleLandScape extends Fragment {
 
                                 fm1 = getActivity().getSupportFragmentManager();
                                 ft1 = fm1.beginTransaction();
-                                frag = new MyScheduleLandScape();
+                                frag = new myTaskLandScape();
                                 ft1.replace(R.id.content_frame, frag);
                                 ft1.commit();
 
@@ -713,7 +716,7 @@ public class MyScheduleLandScape extends Fragment {
             public void onClick(View view) {
                 fm1 = getActivity().getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
-                frag = new MySchedules();
+                frag = new myTask();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
                 show.dismiss();
@@ -752,7 +755,7 @@ public class MyScheduleLandScape extends Fragment {
 
                     fm1 = getActivity().getSupportFragmentManager();
                     ft1 = fm1.beginTransaction();
-                    frag = new MyScheduleLandScape();
+                    frag = new myTaskLandScape();
                     ft1.replace(R.id.content_frame, frag);
                     ft1.commit();
 

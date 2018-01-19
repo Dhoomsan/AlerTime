@@ -36,7 +36,7 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
-public class NotesActivity extends Fragment implements View.OnClickListener,TextToSpeech.OnInitListener {
+public class myNotes extends Fragment implements View.OnClickListener,TextToSpeech.OnInitListener {
     private ProgressDialog csprogress;
     Button newButton, saveButton, openButton,readButton,searchButton;
     private EditText text;

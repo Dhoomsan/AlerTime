@@ -1,10 +1,15 @@
 package com.example.evo09.timetablemanager;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 /**
  * Created by Kusan on 4/17/17.

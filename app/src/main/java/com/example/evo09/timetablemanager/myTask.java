@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -38,7 +37,7 @@ import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MySchedules extends Fragment implements View.OnClickListener,ViewPager.OnPageChangeListener {
+public class myTask extends Fragment implements View.OnClickListener,ViewPager.OnPageChangeListener {
 
     Fragment fragment=null;
     Fragment frag;
@@ -101,7 +100,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View views= inflater.inflate(R.layout.fragment_my_schedules, container, false);
+        View views= inflater.inflate(R.layout.fragment_mytask, container, false);
         //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
@@ -199,7 +198,7 @@ public class MySchedules extends Fragment implements View.OnClickListener,ViewPa
         else {
             fm1 = getActivity().getSupportFragmentManager();
             ft1 = fm1.beginTransaction();
-            frag = new MyStaticSchedules();
+            frag = new myTaskStatic();
             ft1.replace(R.id.content_frame, frag);
             ft1.commit();
         }

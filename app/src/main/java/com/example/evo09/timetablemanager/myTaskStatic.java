@@ -2,12 +2,8 @@ package com.example.evo09.timetablemanager;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -18,7 +14,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,7 +29,7 @@ import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MyStaticSchedules extends Fragment implements View.OnClickListener{
+public class myTaskStatic extends Fragment implements View.OnClickListener{
 
     Fragment fragment=null;
     Fragment frag;
@@ -67,7 +62,7 @@ public class MyStaticSchedules extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Schedules");
+        getActivity().setTitle("Create Task");
         setHasOptionsMenu(true);
     }
     @Override
@@ -152,7 +147,7 @@ public class MyStaticSchedules extends Fragment implements View.OnClickListener{
                 SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + dayOfTheWeek + "', '" + stime + "', '" + etime + "', '" + "Math" + "', '" + "Room 101" + "' , '" + "5" + "');");
                 fm1 = getActivity().getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
-                frag = new MySchedules();
+                frag = new myTask();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
                 break;
@@ -328,7 +323,7 @@ public class MyStaticSchedules extends Fragment implements View.OnClickListener{
         if(cursor.getCount()>0){
             fm1 = getActivity().getSupportFragmentManager();
             ft1 = fm1.beginTransaction();
-            frag = new MySchedules();
+            frag = new myTask();
             ft1.replace(R.id.content_frame, frag);
             ft1.commit();
         }

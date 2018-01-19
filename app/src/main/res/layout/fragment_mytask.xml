@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="3dp"
-    tools:context="com.example.evo09.timetablemanager.MySchedules">
+    tools:context="com.example.evo09.timetablemanager.myTask">
     <!-- TODO: Update blank fragment layout -->
    <RelativeLayout
        android:layout_width="match_parent"

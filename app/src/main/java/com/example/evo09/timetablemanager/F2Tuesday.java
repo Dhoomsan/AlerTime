@@ -6,12 +6,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -27,7 +24,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -35,7 +31,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListener,AbsListView.MultiChoiceModeListener {
     SQLiteHelper SQLITEHELPER;
-    MySchedules mySchedules;
+    myTask myTask;
     SQLiteDatabase SQLITEDATABASE;
     Cursor cursor;
     SQLiteListAdapter ListAdapter ;
@@ -72,7 +68,7 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
 
-        mySchedules=new MySchedules();
+        myTask =new myTask();
 
         LISTVIEW.setAdapter(ListAdapter);
         LISTVIEW.setOnItemClickListener(this);
@@ -137,23 +133,23 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
         slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
         String data=(String)adapterView.getItemAtPosition(position);
 
-        mySchedules.Subject.setText("");
-        mySchedules.Venue.setText("");
-        mySchedules.StartTime.setText("");
-        mySchedules.EndTime.setText("");
-        mySchedules.Subject.setText(((TextView)view.findViewById(R.id.textViewSubject)).getText().toString());
-        mySchedules.Venue.setText(((TextView)view.findViewById(R.id.textViewVenue)).getText().toString());
-        mySchedules.StartTime.setText(((TextView)view.findViewById(R.id.textViewSTime)).getText().toString());
-        mySchedules.EndTime.setText(((TextView)view.findViewById(R.id.textViewETime)).getText().toString());
-        mySchedules.Allday.setVisibility(View.GONE);
+        myTask.Subject.setText("");
+        myTask.Venue.setText("");
+        myTask.StartTime.setText("");
+        myTask.EndTime.setText("");
+        myTask.Subject.setText(((TextView)view.findViewById(R.id.textViewSubject)).getText().toString());
+        myTask.Venue.setText(((TextView)view.findViewById(R.id.textViewVenue)).getText().toString());
+        myTask.StartTime.setText(((TextView)view.findViewById(R.id.textViewSTime)).getText().toString());
+        myTask.EndTime.setText(((TextView)view.findViewById(R.id.textViewETime)).getText().toString());
+        myTask.Allday.setVisibility(View.GONE);
 
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor+ " != '" + "00" + "' AND " + SQLITEHELPER.KEY_ID + " = '"+ data +"'" , null);
-        mySchedules.AlermBefore.setText("");
-        mySchedules.AlermRepeat.setChecked(false);
+        myTask.AlermBefore.setText("");
+        myTask.AlermRepeat.setChecked(false);
         while (cursor != null && cursor.moveToNext()) {
 
-            mySchedules.AlermBefore.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor)));
-            mySchedules.AlermRepeat.setChecked(true);
+            myTask.AlermBefore.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor)));
+            myTask.AlermRepeat.setChecked(true);
         }
 
 

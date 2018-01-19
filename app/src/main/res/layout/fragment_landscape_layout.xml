@@ -25,8 +25,7 @@
                 android:text="Time"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textAlignment="center"
-                android:padding="5dp" />
+                android:textAlignment="center" />
             <TextView
                 android:id="@+id/textmo"
                 android:layout_weight="1"
@@ -36,7 +35,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:padding="5dp"/>
+                android:padding="2dp"/>
             <TextView
                 android:id="@+id/texttu"
                 android:layout_weight="1"
@@ -45,8 +44,7 @@
                 android:text="Tue"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textAlignment="center"
-                android:padding="5dp"/>
+                android:textAlignment="center"/>
             <TextView
                 android:id="@+id/textwe"
                 android:layout_weight="1"
@@ -56,7 +54,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:padding="5dp" />
+                android:padding="2dp" />
             <TextView
                 android:id="@+id/textth"
                 android:layout_weight="1"
@@ -65,8 +63,7 @@
                 android:text="Thu"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textAlignment="center"
-                android:padding="5dp"/>
+                android:textAlignment="center"/>
             <TextView
                 android:id="@+id/textfr"
                 android:layout_weight="1"
@@ -76,7 +73,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:padding="5dp"/>
+                android:padding="2dp"/>
             <TextView
                 android:id="@+id/textsa"
                 android:layout_weight="1"
@@ -85,8 +82,7 @@
                 android:text="Sat"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textAlignment="center"
-                android:padding="5dp"/>
+                android:textAlignment="center"/>
             <TextView
                 android:id="@+id/textsu"
                 android:layout_weight="1"
@@ -96,15 +92,17 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:padding="5dp"/>
+                android:padding="2dp"/>
         </LinearLayout>
     </RelativeLayout>
+
     <ScrollView
         android:id="@+id/container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/header"
         android:scrollbars="none"
+        android:layout_marginTop="2dp"
         android:fillViewport="true">
         <LinearLayout
             android:layout_width="fill_parent"
@@ -169,6 +167,6 @@
                 android:orientation="vertical"
                 android:id="@+id/linearLayoutsun"/>
         </LinearLayout>
-
     </ScrollView>
+
 </RelativeLayout>

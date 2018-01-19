@@ -1,6 +1,7 @@
 package com.example.evo09.timetablemanager;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -16,6 +17,13 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,7 +37,9 @@ public class AlarmService extends Service  {
     SQLiteHelper SQLITEHELPER;
     Cursor cursor;
     private static final int NOTIFICATION_ID = 1;
-    public int counter=0;
+
+    Button notificationclose;
+    TextView textViewSTime;
 
     public AlarmService(Context applicationContext) {
         super();
@@ -81,7 +91,7 @@ public class AlarmService extends Service  {
         };
     }
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-        private String resp;
+        String resp="";
         private String Stime,Abefore,Sday,sub,ven,StineSplitStime,CSTime;
         private int hour,mint;
         Date date1,date3;
@@ -126,6 +136,7 @@ public class AlarmService extends Service  {
                     Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
                     if ((dayOfTheWeek.equals(Sday)) && (ctime.equals(CSTime))) {
                         notification(sub,ven,Stime);
+                        resp= sub + " ( " + ven + " ) \n at " + Stime;
                     }
                 }
             }
@@ -134,6 +145,33 @@ public class AlarmService extends Service  {
         }
         @Override
         protected void onPostExecute(String result ) {
+            if(result.length()>0) {
+                AlertDialog.Builder builders = new AlertDialog.Builder(getApplicationContext().getApplicationContext());
+                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                View dialogView = inflater.inflate(R.layout.notification, null);
+                builders.setView(dialogView);
+                builders.setCancelable(false);
+                final AlertDialog alert = builders.create();
+                alert.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                notificationclose = (Button) dialogView.findViewById(R.id.notificationclose);
+                textViewSTime = (TextView) dialogView.findViewById(R.id.textViewSTime);
+                textViewSTime.setText(result);
+                notificationclose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alert.dismiss();
+                    }
+                });
+                alert.show();
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                Window window = alert.getWindow();
+                lp.copyFrom(window.getAttributes());
+                //This makes the dialog take up the full width
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                window.setAttributes(lp);
+            }
         }
         @Override
         protected void onProgressUpdate(String... text) {
@@ -148,13 +186,12 @@ public class AlarmService extends Service  {
                 .setContentText("Today Task is " + sub + " ( " + ven + " ) \n at " + Stime)
                 .setVibrate(new long[]{150, 300, 150, 600})
                 .setSound(defaultSoundUri)
-                .setSmallIcon(R.drawable.ic_alarm_clock)
+                .setSmallIcon(R.drawable.tlogo)
                 .setAutoCancel(true);
 
         Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
         builder.setContentIntent(pendingIntent);
-
         NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(NOTIFICATION_ID, builder.build());
     }

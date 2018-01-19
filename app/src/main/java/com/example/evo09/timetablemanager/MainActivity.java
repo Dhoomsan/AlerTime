@@ -1,28 +1,23 @@
 package com.example.evo09.timetablemanager;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -41,8 +36,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-
 
 //#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end #parse("File Header.java") public class ${NAME} { }
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    MySchedules mySchedules;
+    myTask myTask;
     Fragment fragment=null;
     Fragment frag;
     FragmentManager fm1;
@@ -82,31 +75,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*Intent intent = getIntent();
-        String action = intent.getAction();
-        Uri data = intent.getData();
-        Log.d("onCreate", action);
-        Log.d("onCreate", data.toString());*/
-
-
         //Servises
-        ctx = this;
-        setContentView(R.layout.activity_main);
-        mSensorService = new AlarmService(getCtx());
-        mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
-        if (!isMyServiceRunning(mSensorService.getClass())) {
-            startService(mServiceIntent);
-        }
-        startService(new Intent(this, AlarmService.class));
-
+            ctx = this;
+            setContentView(R.layout.activity_main);
+            mSensorService = new AlarmService(getCtx());
+            mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
+            if (!isMyServiceRunning(mSensorService.getClass())) {
+                startService(mServiceIntent);
+            }
+            startService(new Intent(this, AlarmService.class));
+        //.................
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //permissions
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1);
-       /* ActionBar menu = getSupportActionBar();
-        menu.setDisplayShowHomeEnabled(true);
-        menu.setIcon(R.drawable.ic_clock);*/
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1);
+        //.................
         sharedpreferences =getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         mEditor = sharedpreferences.edit();
 
@@ -118,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SQLITEHELPER = new SQLiteHelper(this);
         DBCreate();
-        mySchedules=new MySchedules();
+        myTask =new myTask();
 
         csprogress = new ProgressDialog(this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -140,102 +123,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(cursor.getCount()!=0) {
                 fm1 = MainActivity.this.getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
-                frag = new MySchedules();
+                frag = new myTask();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
             }
             else {
                 fm1 = MainActivity.this.getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
-                frag = new MyStaticSchedules();
+                frag = new myTaskStatic();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
             }
         }
-        else if(isRunning()==false) {
-            autoStartPermission();
-        }
     }
-// autostart permission
-    public void autoStartPermission(){
-        try {
-            Intent intent = new Intent();
-            String manufacturer = android.os.Build.MANUFACTURER;
-            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
-            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-            } else if("oneplus".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.oneplus.security", "com.oneplus.security.chainlaunch.view.ChainLaunchAppListAct‌​ivity")); }
-
-            List<ResolveInfo> list = ctx.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-            if  (list.size() > 0) {
-                startActivityForResult(intent,224);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        // check if the request code is same as what is passed  here it is 2
-        if(requestCode==224)
-        {
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 2);
-                    int p = ContextCompat.checkSelfPermission(ctx, Manifest.permission.RECEIVE_BOOT_COMPLETED);
-                    if (p == PackageManager.PERMISSION_GRANTED) {
-                        //Yay, you have the receive boot completed (= Autostart) permission!
-                    }
-                }
-            }, 2000);
-
-        }
-        else {
-            autoStartPermission();
-        }
-    }
-    private boolean isRunning() {
-        boolean isInBackground = true;
-        ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String activeProcess : processInfo.pkgList) {
-                        if (activeProcess.equals(ctx.getPackageName())) {
-                            isInBackground = false;
-                        }
-                    }
-                }
-            }
-        } else {
-            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-            ComponentName componentInfo = taskInfo.get(0).topActivity;
-            if (componentInfo.getPackageName().equals(ctx.getPackageName())) {
-                isInBackground = false;
-            }
-        }
-
-        return isInBackground;
-    }
-//..........................................
     public void DBCreate(){
         SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
         if(SQLITEDATABASE.isOpen()) {
-            //Log.d("SQ", "open");
         }
         else {
-            //Log.d("SLV", "not open");
+            DBCreate();
         }
     }
 
@@ -246,14 +154,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.i ("isMyServiceRunning?", true+"");
                 return true;
             }
-            /*String manufacturer = "xiaomi";
-            if(manufacturer.equalsIgnoreCase(android.os.Build.MANUFACTURER)) {
-
-                //this will open auto start screen where user can enable permission for your app
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-                startActivity(intent);
-            }*/
         }
         Log.i ("isMyServiceRunning?", false+"");
         return false;
@@ -273,11 +173,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }, 2000);
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Permission denied to read your External storage"+"\n"+"Allow it")
+                    builder.setMessage("Permission id "+"\n"+"Allow it")
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1);
                                 }
                             });
                     AlertDialog alert = builder.create();
@@ -288,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     @Override
     public void onBackPressed() {
-        //moveTaskToBack(true);
+        moveTaskToBack(true);
     }
 
     @Override
@@ -306,10 +206,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch(item.getItemId()) {
             case R.id.action_LANDSCAPE: {
-                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
                 fm1 = MainActivity.this.getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
-                frag = new MyScheduleLandScape();
+                frag = new myTaskLandScape();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
                 break;
@@ -317,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.action_PORTRAIT: {
                 fm1 = MainActivity.this.getSupportFragmentManager();
                 ft1 = fm1.beginTransaction();
-                frag = new MySchedules();
+                frag = new myTask();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
                 break;
@@ -330,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 b.setText("Add");
                 layout.setVisibility(View.VISIBLE);
                 layout.startAnimation(slideUp);
-                mySchedules.Allday.setVisibility(View.VISIBLE);
+                myTask.Allday.setVisibility(View.VISIBLE);
                 break;
             }
             case R.id.action_createStatic: {
@@ -342,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 else {
                     fm1 = MainActivity.this.getSupportFragmentManager();
                     ft1 = fm1.beginTransaction();
-                    frag = new MyStaticSchedules();
+                    frag = new myTaskStatic();
                     ft1.replace(R.id.content_frame, frag);
                     ft1.commit();
                 }
@@ -362,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 mEditor.clear();
                                 mEditor.commit();
 
-                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
                                 csprogress.setMessage("Deleting...");
                                 csprogress.show();
                                 csprogress.setCancelable(false);
@@ -373,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         Toast.makeText(getApplicationContext(),"Deleted Successfully.",Toast.LENGTH_LONG).show();
                                         fm1 = MainActivity.this.getSupportFragmentManager();
                                         ft1 = fm1.beginTransaction();
-                                        frag = new MyStaticSchedules();
+                                        frag = new myTaskStatic();
                                         ft1.replace(R.id.content_frame, frag);
                                         ft1.commit();
                                         new Handler().postDelayed(new Runnable() {
@@ -410,10 +309,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id)
         {
             case  R.id.My_schedule:
-               fragment=new MySchedules();
+               fragment=new myTask();
                 break;
             case  R.id.nav_notes:
-                fragment= new NotesActivity();
+                fragment= new myNotes();
                 break;
             case  R.id.nav_share:
                 try {
