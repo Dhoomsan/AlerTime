@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,7 +94,7 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("DayView");
+        getActivity().setTitle(R.string.Day_View);
         setHasOptionsMenu(true);
     }
 
@@ -207,8 +208,6 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
     public void onPrepareOptionsMenu(Menu menu) {
         MenuItem item1=menu.findItem(R.id.action_PORTRAIT);
         item1.setVisible(false);
-        /*MenuItem item2=menu.findItem(R.id.action_deleteStatic);
-        item2.setVisible(false);*/
     }
     @Override
     public void onClick(View view) {

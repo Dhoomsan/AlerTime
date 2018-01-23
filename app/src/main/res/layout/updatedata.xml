@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:id="@+id/btn_bottom_sheet">
     <ScrollView
         android:layout_width="fill_parent"
@@ -16,26 +16,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:orientation="horizontal"
-                android:weightSum="2"
                 android:background="@color/colorPrimaryDark">
                 <ImageView
                     android:id="@+id/image"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:layout_gravity="right"
-                    android:scaleType="fitEnd"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
                     android:src="@android:drawable/ic_menu_edit"/>
                 <TextView
                     android:id="@+id/title"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
-                    android:layout_marginLeft="10dp"
-                    android:text="Schedule Now"
-                    android:textAlignment="textStart"
+                    android:padding="2dp"
+                    android:text="@string/Schedule_Now"
+                    android:textAlignment="center"
+                    android:typeface="monospace"
                     android:inputType="time"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
             </LinearLayout>
@@ -53,7 +50,8 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="Day of Week : "
+                    android:text="@string/Day_of_week"
+                    android:typeface="monospace"
                     android:gravity="bottom"
                     android:layout_weight="1"/>
                 <CheckBox
@@ -62,12 +60,14 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:id="@+id/Allday"
+                    android:textColor="@color/underlinebar"
                     android:checked="false"
-                    android:text="Allday"/>
+                    android:text="@string/All_Day"/>
                 <TextView
                     android:id="@+id/Dayofweek"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:typeface="monospace"
                     android:gravity="bottom"
                     android:layout_height="match_parent"
                     android:hint=""/>
@@ -90,7 +90,8 @@
                     android:layout_weight="0.95"
                     android:textSize="16dp"
                     android:gravity="bottom"
-                    android:hint="Starting Time"
+                    android:typeface="monospace"
+                    android:hint="@string/Start_Time"
                     android:background="@drawable/borderbottom"
                     android:layout_height="match_parent"/>
                 <TextView
@@ -107,7 +108,8 @@
                     android:layout_weight="0.95"
                     android:textSize="16dp"
                     android:gravity="bottom"
-                    android:hint="Ending Time"
+                    android:typeface="monospace"
+                    android:hint="@string/End_Time"
                     android:background="@drawable/borderbottom"
                     android:layout_height="match_parent"/>
             </LinearLayout>
@@ -128,8 +130,10 @@
                         android:id="@+id/Subject"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:hint="Sub Ex:Eng101"
+                        android:hint="@string/Subject"
                         android:textSize="16dp"
+                        android:textColor="@color/underlinebar"
+                        android:typeface="monospace"
                         android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                         android:textColorHighlight="@android:color/black"
                         android:singleLine="true"
@@ -159,8 +163,10 @@
                         android:id="@+id/Venue"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:hint="Ven Ex:B15202"
+                        android:hint="@string/Venue"
                         android:textSize="16dp"
+                        android:typeface="monospace"
+                        android:textColor="@color/underlinebar"
                         android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                         android:textColorHighlight="@android:color/black"
                         android:singleLine="true"
@@ -186,9 +192,11 @@
                         android:id="@+id/AlermBefore"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:hint="Alerm Before Ex:10M "
+                        android:hint="@string/Alarm_Before"
                         android:inputType="number"
                         android:maxLength="2"
+                        android:typeface="monospace"
+                        android:textColor="@color/underlinebar"
                         android:imeOptions="flagNoExtractUi"
                         android:textSize="16dp" >
                         <requestFocus/>
@@ -209,8 +217,10 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.95"
                     android:id="@+id/AlermRepeat"
+                    android:typeface="monospace"
+                    android:textColor="@color/underlinebar"
                     android:checked="false"
-                    android:text="Set"/>
+                    android:text="@string/Set"/>
             </LinearLayout>
             <!-- //////////////////////////////////////////////////// -->
             <LinearLayout
@@ -226,9 +236,11 @@
                     android:id="@+id/ButtonAddUpdate"
                     android:layout_width="0dp"
                     android:gravity="center"
-                    android:text="ADD"
+                    android:text="@string/Add"
                     android:textColor="@color/white"
                     android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:typeface="monospace"
                     android:background="@color/colorPrimaryDark"
                     android:layout_weight="1"
                     android:layout_height="fill_parent"/>
@@ -236,10 +248,12 @@
                     android:id="@+id/ButtonCancel"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:text="Cancel"
+                    android:text="@string/Cancel"
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:textAllCaps="false"
                     android:background="@color/red"
                     android:layout_height="fill_parent"/>
             </LinearLayout>

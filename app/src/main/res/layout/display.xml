@@ -8,6 +8,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="3"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/rippleefect"
         android:gravity="center">
         <LinearLayout
@@ -20,7 +22,8 @@
                 android:id="@+id/textViewSTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Start time"
+                android:text="@string/Start_Time"
+                android:typeface="monospace"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -28,7 +31,8 @@
                 android:id="@+id/space"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="to"
+                android:text="@string/to"
+                android:typeface="monospace"
                 android:textAlignment="center"
                 android:textSize="10dp"
                 android:textColor="@color/hue"
@@ -37,8 +41,9 @@
                 android:id="@+id/textViewETime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="End Time"
+                android:text="@string/End_Time"
                 android:textSize="10dp"
+                android:typeface="monospace"
                 android:textAlignment="center"
                 android:textColor="@color/red"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -56,8 +61,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="16dp"
+                android:typeface="monospace"
                 android:textColor="@color/orange"
-                android:text="Subject"
+                android:text="@string/Subject"
                 android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
@@ -73,8 +79,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".5"
                 android:textSize="16dp"
-                android:textColor="@color/colorPrimary"
-                android:text="Venue"
+                android:typeface="monospace"
+                android:textColor="@color/green"
+                android:text="@string/Venue"
                 android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
             <TextView
@@ -84,6 +91,8 @@
                 android:text=""
                 android:textSize="8dp"
                 android:gravity="center"
+                android:typeface="monospace"
+                android:textStyle="bold"
                 android:textColor="@color/underlinebar"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>

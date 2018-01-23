@@ -164,7 +164,7 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
 
         editor.commit();
         Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
-        b.setText("Update");
+        b.setText(R.string.Update);
         layout.setVisibility(View.VISIBLE);
         layout.startAnimation(slideUp);
     }
@@ -227,7 +227,7 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
                                 SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                                 String sql = "DELETE FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_ID + " = '" + selecteditem + "'";
                                 try {
-                                    Log.d("SQLvarid",selecteditem);
+                                    //Log.d("SQLvarid",selecteditem);
                                     SQLITEDATABASE.execSQL(sql);
                                 } catch (SQLException e) {
                                 }
@@ -243,7 +243,7 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
                     }
                 });
                 AlertDialog alert = builder.create();
-                alert.setIcon(R.drawable.ic_alarm_clock);// dialog  Icon
+                alert.setIcon(R.drawable.logo);// dialog  Icon
                 alert.setTitle("Confirmation"); // dialog  Title
                 alert.show();
                 return true;

@@ -5,11 +5,11 @@
         <item
             android:id="@+id/My_schedule"
             android:icon="@drawable/ic_schedulesicon"
-            android:title="myTask" />
+            android:title="@string/app_name" />
         <item
             android:id="@+id/nav_notes"
             android:icon="@drawable/ic_notes"
-            android:title="myNotes" />
+            android:title="@string/Notes" />
     </group>
     <item android:title="Communicate">
         <menu>
@@ -17,6 +17,14 @@
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
+        </menu>
+    </item>
+    <item android:title="Operation">
+        <menu>
+            <item
+                android:id="@+id/action_deleteStatic"
+                android:icon="@drawable/ic_deleteicon"
+                android:title="@string/Delete_Grid"/>
         </menu>
     </item>
 </menu>

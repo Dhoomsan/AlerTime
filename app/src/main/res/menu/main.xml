@@ -9,21 +9,11 @@
     <item
         android:id="@+id/action_LANDSCAPE"
         android:icon="@drawable/portland"
-        android:title="Add"
+        android:title="landScape"
         app:showAsAction="always"/>
     <item
         android:id="@+id/action_PORTRAIT"
         android:icon="@drawable/portland"
-        android:title="Add"
+        android:title="Portrait"
         app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_createStatic"
-        android:icon="@drawable/ic_deleteicon"
-        android:title="Create Table"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_deleteStatic"
-        android:icon="@drawable/ic_deleteicon"
-        android:title="Delete Table"
-        app:showAsAction="never"/>
 </menu>

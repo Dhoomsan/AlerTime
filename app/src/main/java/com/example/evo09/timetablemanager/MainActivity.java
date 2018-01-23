@@ -40,6 +40,9 @@ import android.widget.Toast;
 //#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end #parse("File Header.java") public class ${NAME} { }
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int TIME_DELAY = 2000;
+    private static long back_pressed;
+
     private ProgressDialog csprogress;
     SQLiteDatabase SQLITEDATABASE;
     SQLiteHelper SQLITEHELPER;
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Fragment frag;
     FragmentManager fm1;
     FragmentTransaction ft1;
+
     boolean permissiongrant=false;
     TextView evolvan;
     LinearLayout layout;
@@ -151,11 +155,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i ("isMyServiceRunning?", true+"");
+                //Log.i ("isMyServiceRunning?", true+"");
                 return true;
             }
         }
-        Log.i ("isMyServiceRunning?", false+"");
+        //Log.i ("isMyServiceRunning?", false+"");
         return false;
     }
 
@@ -173,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }, 2000);
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Permission id "+"\n"+"Allow it")
+                    builder.setMessage("Permission is necessary "+"\n"+"Allow it")
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -188,7 +192,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);
+        if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(getBaseContext(), "Press once again to exit!",
+                    Toast.LENGTH_SHORT).show();
+        }
+        back_pressed = System.currentTimeMillis();
     }
 
     @Override
@@ -226,76 +236,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 editor.putString(AddUpdateFlag, insertdata);
                 editor.commit();
                 Button b = (Button) layout.findViewById(R.id.ButtonAddUpdate);
-                b.setText("Add");
+                b.setText(R.string.Add);
                 layout.setVisibility(View.VISIBLE);
                 layout.startAnimation(slideUp);
                 myTask.Allday.setVisibility(View.VISIBLE);
                 break;
             }
-            case R.id.action_createStatic: {
-                SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-                cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
-                if(cursor.getCount()!=0){
-                    Toast.makeText(getApplicationContext(),"Record already existing!",Toast.LENGTH_LONG).show();
-                }
-                else {
-                    fm1 = MainActivity.this.getSupportFragmentManager();
-                    ft1 = fm1.beginTransaction();
-                    frag = new myTaskStatic();
-                    ft1.replace(R.id.content_frame, frag);
-                    ft1.commit();
-                }
-                break;
-            }
-            case R.id.action_deleteStatic: {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Are you sure you want to Delete Schedule?"+"\n"+"it will delete all record")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
-                                SQLITEDATABASE.delete(SQLITEHELPER.TABLE_NAME,null,null);
-                                SQLITEDATABASE.close();
-
-                                mEditor.clear();
-                                mEditor.commit();
-
-                                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-                                csprogress.setMessage("Deleting...");
-                                csprogress.show();
-                                csprogress.setCancelable(false);
-                                new Handler().postDelayed(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(),"Deleted Successfully.",Toast.LENGTH_LONG).show();
-                                        fm1 = MainActivity.this.getSupportFragmentManager();
-                                        ft1 = fm1.beginTransaction();
-                                        frag = new myTaskStatic();
-                                        ft1.replace(R.id.content_frame, frag);
-                                        ft1.commit();
-                                        new Handler().postDelayed(new Runnable() {
-
-                                            @Override
-                                            public void run() {
-                                                csprogress.dismiss();
-                                            }
-                                        }, 300);
-                                    }
-                                }, 1500);//just mention the time when you want to launch your action
-
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-            break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -306,15 +252,72 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        switch (id)
-        {
-            case  R.id.My_schedule:
-               fragment=new myTask();
+        switch (id) {
+            case R.id.My_schedule: {
+                fragment = new myTask();
                 break;
-            case  R.id.nav_notes:
-                fragment= new myNotes();
+            }
+            case R.id.nav_notes: {
+                fragment = new myNotes();
                 break;
-            case  R.id.nav_share:
+            }
+            case R.id.action_deleteStatic: {
+                SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+                cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
+                if(cursor.getCount()!=0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Are you sure you want to Delete Schedule?" + "\n" + "it will delete all record")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                    SQLITEDATABASE = SQLITEHELPER.getWritableDatabase();
+                                    SQLITEDATABASE.delete(SQLITEHELPER.TABLE_NAME, null, null);
+                                    SQLITEDATABASE.close();
+
+                                    mEditor.clear();
+                                    mEditor.commit();
+
+                                    //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                                    csprogress.setMessage("Deleting...");
+                                    csprogress.show();
+                                    csprogress.setCancelable(false);
+                                    new Handler().postDelayed(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "Deleted Successfully.", Toast.LENGTH_LONG).show();
+                                            fm1 = MainActivity.this.getSupportFragmentManager();
+                                            ft1 = fm1.beginTransaction();
+                                            frag = new myTaskStatic();
+                                            ft1.replace(R.id.content_frame, frag);
+                                            ft1.commit();
+                                            new Handler().postDelayed(new Runnable() {
+
+                                                @Override
+                                                public void run() {
+                                                    csprogress.dismiss();
+                                                }
+                                            }, 300);
+                                        }
+                                    }, 1500);//just mention the time when you want to launch your action
+
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"Error! Something went wrong!",Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+            case R.id.nav_share: {
                 try {
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.setType("text/plain");
@@ -323,10 +326,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     sAux = sAux + "https://play.google.com/store/apps/details?id=mockme.evolvan.com.mockme&hl=en \n\n";
                     share.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(share, "Share Using..."));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     //e.toString();
                 }
                 return true;
+            }
         }
         if(fragment !=null)
         {

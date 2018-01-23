@@ -14,28 +14,25 @@
             <!-- //////////////////////////////////////////////////// -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:orientation="horizontal"
-                android:weightSum="2"
-                android:layout_gravity="center"
                 android:background="@color/colorPrimaryDark">
                 <ImageView
                     android:id="@+id/image"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:scaleType="fitEnd"
-                    android:src="@android:drawable/ic_menu_edit"/>
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    android:src="@drawable/logo"/>
                 <TextView
                     android:id="@+id/title"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
-                    android:layout_marginLeft="10dp"
-                    android:text="Schedule Now"
-                    android:textAlignment="textStart"
+                    android:text="Today Task..."
+                    android:typeface="monospace"
+                    android:textAlignment="center"
                     android:inputType="time"
-                    android:textColor="@color/grey"
+                    android:padding="2dp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
             </LinearLayout>
@@ -64,8 +61,9 @@
                             android:id="@+id/Subject"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Sub Ex:Eng101"
+                            android:hint="@string/Subject"
                             android:textSize="16dp"
+                            android:typeface="monospace"
                             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                             android:textColorHighlight="@android:color/black"
                             android:singleLine="true"
@@ -95,8 +93,9 @@
                             android:id="@+id/Venue"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Ven Ex:B15202"
+                            android:hint="@string/Venue"
                             android:textSize="16dp"
+                            android:typeface="monospace"
                             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                             android:textColorHighlight="@android:color/black"
                             android:singleLine="true"
@@ -122,9 +121,10 @@
                             android:id="@+id/AlermBefore"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Alerm Before Ex:10M "
+                            android:hint="@string/Alarm_Before"
                             android:inputType="number"
                             android:maxLength="2"
+                            android:typeface="monospace"
                             android:imeOptions="flagNoExtractUi"
                             android:textSize="16dp" >
                             <requestFocus/>
@@ -137,7 +137,7 @@
                         android:layout_weight="1"
                         android:id="@+id/AlermRepeat"
                         android:checked="false"
-                        android:text="Set"/>
+                        android:text="@string/Set"/>
                 </LinearLayout>
             </LinearLayout>
             <!-- //////////////////////////////////////////////////// -->
@@ -153,10 +153,12 @@
                     android:id="@+id/ButtonAddUpdate"
                     android:layout_width="match_parent"
                     android:gravity="center"
-                    android:text="Update"
+                    android:text="@string/Update"
                     android:textColor="@color/white"
                     android:textStyle="bold"
-                    android:background="@color/colorPrimaryDark"
+                    android:typeface="monospace"
+                    android:textAllCaps="false"
+                    android:background="@color/colorPrimary"
                     android:layout_weight="1"
                     android:layout_height="fill_parent"/>
                 <Button
@@ -167,16 +169,10 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:textAllCaps="false"
                     android:background="@color/red"
                     android:layout_height="fill_parent"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/gotoViewPager"
-                    android:padding="10dp"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorPrimary"
-                    android:text="Click to UPDATE Hole Data!"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

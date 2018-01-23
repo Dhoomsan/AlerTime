@@ -15,6 +15,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,8 +33,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class myTaskLandScape extends Fragment {
@@ -42,7 +49,7 @@ public class myTaskLandScape extends Fragment {
     FragmentManager fm1;
     FragmentTransaction ft1;
 
-    static int t = 0,j, jump = 0, ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0,storDayId=0;
+    static int t = 0,j, jump = 0, ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0;
     static String[] Timedata, Mondata, Tuedata, Weddata, Thudata, Fridata, Satdata, Sundata, SplitMondSTCompare, SplitMonETCompare;
     static String[] MondST, MonET, TueST, TueET, WedST, WedET, ThuST, ThuET, FriST, FriET, SatST, SatET, SunST, SunET;
     static String[] MonId, TueId, WedId, ThuId, FriId, SatId, SunId;
@@ -58,10 +65,10 @@ public class myTaskLandScape extends Fragment {
     LinearLayout.LayoutParams param1;
     LinearLayout Layouttime, LayoutMon, LayoutTue, LayoutWed, LayoutThu, LayoutFri, LayoutSat, LayoutSun, container1;
     LinearLayout LDay,datafield;
-    TextView Day,gotoViewPager;
+    TextView Day;
     Display display;
-    String[] CStimeId,CStime, CEtime,CMonId, CMon, CMonSTime, CMonETime,CTueId, CTue, CTueETime, CTueTime,CWedId, CWed, CWedTime, CWedETime,CThuId, CThu, CThuTime, CThuETime,CFriId, CFri, CFriTime, CFriETime,CSatId, CSat, CSatTime, CSatETime,CSunId, CSun, CSunTime, CSunETime;
-    String StrSubject,StrVenue,StrAlembefor,Error="All Field Are Required !";
+    String[]SplitEtime,SplitStime, CStimeId,CStime, CEtime,CMonId, CMon, CMonSTime, CMonETime,CTueId, CTue, CTueETime, CTueTime,CWedId, CWed, CWedTime, CWedETime,CThuId, CThu, CThuTime, CThuETime,CFriId, CFri, CFriTime, CFriETime,CSatId, CSat, CSatTime, CSatETime,CSunId, CSun, CSunTime, CSunETime;
+    String StrSubject,StrVenue,StrAlembefor,Error="All Field Are Required !",LastEndTime,SplitEtimeFirst,StartFirstTime,shourminute;
     android.support.v7.app.AlertDialog show;
 
     Button ButtonAddUpdate,ButtonDelete;
@@ -70,7 +77,13 @@ public class myTaskLandScape extends Fragment {
     static CheckBox AlermRepeat;
     Snackbar snackbar1;
     boolean refreshcheck = false;
-    @Override
+
+    Calendar cal;
+    int sshour,ssmint,ctime,storeshour,storesmint,storestime,storeehour,storeemint,storeetime;
+    String[] SplitSTCompare,SplitETCompare;
+    String st,et,dayOfTheWeek;
+    SimpleDateFormat sdf;
+     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
         super.onSaveInstanceState(outState);
@@ -78,7 +91,7 @@ public class myTaskLandScape extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("TableView");
+        getActivity().setTitle(R.string.Table_View);
         setHasOptionsMenu(true);
     }
 
@@ -136,8 +149,6 @@ public class myTaskLandScape extends Fragment {
         item.setVisible(false);
         MenuItem item2 = main.findItem(R.id.action_LANDSCAPE);
         item2.setVisible(false);
-        MenuItem item3=main.findItem(R.id.action_createStatic);
-        item3.setVisible(false);
     }
 
     public void DBCreate(){
@@ -340,15 +351,13 @@ public class myTaskLandScape extends Fragment {
             LayoutFri = (LinearLayout) getActivity().findViewById(R.id.linearLayoutfri);
             LayoutSat = (LinearLayout) getActivity().findViewById(R.id.linearLayoutsat);
             LayoutSun = (LinearLayout) getActivity().findViewById(R.id.linearLayoutsun);
-            container1 = (LinearLayout) getActivity().findViewById(R.id.container1);
-            //container1.setOnClickListener(this);
 
             LinearLayout.LayoutParams Margin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             Margin.setMargins(0, 5, 0, 0);
             //main for loop
-            String StartFirstTime = CStime[0];
-            String[] SplitStime = StartFirstTime.split(" ");
-            String shourminute = SplitStime[0];
+            StartFirstTime = CStime[0];
+            SplitStime = StartFirstTime.split(" ");
+            shourminute = SplitStime[0];
             date1 = new Date();
             date1.setTime((((Integer.parseInt(shourminute.split(":")[0])) * 60 + (Integer.parseInt(shourminute.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
             Shour = date1.getHours() * 60;
@@ -358,9 +367,9 @@ public class myTaskLandScape extends Fragment {
 
             Timedatalist = new ArrayList<String>();
 
-            String LastEndTime = CEtime[CEtime.length - 1];
-            String[] SplitEtime = LastEndTime.split(" ");
-            String SplitEtimeFirst = SplitEtime[0];
+            LastEndTime = CEtime[CEtime.length - 1];
+            SplitEtime = LastEndTime.split(" ");
+            SplitEtimeFirst = SplitEtime[0];
             date2 = new Date();
             date2.setTime((((Integer.parseInt(SplitEtimeFirst.split(":")[0])) * 60 + (Integer.parseInt(SplitEtimeFirst.split(":")[1]))) + date2.getTimezoneOffset()) * 60000);
             int SET = date2.getHours() * 60 + date2.getMinutes();
@@ -375,6 +384,7 @@ public class myTaskLandScape extends Fragment {
                         Day.setText(StartFirstTime);
                         Day.setBackgroundResource(R.drawable.gradientbottom);
                         Day.setTextColor(Color.parseColor("#4a5a71"));
+                        Day.setGravity(Gravity.CENTER_HORIZONTAL);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height - Sminutes * 2);
                         }
@@ -391,6 +401,7 @@ public class myTaskLandScape extends Fragment {
                     if (mint == 0) {
                         LDay = new LinearLayout(getContext());
                         Day = new TextView(getContext());
+                        Day.setGravity(Gravity.CENTER_HORIZONTAL);
                         Day.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
                         Day.setTextColor(Color.parseColor("#4a5a71"));
                         Day.setBackgroundResource(R.drawable.gradientbottom);
@@ -432,7 +443,7 @@ public class myTaskLandScape extends Fragment {
                     strMondata = Mondata[j];
                     MonETCompare = MonET[j];
                     strDayId=MonId[j];
-                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width, LayoutMon);
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, LayoutMon,"Monday");
                     j = j + (DStandEt / 2) - 1;
                 } else {
                     AddSpaceInLandscape(LayoutMon);
@@ -460,7 +471,7 @@ public class myTaskLandScape extends Fragment {
                     strMondata=Tuedata[j];
                     MonETCompare = TueET[j];
                     strDayId=TueId[j];
-                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutTue);
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, LayoutTue , "Tuesday");
                     j = j + (DStandEt / 2) - 1;
                 } else {
                     AddSpaceInLandscape(LayoutTue);
@@ -488,7 +499,7 @@ public class myTaskLandScape extends Fragment {
                     strMondata=Weddata[j];
                     MonETCompare = WedET[j];
                     strDayId=WedId[j];
-                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutWed);
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, LayoutWed, "Wednesday");
                     j = j + (DStandEt / 2) - 1;
                 } else {
                     AddSpaceInLandscape(LayoutWed);
@@ -516,7 +527,7 @@ public class myTaskLandScape extends Fragment {
                     strMondata=Thudata[j];
                     MonETCompare = ThuET[j];
                     strDayId=ThuId[j];
-                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutThu);
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, LayoutThu, "Thursday");
                     j = j + (DStandEt / 2) - 1;
                 } else {
                     AddSpaceInLandscape(LayoutThu);
@@ -544,7 +555,7 @@ public class myTaskLandScape extends Fragment {
                     strMondata=Fridata[j];
                     MonETCompare = FriET[j];
                     strDayId=FriId[j];
-                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutFri);
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, LayoutFri,"Friday");
                     j = j + (DStandEt / 2) - 1;
                 } else {
                     AddSpaceInLandscape(LayoutFri);
@@ -571,7 +582,7 @@ public class myTaskLandScape extends Fragment {
                     strMondata=Satdata[j];
                     MonETCompare = SatET[j];
                     strDayId=SatId[j];
-                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutSat);
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, LayoutSat,"Saturday");
                     j = j + (DStandEt / 2) - 1;
                 } else {
                     AddSpaceInLandscape(LayoutSat);
@@ -599,7 +610,7 @@ public class myTaskLandScape extends Fragment {
                     strMondata=Sundata[j];
                     MonETCompare = SunET[j];
                     strDayId=SunId[j];
-                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, width,LayoutSun);
+                    AddDataInLandscape(DaySTCompare, strMondata, MonETCompare,strDayId, height, LayoutSun,"Sunday");
                     j = j + (DStandEt / 2) - 1;
                 } else {
                     AddSpaceInLandscape(LayoutSun);
@@ -609,7 +620,31 @@ public class myTaskLandScape extends Fragment {
         //........................
     }
 
-    public void AddDataInLandscape(String DaySTCompare,String strMondata,String MonETCompare,String strDayId,int height,int width,LinearLayout LayoutDay) {
+    public void AddDataInLandscape(String DaySTCompare,String strMondata,String MonETCompare,String strDayId,int height,LinearLayout LayoutDay, String cday) {
+
+        cal = Calendar.getInstance();
+        sshour = cal.get(Calendar.HOUR_OF_DAY);
+        ssmint = cal.get(Calendar.MINUTE);
+        ctime = sshour * 60 + ssmint;
+        Date d = new Date();
+        sdf = new SimpleDateFormat("EEEE");
+        dayOfTheWeek = sdf.format(d);
+
+        SplitSTCompare = DaySTCompare.split(" ");
+        SplitETCompare = MonETCompare.split(" ");
+        st = SplitSTCompare[0];
+        et = SplitETCompare[0];
+        date1 = new Date();
+        date1.setTime((((Integer.parseInt(st.split(":")[0])) * 60 + (Integer.parseInt(st.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
+        storeshour = date1.getHours();
+        storesmint = date1.getMinutes();
+        storestime = storeshour * 60 + storesmint;
+        date2 = new Date();
+        date2.setTime((((Integer.parseInt(et.split(":")[0])) * 60 + (Integer.parseInt(et.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
+        storeehour = date2.getHours();
+        storeemint = date2.getMinutes();
+        storeetime = storeehour * 60 + storeemint;
+
         SplitMondSTCompare = DaySTCompare.split(" ");
         shourSplitMondSTCompare = SplitMondSTCompare[0];
         dateSTime = new Date();
@@ -622,12 +657,9 @@ public class myTaskLandScape extends Fragment {
         dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
         ET = dateETime.getHours() * 60 + dateETime.getMinutes();
         DStandEt = ((ET - ST) * 2);
-        jump = DStandEt / height;
         LDay = new LinearLayout(getContext());
         Day = new TextView(getContext());
-        Day.setBackgroundResource(R.drawable.gradientbottom);
         Day.setId(Integer.parseInt(strDayId));
-       //Log.d("strDayId",strDayId);
         Day.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -635,6 +667,15 @@ public class myTaskLandScape extends Fragment {
                 ConfirmUpdate(ss.getId());
             }
         });
+        if (ctime > storestime && ctime < storeetime && cday.equals(dayOfTheWeek)){
+            Day.setBackgroundResource(R.drawable.highlightcolor);
+        }
+        else if (ctime > storestime && ctime < storeetime){
+            Day.setBackgroundResource(R.drawable.highlightct);
+        }
+        else {
+            Day.setBackgroundResource(R.drawable.gradientbottom);
+        }
         Day.setPadding(0,5,0,5);
         Day.setText(Html.fromHtml("<small><font size=\"10 \" color=\"#008080\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
         Day.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -653,7 +694,6 @@ public class myTaskLandScape extends Fragment {
     public void AddSpaceInLandscape(LinearLayout LayoutDay) {
         LDay = new LinearLayout(getContext());
         Day = new TextView(getContext());
-        Day.setBackgroundColor(Color.parseColor("#669999"));
         Day.setText(" ");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
@@ -680,7 +720,6 @@ public class myTaskLandScape extends Fragment {
         Venue=(AutoCompleteTextView) promptsView.findViewById(R.id.Venue);
         AlermBefore=(EditText)promptsView.findViewById(R.id.AlermBefore);
         AlermRepeat=(CheckBox)promptsView.findViewById(R.id.AlermRepeat);
-        gotoViewPager=(TextView)promptsView.findViewById(R.id.gotoViewPager);
         ButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -708,17 +747,6 @@ public class myTaskLandScape extends Fragment {
                 android.support.v7.app.AlertDialog alert = builder.create();
                 alert.show();
 
-                show.dismiss();
-            }
-        });
-        gotoViewPager.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fm1 = getActivity().getSupportFragmentManager();
-                ft1 = fm1.beginTransaction();
-                frag = new myTask();
-                ft1.replace(R.id.content_frame, frag);
-                ft1.commit();
                 show.dismiss();
             }
         });

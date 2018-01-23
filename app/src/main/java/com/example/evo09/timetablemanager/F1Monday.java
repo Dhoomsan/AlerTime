@@ -157,7 +157,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
         editor.commit();
 
         Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
-        b.setText("Update");
+        b.setText(R.string.Update);
         layout.setVisibility(View.VISIBLE);
         layout.startAnimation(slideUp);
     }
@@ -221,7 +221,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
                                 String sql = "DELETE FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_ID + " = '" + selecteditem + "'";
                                 try {
                                     SQLITEDATABASE.execSQL(sql);
-                                    Log.d("SQLvarid",selecteditem);
+                                    //Log.d("SQLvarid",selecteditem);
                                 } catch (SQLException e) {
                                 }
                                 //Toast.makeText(getContext(),selecteditem,Toast.LENGTH_LONG).show();
@@ -236,7 +236,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
                     }
                 });
                 AlertDialog alert = builder.create();
-                alert.setIcon(R.drawable.ic_alarm_clock);// dialog  Icon
+                alert.setIcon(R.drawable.logo);// dialog  Icon
                 alert.setTitle("Confirmation"); // dialog  Title
                 alert.show();
                 return true;

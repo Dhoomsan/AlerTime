@@ -159,7 +159,7 @@ public class F5Friday extends Fragment implements AdapterView.OnItemClickListene
 
         editor.commit();
         Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
-        b.setText("Update");
+        b.setText(R.string.Update);
         layout.setVisibility(View.VISIBLE);
         layout.startAnimation(slideUp);
     }
@@ -236,7 +236,7 @@ public class F5Friday extends Fragment implements AdapterView.OnItemClickListene
                     }
                 });
                 AlertDialog alert = builder.create();
-                alert.setIcon(R.drawable.ic_alarm_clock);// dialog  Icon
+                alert.setIcon(R.drawable.logo);// dialog  Icon
                 alert.setTitle("Confirmation"); // dialog  Title
                 alert.show();
                 return true;

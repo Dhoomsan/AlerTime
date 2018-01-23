@@ -41,6 +41,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="Push"
+                    android:textAllCaps="false"
                     android:background="@color/colorPrimaryDark"
                     android:layout_weight="1"
                     android:id="@+id/promptPush" />

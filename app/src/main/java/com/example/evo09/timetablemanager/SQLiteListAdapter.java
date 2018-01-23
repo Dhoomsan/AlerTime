@@ -29,8 +29,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SQLiteListAdapter extends BaseAdapter {
-    //0.5 seconds
-    private String tabtitles[] = new String[] { "Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday" };
+
+    Calendar cal;
+    int sshour,ssmint,ctime,storeshour,storesmint,storestime,storeehour,storeemint,storeetime;
+    String shour,ehour,st,et,cb,dayOfTheWeek,currentday,breaks;
+    SimpleDateFormat sdf;
+    String[] SplitStime,Splitetime;
+    Date date1,date2,d;
+    Holder holder;
+    LayoutInflater layoutInflater;
     Context context;
     ArrayList<String> userID;
     ArrayList<String> UserSTime;
@@ -73,8 +80,7 @@ public class SQLiteListAdapter extends BaseAdapter {
         return position;
     }
     public View getView(int position, View child, ViewGroup parent) {
-        Holder holder;
-        LayoutInflater layoutInflater;
+
         if (child == null) {
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             child = layoutInflater.inflate(R.layout.display, null, true);
@@ -90,56 +96,49 @@ public class SQLiteListAdapter extends BaseAdapter {
             child.setTag(holder);
 
         } else {
-
             holder = (Holder) child.getTag();
         }
-        Calendar cal = Calendar.getInstance();
-        int sshour = cal.get(Calendar.HOUR_OF_DAY);
-        int ssmint = cal.get(Calendar.MINUTE);
-        int ctime = sshour * 60 + ssmint;
-        String shour = UserSTime.get(position);
-        String ehour = UserETime.get(position);
-        String[] SplitStime = shour.split(" ");
-        String[] Splitetime = ehour.split(" ");
-        String st = SplitStime[0];
-        String et = Splitetime[0];
-        Date date1 = new Date();
+
+
+        cal = Calendar.getInstance();
+        sshour = cal.get(Calendar.HOUR_OF_DAY);
+        ssmint = cal.get(Calendar.MINUTE);
+        ctime = sshour * 60 + ssmint;
+        shour = UserSTime.get(position);
+        ehour = UserETime.get(position);
+        SplitStime = shour.split(" ");
+        Splitetime = ehour.split(" ");
+        st = SplitStime[0];
+        et = Splitetime[0];
+        date1 = new Date();
         date1.setTime((((Integer.parseInt(st.split(":")[0])) * 60 + (Integer.parseInt(st.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-        int storeshour = date1.getHours();
-        int storesmint = date1.getMinutes();
-        int storestime = storeshour * 60 + storesmint;
-        Date date2 = new Date();
+        storeshour = date1.getHours();
+        storesmint = date1.getMinutes();
+        storestime = storeshour * 60 + storesmint;
+        date2 = new Date();
         date2.setTime((((Integer.parseInt(et.split(":")[0])) * 60 + (Integer.parseInt(et.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-        int storeehour = date2.getHours();
-        int storeemint = date2.getMinutes();
-        int storeetime = storeehour * 60 + storeemint;
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-        Date d = new Date();
-        final String dayOfTheWeek = sdf.format(d);
-        if (ctime > storestime && ctime < storeetime) {
-            child.setBackgroundColor(Color.parseColor("#E6E8FA"));
+        storeehour = date2.getHours();
+        storeemint = date2.getMinutes();
+        storeetime = storeehour * 60 + storeemint;
+        sdf = new SimpleDateFormat("EEEE");
+        d = new Date();
+        dayOfTheWeek = sdf.format(d);
+        currentday=sdf.format(d);
+        if (ctime > storestime && ctime < storeetime){
+            child.setBackgroundResource(R.color.highlight);
         }
-        //Random random = new Random();
-        String cb = User_Alarm.get(position);
-        /*if(position %2 == 1)
-        {
-            // Set a background color for ListView regular row/item
-            child.setBackgroundColor(Color.parseColor("#FFB6B546"));
+        else if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){
+            child.setBackgroundResource(R.color.white);
         }
-        else
-        {
-            // Set the background color for alternate row/item
-            child.setBackgroundColor(Color.parseColor("#FFCCCB4C"));
-        }*/
+        cb = User_Alarm.get(position);
+        breaks = User_Venue.get(position);
         if (cb.equals("00") || cb.equals("")) {
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
             holder.textviewsubject.setText(UserSubject.get(position));
             holder.textviewvenue.setText(User_Venue.get(position));
         } else{
-
             holder.textviewalarm.setBackgroundResource(R.drawable.ic_alarm);
-           // holder.textviewalarm.setTextColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
             holder.textviewsubject.setText(UserSubject.get(position));

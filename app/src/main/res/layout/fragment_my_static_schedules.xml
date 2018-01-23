@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@color/hue">
+    android:background="@color/highlight">
     <!--Statics-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,15 +15,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:weightSum="2"
-            android:layout_gravity="center"
             android:id="@+id/dynamicShowdata">
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Create Dynamic Schedule"
-                android:background="@drawable/gradientbottom"
-                android:layout_margin="25dp"
+                android:text="@string/Start_from_scratch"
+                android:textAllCaps="false"
+                android:typeface="monospace"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/gradientbackground"
                 android:textStyle="bold"
                 android:id="@+id/dynamic"
                 android:gravity="center"/>
@@ -33,10 +35,12 @@
                 android:id="@+id/statically"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:layout_margin="25dp"
+                android:typeface="monospace"
+                android:textColor="@color/red"
+                android:textAllCaps="false"
                 android:textStyle="bold"
-                android:background="@drawable/gradientbottom"
-                android:text="Create Static Schedule"/>
+                android:background="@drawable/gradientbackground"
+                android:text="@string/Start_with_a_table_skeleton"/>
         </LinearLayout>
         <ScrollView
             android:layout_width="fill_parent"
@@ -60,9 +64,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Start time : "
+                        android:text="@string/Start_Time"
                         android:textStyle="bold"
                         android:padding="5dp"
+                        android:typeface="monospace"
                         android:layout_weight="1.2"
                         android:background="@color/Transparent"
                         android:gravity="center|end"/>
@@ -74,6 +79,7 @@
                         android:gravity="start|center"
                         android:padding="5dp"
                         android:hint="Ex. 08:00AM"
+                        android:typeface="monospace"
                         android:layout_weight="0.8"
                         android:background="@color/grey"/>
                 </LinearLayout>
@@ -88,10 +94,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Period Duration: "
+                        android:text="@string/Period_Duration"
                         android:layout_weight="1.2"
                         android:textStyle="bold"
                         android:padding="5dp"
+                        android:typeface="monospace"
                         android:background="@color/Transparent"
                         android:gravity="center|end"/>
 
@@ -104,6 +111,8 @@
                         android:padding="5dp"
                         android:layout_weight="0.8"
                         android:gravity="start|center"
+                        android:typeface="monospace"
+                        android:textColor="@color/underlinebar"
                         android:hint="Ex.45M"
                         android:background="@color/grey"
                         android:imeOptions="actionNext"/>
@@ -123,10 +132,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text=" Break Start : "
+                        android:text="@string/Break_Start_Time"
                         android:background="@color/Transparent"
                         android:layout_column="0"
                         android:padding="5dp"
+                        android:typeface="monospace"
                         android:layout_weight="1.2"
                         android:textStyle="bold"
                         android:gravity="center|end" />
@@ -138,6 +148,7 @@
                         android:gravity="start|center"
                         android:padding="5dp"
                         android:hint="Ex. 12:30PM"
+                        android:typeface="monospace"
                         android:background="@color/grey"
                         android:layout_weight="0.8"/>
 
@@ -153,11 +164,12 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text=" Break Duration : "
+                        android:text="@string/Break_Duration"
                         android:background="@color/Transparent"
                         android:layout_column="0"
                         android:padding="5dp"
                         android:textStyle="bold"
+                        android:typeface="monospace"
                         android:layout_weight="1.2"
                         android:gravity="center|end" />
 
@@ -170,6 +182,8 @@
                         android:padding="5dp"
                         android:gravity="start|center"
                         android:hint="Ex.45M"
+                        android:typeface="monospace"
+                        android:textColor="@color/underlinebar"
                         android:background="@color/grey"
                         android:layout_weight="0.8"
                         android:imeOptions="normal"/>
@@ -185,10 +199,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text=" End time : "
+                        android:text="@string/End_Time"
                         android:background="@color/Transparent"
                         android:layout_weight="1.2"
                         android:padding="5dp"
+                        android:typeface="monospace"
                         android:textStyle="bold"
                         android:gravity="center|end" />
 
@@ -198,6 +213,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.8"
                         android:padding="5dp"
+                        android:typeface="monospace"
                         android:background="@color/grey"
                         android:gravity="start|center"
                         android:hint="Ex. 02:00PM" />
@@ -213,9 +229,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text=" Alarm before : "
+                        android:text="@string/Alarm_Before"
                         android:background="@color/Transparent"
                         android:layout_weight="1.2"
+                        android:typeface="monospace"
                         android:padding="5dp"
                         android:textStyle="bold"
                         android:gravity="center|end" />
@@ -227,9 +244,11 @@
                         android:inputType="number"
                         android:maxLength="2"
                         android:padding="5dp"
+                        android:typeface="monospace"
                         android:gravity="start|center"
                         android:hint="Ex.10M (optional)"
                         android:background="@color/grey"
+                        android:textColor="@color/underlinebar"
                         android:layout_weight="0.8"
                         android:imeOptions="normal"/>
 
@@ -245,7 +264,9 @@
                         android:layout_height="match_parent"
                         android:textSize="16dp"
                         android:layout_weight="1"
-                        android:text="Submit"
+                        android:text="@string/Create"
+                        android:typeface="monospace"
+                        android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textStyle="bold"
                         android:background="@color/colorPrimary"/>
@@ -260,5 +281,6 @@
         android:layout_height="match_parent"
         android:id="@+id/ShowStatus"
         android:text=""
+        android:typeface="monospace"
         android:gravity="center"/>
 </FrameLayout>

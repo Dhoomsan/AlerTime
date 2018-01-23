@@ -8,17 +8,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/notepad"
-            android:id="@+id/titlefile"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/footer"
             android:id="@+id/notepad"
             android:orientation="vertical">
+            <!--<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/notepad"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/titlefile"/>-->
             <ScrollView
                 android:id="@+id/container"
                 android:layout_width="fill_parent"
@@ -33,11 +35,12 @@
                     <EditText
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:inputType="textMultiLine"
+                        android:inputType="textNoSuggestions|textUri"
                         android:layout_margin="5dp"
                         android:background="@color/Transparent"
                         android:gravity="top"
-                        android:id="@+id/text"
+                        android:typeface="monospace"
+                        android:id="@+id/EditextReadWrite"
                         android:imeOptions="flagNoExtractUi"
                         android:scrollbars = "vertical"/>
                 </LinearLayout>
@@ -46,7 +49,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:orientation="horizontal"
             android:id="@+id/footer"
             android:gravity="center"
@@ -72,7 +75,7 @@
                 android:text="Save"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:background="@color/colorAccent"
+                android:background="@color/green"
                 android:layout_margin="2dp"
                 android:id="@+id/saveButton"/>
 
@@ -87,17 +90,17 @@
                 android:layout_margin="2dp"
                 android:background="@color/orange"
                 android:id="@+id/searchButton"/>
-            <Button
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="Open"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:layout_margin="2dp"
-                android:background="@color/colorPrimary"
-                android:id="@+id/openButton"/>
+            <!-- <Button
+                 android:layout_weight="1"
+                 android:layout_width="0dp"
+                 android:layout_height="fill_parent"
+                 android:gravity="center"
+                 android:text="Open"
+                 android:textColor="@color/white"
+                 android:textStyle="bold"
+                 android:layout_margin="2dp"
+                 android:background="@color/colorPrimary"
+                 android:id="@+id/openButton"/>-->
             <Button
                 android:layout_weight="1"
                 android:layout_width="0dp"
@@ -107,7 +110,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:layout_margin="2dp"
-                android:background="@color/red"
+                android:background="@color/colorPrimary"
                 android:id="@+id/readButton"/>
 
         </LinearLayout>

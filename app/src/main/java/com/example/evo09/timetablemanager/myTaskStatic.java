@@ -62,7 +62,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Create Task");
+        getActivity().setTitle(R.string.Create_Time_Grid);
         setHasOptionsMenu(true);
     }
     @Override
@@ -236,7 +236,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
         if(SQLITEDATABASE.isOpen()) {
-            Log.d("SQ", "open");
+            //Log.d("SQ", "open");
             insertCreateddata(getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore);
         }
         else {
@@ -279,7 +279,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                 StrEndTime=String.format("%02d:%02d %s", ehour == 0 ? 12 : ehour, emint, ehour < 12 ? "AM" : "PM");
                 for(int i=0;i<7;i++) {
                     SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + "Break" + "', '" + "Break" + "' , '" + getAlarmbefore + "');");
-                   Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
+                  // Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
                 }
             }
             else {
@@ -293,7 +293,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                 StrEndTime=String.format("%02d:%02d %s", ehour == 0 ? 12 : ehour, emint, ehour < 12 ? "AM" : "PM");
                 for(int i=0;i<7;i++) {
                     SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + "Subject" + "', '" + "Venue" + "' , '" + getAlarmbefore + "');");
-                     Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
+                     //Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
                 }
             }
 

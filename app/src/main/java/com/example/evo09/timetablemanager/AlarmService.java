@@ -133,14 +133,14 @@ public class AlarmService extends Service  {
                     hour = date3.getHours();
                     mint = date3.getMinutes();
                     CSTime = String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM");
-                    Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
+                    //Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
                     if ((dayOfTheWeek.equals(Sday)) && (ctime.equals(CSTime))) {
                         notification(sub,ven,Stime);
                         resp= sub + " ( " + ven + " ) \n at " + Stime;
                     }
                 }
             }
-            Log.d("TodayTask",".............................");
+            //Log.d("TodayTask",".............................");
             return resp;
         }
         @Override
@@ -186,7 +186,7 @@ public class AlarmService extends Service  {
                 .setContentText("Today Task is " + sub + " ( " + ven + " ) \n at " + Stime)
                 .setVibrate(new long[]{150, 300, 150, 600})
                 .setSound(defaultSoundUri)
-                .setSmallIcon(R.drawable.tlogo)
+                .setSmallIcon(R.drawable.logo)
                 .setAutoCancel(true);
 
         Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
