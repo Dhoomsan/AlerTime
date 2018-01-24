@@ -32,6 +32,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class F1Monday extends Fragment implements AdapterView.OnItemClickListener,AbsListView.MultiChoiceModeListener {
+
     SQLiteHelper SQLITEHELPER;
     myTask myTask;
     SQLiteDatabase SQLITEDATABASE;
@@ -99,6 +100,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
         if (cursor != null && cursor.moveToFirst()) {
             Log.d("tabledata","ok");
             do {
+
                 ID_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ID)));
                 STIME_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime)));
                 ETIME_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime)));

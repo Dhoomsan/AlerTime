@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -66,6 +68,7 @@ public class SQLiteListAdapter extends BaseAdapter {
         this.User_Alarm = alarm;
     }
 
+
     public int getCount() {
         // TODO Auto-generated method stub
         return userID.size();
@@ -79,6 +82,7 @@ public class SQLiteListAdapter extends BaseAdapter {
         // TODO Auto-generated method stub
         return position;
     }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public View getView(int position, View child, ViewGroup parent) {
 
         if (child == null) {
@@ -123,8 +127,8 @@ public class SQLiteListAdapter extends BaseAdapter {
         sdf = new SimpleDateFormat("EEEE");
         d = new Date();
         dayOfTheWeek = sdf.format(d);
-        currentday=sdf.format(d);
-        if (ctime > storestime && ctime < storeetime){
+        currentday = "";
+        if (ctime > storestime && ctime < storeetime ){
             child.setBackgroundResource(R.color.highlight);
         }
         else if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){

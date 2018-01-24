@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -150,6 +151,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                 frag = new myTask();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
+                //MenuItem bedMenuItem = getActivity().findItem(R.id.bedSwitch);
                 break;
             }
             case R.id.statically:
