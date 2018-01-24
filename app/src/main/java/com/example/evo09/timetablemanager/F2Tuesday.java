@@ -61,7 +61,6 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.f2_tuesday, container, false);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         LISTVIEW = (ListView) view.findViewById(R.id.DynamiclistView);
@@ -73,7 +72,6 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
         LISTVIEW.setAdapter(ListAdapter);
         LISTVIEW.setOnItemClickListener(this);
         LISTVIEW.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        // Capture ListView item click
         LISTVIEW.setMultiChoiceModeListener(this);
         return view;
     }@Override
@@ -98,7 +96,6 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
         ALARM_ArrayList.clear();
 
         if (cursor != null && cursor.moveToFirst()) {
-            //Log.d("tabledata","ok");
             do {
                 ID_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ID)));
                 STIME_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime)));
@@ -179,24 +176,14 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
         // TODO  Auto-generated method stub
         switch (menuItem.getItemId()) {
             case R.id.selectAll:
-                //
                 final int checkedCount = ID_ArrayList.size();
-                // If item  is already selected or checked then remove or
-                // unchecked  and again select all
                 ListAdapter.removeSelection();
                 for (int i = 0; i < checkedCount; i++) {
                     LISTVIEW.setItemChecked(i, true);
                 }
-                // Set the  CAB title according to total checked items
-
-                // Calls  toggleSelection method from ListViewAdapter Class
-
-                // Count no.  of selected item and print it
                 actionMode.setTitle(checkedCount + "  Selected");
                 return true;
             case R.id.delete:
-                // Add  dialog for confirmation to delete selected item
-                // record.
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("Do you  want to delete selected record(s)?");
 
@@ -217,19 +204,15 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
                         for (int i = (selected.size() - 1); i >= 0; i--) {
                             if (selected.valueAt(i)) {
                                 String selecteditem = (String) ListAdapter.getItem(selected.keyAt(i));
-                                // Remove  selected items following the ids
                                 SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                                 String sql = "DELETE FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_ID + " = '" + selecteditem + "'";
                                 try {
                                     SQLITEDATABASE.execSQL(sql);
                                 } catch (SQLException e) {
                                 }
-                                //Toast.makeText(getContext(),selecteditem,Toast.LENGTH_LONG).show();
                                 ShowSQLiteDBdata();
                             }
                         }
-
-                        // Close CAB
                         actionMode.finish();
                         selected.clear();
 
@@ -248,9 +231,7 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
     public void onItemCheckedStateChanged (ActionMode mode,int position, long id, boolean checked){
         // TODO  Auto-generated method stub
         final int checkedCount = LISTVIEW.getCheckedItemCount();
-        // Set the  CAB title according to total checked items
         mode.setTitle(checkedCount + "  Selected");
-        // Calls  toggleSelection method from ListViewAdapter Class
         ListAdapter.toggleSelection(position);
     }
     @Override

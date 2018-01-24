@@ -15,8 +15,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,7 +36,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -49,7 +46,7 @@ public class myTaskLandScape extends Fragment {
     FragmentManager fm1;
     FragmentTransaction ft1;
 
-    static int t = 0,j, jump = 0, ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0;
+    static int t = 0,j,  ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0;
     static String[] Timedata, Mondata, Tuedata, Weddata, Thudata, Fridata, Satdata, Sundata, SplitMondSTCompare, SplitMonETCompare;
     static String[] MondST, MonET, TueST, TueET, WedST, WedET, ThuST, ThuET, FriST, FriET, SatST, SatET, SunST, SunET;
     static String[] MonId, TueId, WedId, ThuId, FriId, SatId, SunId;
@@ -63,7 +60,7 @@ public class myTaskLandScape extends Fragment {
 
     Toolbar.LayoutParams lp;
     LinearLayout.LayoutParams param1;
-    LinearLayout Layouttime, LayoutMon, LayoutTue, LayoutWed, LayoutThu, LayoutFri, LayoutSat, LayoutSun, container1;
+    LinearLayout Layouttime, LayoutMon, LayoutTue, LayoutWed, LayoutThu, LayoutFri, LayoutSat, LayoutSun;
     LinearLayout LDay,datafield;
     TextView Day;
     Display display;
@@ -97,10 +94,8 @@ public class myTaskLandScape extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_landscape_layout, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         csprogress = new ProgressDialog(getActivity());
         SQLITEHELPER = new SQLiteHelper(getActivity());
         return view;
@@ -144,7 +139,6 @@ public class myTaskLandScape extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu main) {
-        //menu.clear();
         MenuItem item = main.findItem(R.id.action_add);
         item.setVisible(false);
         MenuItem item2 = main.findItem(R.id.action_LANDSCAPE);
@@ -155,12 +149,8 @@ public class myTaskLandScape extends Fragment {
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-        if(SQLITEDATABASE.isOpen()) {
-            //Log.d("SQ", "open");
-        }
-        else {
-            //Log.d("SLV", "not open");
-        }
+        if(SQLITEDATABASE.isOpen()) {}
+        else {}
     }
 
     public void AlarmDataShow() {
@@ -238,7 +228,6 @@ public class myTaskLandScape extends Fragment {
             String timee = cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
             String id = cursormon.getString(cursormon.getColumnIndex(SQLiteHelper.KEY_ID));
-           //Log.d("KEY_IDM",id);
             CMonId[a]=id;
             CMonSTime[a] = times;
             CMonETime[a] = timee;
@@ -252,7 +241,6 @@ public class myTaskLandScape extends Fragment {
             String timee = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
             String id = cursortue.getString(cursortue.getColumnIndex(SQLiteHelper.KEY_ID));
-           //Log.d("KEY_IDT",id);
             CTueId[a]=id;
             CTueTime[a] = Day;
             CTueETime[a] = timee;
@@ -266,7 +254,6 @@ public class myTaskLandScape extends Fragment {
             String timee = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
             String id = cursorwed.getString(cursorwed.getColumnIndex(SQLiteHelper.KEY_ID));
-           //Log.d("KEY_IDW",id);
             CWedId[a]=id;
             CWedTime[a] = Day;
             CWed[a] = SubVen;
@@ -280,7 +267,6 @@ public class myTaskLandScape extends Fragment {
             String timee = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
             String id = cursorthu.getString(cursorthu.getColumnIndex(SQLiteHelper.KEY_ID));
-           //Log.d("KEY_IDTh",id);
             CThuId[a]=id;
             CThuTime[a] = Day;
             CThu[a] = SubVen;
@@ -294,7 +280,6 @@ public class myTaskLandScape extends Fragment {
             String timee = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
             String id = cursorfri.getString(cursorfri.getColumnIndex(SQLiteHelper.KEY_ID));
-           //Log.d("KEY_IDF",id);
             CFriId[a]=id;
             CFriTime[a] = Day;
             CFri[a] = SubVen;
@@ -308,12 +293,10 @@ public class myTaskLandScape extends Fragment {
             String timee = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
             String id = cursorsat.getString(cursorsat.getColumnIndex(SQLiteHelper.KEY_ID));
-           //Log.d("KEY_IDSa",id);
             CSatId[a]=id;
             CSatTime[a] = Day;
             CSat[a] = SubVen;
             CSatETime[a] = timee;
-            //Log.d("ahdsfgahs",SubVen);
             a++;
         }
         //Sun
@@ -323,7 +306,6 @@ public class myTaskLandScape extends Fragment {
             String timee = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_ETime));
             String SubVen = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_Subject)) + "<br>(" + cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_Venue)) + ")";
             String id = cursorsun.getString(cursorsun.getColumnIndex(SQLiteHelper.KEY_ID));
-           //Log.d("KEY_IDS",id);
             CSunId[a]=id;
             CSunTime[a] = Day;
             CSun[a] = SubVen;
@@ -354,7 +336,6 @@ public class myTaskLandScape extends Fragment {
 
             LinearLayout.LayoutParams Margin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             Margin.setMargins(0, 5, 0, 0);
-            //main for loop
             StartFirstTime = CStime[0];
             SplitStime = StartFirstTime.split(" ");
             shourminute = SplitStime[0];
@@ -708,7 +689,6 @@ public class myTaskLandScape extends Fragment {
         android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
         LayoutInflater li = LayoutInflater.from(getContext());
         final View promptsView = li.inflate(R.layout.updatelandscapedata, null);
-        // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView);
         show = alertDialogBuilder.show();
 

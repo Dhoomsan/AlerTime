@@ -16,12 +16,10 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -43,7 +41,6 @@ public class AlarmService extends Service  {
 
     public AlarmService(Context applicationContext) {
         super();
-        //Log.i("HERE", "here I am!");
     }
 
     public AlarmService() {
@@ -59,7 +56,6 @@ public class AlarmService extends Service  {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //Log.i("EXIT", "ondestroy!");
         Intent broadcastIntent = new Intent("com.example.evo09.timetablemanager.RestartSensor");
         sendBroadcast(broadcastIntent);
         stoptimertask();
@@ -67,26 +63,16 @@ public class AlarmService extends Service  {
 
     private Timer timer;
     private TimerTask timerTask;
-    long oldTime=0;
     public void startTimer() {
-        //set a new Timer
         timer = new Timer();
-
-        //initialize the TimerTask's job
         initializeTimerTask();
-
-        //schedule the timer, to wake up every 1 second
         timer.schedule(timerTask, mInterval, mInterval); //
     }
 
-    /**
-     * it sets the timer to print the counter every x seconds
-     */
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                //Log.i("in timer", "in timer ++++  "+ (counter++));
-                new AsyncTaskRunner().execute();
+               new AsyncTaskRunner().execute();
             }
         };
     }
@@ -107,12 +93,8 @@ public class AlarmService extends Service  {
             SQLITEDATABASE = getApplicationContext().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
             String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
             SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-            if(SQLITEDATABASE.isOpen()) {
-                ////Log.d("SQ", "open");
-            }
-            else {
-                ////Log.d("SLV", "not open");
-            }
+            if(SQLITEDATABASE.isOpen()) {}
+            else {}
         }
         @Override
         protected String doInBackground(String... params) {
@@ -140,7 +122,6 @@ public class AlarmService extends Service  {
                     }
                 }
             }
-            //Log.d("TodayTask",".............................");
             return resp;
         }
         @Override
@@ -167,7 +148,6 @@ public class AlarmService extends Service  {
                 WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 Window window = alert.getWindow();
                 lp.copyFrom(window.getAttributes());
-                //This makes the dialog take up the full width
                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                 lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
                 window.setAttributes(lp);
@@ -209,11 +189,8 @@ public class AlarmService extends Service  {
 
         super.onTaskRemoved(rootIntent);
     }
-    /**
-     * not needed
-     */
+
     public void stoptimertask() {
-        //stop the timer, if it's not already null
         if (timer != null) {
             timer.cancel();
             timer = null;

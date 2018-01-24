@@ -1,34 +1,19 @@
 package com.example.evo09.timetablemanager;
 
-import android.app.AlarmManager;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class SQLiteListAdapter extends BaseAdapter {
 
@@ -162,12 +147,10 @@ public class SQLiteListAdapter extends BaseAdapter {
     public void  toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }
-    // Remove selection after unchecked
     public void  removeSelection() {
         mSelectedItemsIds = new  SparseBooleanArray();
         notifyDataSetChanged();
     }
-    // Item checked on selection
     public void selectView(int position, boolean value) {
         if (value)
             mSelectedItemsIds.put(position,  value);
@@ -176,7 +159,6 @@ public class SQLiteListAdapter extends BaseAdapter {
             mSelectedItemsIds.delete(position);
         notifyDataSetChanged();
     }
-    // Get number of selected item
     public int  getSelectedCount() {
         return mSelectedItemsIds.size();
     }

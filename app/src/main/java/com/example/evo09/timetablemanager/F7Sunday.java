@@ -24,9 +24,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-
 import static android.content.Context.MODE_PRIVATE;
 
 public class F7Sunday extends Fragment implements AdapterView.OnItemClickListener,AbsListView.MultiChoiceModeListener {
@@ -61,7 +59,6 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.f7_sunday, container, false);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         LISTVIEW = (ListView) view.findViewById(R.id.DynamiclistView);
@@ -98,7 +95,6 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
         ALARM_ArrayList.clear();
 
         if (cursor != null && cursor.moveToFirst()) {
-            //Log.d("tabledata","ok");
             do {
                 ID_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ID)));
                 STIME_ArrayList.add(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime)));
@@ -178,24 +174,14 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
         // TODO  Auto-generated method stub
         switch (menuItem.getItemId()) {
             case R.id.selectAll:
-                //
                 final int checkedCount = ID_ArrayList.size();
-                // If item  is already selected or checked then remove or
-                // unchecked  and again select all
                 ListAdapter.removeSelection();
                 for (int i = 0; i < checkedCount; i++) {
                     LISTVIEW.setItemChecked(i, true);
                 }
-                // Set the  CAB title according to total checked items
-
-                // Calls  toggleSelection method from ListViewAdapter Class
-
-                // Count no.  of selected item and print it
                 actionMode.setTitle(checkedCount + "  Selected");
                 return true;
             case R.id.delete:
-                // Add  dialog for confirmation to delete selected item
-                // record.
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("Do you  want to delete selected record(s)?");
 
@@ -216,27 +202,24 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
                         for (int i = (selected.size() - 1); i >= 0; i--) {
                             if (selected.valueAt(i)) {
                                 String selecteditem = (String) ListAdapter.getItem(selected.keyAt(i));
-                                // Remove  selected items following the ids
                                 SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                                 String sql = "DELETE FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_ID + " = '" + selecteditem + "'";
                                 try {
                                     SQLITEDATABASE.execSQL(sql);
                                 } catch (SQLException e) {
                                 }
-                                //Toast.makeText(getContext(),selecteditem,Toast.LENGTH_LONG).show();
                                 ShowSQLiteDBdata();
                             }
                         }
 
-                        // Close CAB
                         actionMode.finish();
                         selected.clear();
 
                     }
                 });
                 AlertDialog alert = builder.create();
-                alert.setIcon(R.drawable.logo);// dialog  Icon
-                alert.setTitle("Confirmation"); // dialog  Title
+                alert.setIcon(R.drawable.logo);
+                alert.setTitle("Confirmation");
                 alert.show();
                 return true;
             default:

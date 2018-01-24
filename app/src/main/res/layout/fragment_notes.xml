@@ -14,13 +14,6 @@
             android:layout_above="@+id/footer"
             android:id="@+id/notepad"
             android:orientation="vertical">
-            <!--<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/notepad"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:id="@+id/titlefile"/>-->
             <ScrollView
                 android:id="@+id/container"
                 android:layout_width="fill_parent"
@@ -90,17 +83,6 @@
                 android:layout_margin="2dp"
                 android:background="@color/orange"
                 android:id="@+id/searchButton"/>
-            <!-- <Button
-                 android:layout_weight="1"
-                 android:layout_width="0dp"
-                 android:layout_height="fill_parent"
-                 android:gravity="center"
-                 android:text="Open"
-                 android:textColor="@color/white"
-                 android:textStyle="bold"
-                 android:layout_margin="2dp"
-                 android:background="@color/colorPrimary"
-                 android:id="@+id/openButton"/>-->
             <Button
                 android:layout_weight="1"
                 android:layout_width="0dp"

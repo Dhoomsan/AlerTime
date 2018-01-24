@@ -47,23 +47,18 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class myNotes extends Fragment implements View.OnClickListener,TextToSpeech.OnInitListener {
 
-    private static final int FILE_RESULT_CODER= 111;
-    private ProgressDialog csprogress;
-    Button newButton, saveButton, openButton,readButton,searchButton;
+    Button newButton, saveButton, readButton,searchButton;
     private EditText EditextReadWrite;
     private int result=0;
-    //TextView titlefile;
     EditText fileName;
     private TextToSpeech tts;
-    Intent intent ;
     File extStore,myFile;
     FileOutputStream fOut;
     FileInputStream fIn;
     OutputStreamWriter myOutWriter;
     BufferedReader myReader;
-    DataInputStream din;
     AlertDialog.Builder ad;
-    String str,path,s,fileContent,DNAME,state,getfilename,storefilename;
+    String str,path,s,fileContent,DNAME,getfilename,storefilename;
     Snackbar snackbar;
 
     @Override
@@ -75,7 +70,6 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle(R.string.Notes);
-        csprogress=new ProgressDialog(getActivity());
     }
     @Nullable
     @Override
@@ -104,13 +98,10 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
         tts = new TextToSpeech(getActivity(), this);
         newButton=(Button)getActivity().findViewById(R.id.newButton);
         saveButton=(Button)getActivity().findViewById(R.id.saveButton);
-        //openButton=(Button) getActivity().findViewById(R.id.openButton);
         readButton=(Button) getActivity().findViewById(R.id.readButton);
         searchButton=(Button) getActivity().findViewById(R.id.searchButton);
-        //titlefile=(TextView) getActivity().findViewById(R.id.titlefile);
         newButton.setOnClickListener(this);
         saveButton.setOnClickListener(this);
-        //openButton.setOnClickListener(this);
         searchButton.setOnClickListener(this);
         readButton.setOnClickListener(this);
     }
@@ -122,14 +113,12 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
     public void onClick(View v ) {
         DNAME = getString(R.string.app_name);
         extStore =new File( Environment.getExternalStorageDirectory()+File.separator+ DNAME);
-        // ==> /storage/emulated/0/note.txt
         fileName = new EditText(getActivity());
         ad = new AlertDialog.Builder(getActivity());
         ad.setView(fileName);
         switch (v.getId()) {
             case R.id.newButton:
                 EditextReadWrite.setText("");
-                //titlefile.setText("");
                 break;
             case R.id.saveButton:
                 ad.setMessage("Save File");
@@ -147,7 +136,6 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
                             storefilename = fileName.getText().toString();
                             getfilename=removeExtension(storefilename);
                             path = extStore.getAbsolutePath() + "/" + getfilename + ".txt";
-                            //Log.i("ExternalStorageDemo", "Save to: " + path);
                             try {
                                 myFile = new File(path);
                                 if(myFile.exists())
@@ -162,11 +150,8 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
                                     myOutWriter.append(str);
                                     myOutWriter.close();
                                     fOut.close();
-                                /*FileOutputStream fout = getActivity().openFileOutput(fileName.getText().toString() + ".txt", MODE_WORLD_READABLE);
-                                fout.write(text.getText().toString().getBytes());*/
                                     snackbar = Snackbar.make(getView(), "Saved!", Snackbar.LENGTH_SHORT);
                                     snackbar.show();
-                                    //titlefile.setText(path);
                                 }
                             } catch (Exception e) {
                                 snackbar = Snackbar.make(getView(), "Oops! Something went wrong.", Snackbar.LENGTH_LONG);
@@ -196,7 +181,6 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
                         path = extStore.getAbsolutePath() + "/" + getfilename + ".txt";
                         Log.d("titlefile",path);
                         EditextReadWrite.setText("");
-                        //titlefile.setText("");
                         s = "";
                         fileContent = "";
                         try {
@@ -211,7 +195,6 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
                             myReader.close();
 
                             EditextReadWrite.setText(fileContent);
-                            //titlefile.setText(path);
                         } catch (Exception e) {
                             snackbar = Snackbar.make(getView(), "Oops! File Name not Existing.", Snackbar.LENGTH_LONG);
                             snackbar.show();
@@ -228,11 +211,6 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
 
                 ad.show();
                 break;
-            //case R.id.openButton:
-            //intent = new Intent(Intent.ACTION_GET_CONTENT);
-            //intent.setType("*/*");
-            //startActivityForResult(intent, FILE_RESULT_CODER);
-            // break;
             case R.id.readButton:
                 String str1 = EditextReadWrite.getText().toString().trim();
                 if (TextUtils.isEmpty(str1)) {
@@ -251,7 +229,6 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
             return storefilename;
         }
     }
-    //call this method to speak text
     private void speakOut() {
         str = EditextReadWrite.getText().toString();
         if(result!=tts.setLanguage(Locale.US))
@@ -260,14 +237,11 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
             snackbar.show();
         }else
         {
-            //speak given text
             tts.speak(str, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
-    //shutdown tts when activity destroy
     @Override
     public void onDestroy() {
-        // Don't forget to shutdown!
         if (tts != null) {
             tts.stop();
             tts.shutdown();
@@ -278,70 +252,17 @@ public class myNotes extends Fragment implements View.OnClickListener,TextToSpee
     @Override
     public void onInit(int status) {
         // TODO Auto-generated method stub
-        //check status for TTS is initialized or not
         if (status == TextToSpeech.SUCCESS) {
-            //if TTS initialized than set language
             result = tts.setLanguage(Locale.US);
 
-            // tts.setPitch(5); // you can set pitch level
-            // tts.setSpeechRate(2); //you can set speech speed rate
-
-            //check language is supported or not
-            //check language data is available or not
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Snackbar snackbar1 = Snackbar.make(getView(), "Oops! Missing data.", Snackbar.LENGTH_SHORT);
                 snackbar1.show();
-                //disable button
                 readButton.setEnabled(false);
             } else {
-                //if all is good than enable button convert text to speech
                 readButton.setEnabled(true);
             }
         }
     }
-   /* @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==FILE_RESULT_CODER && resultCode == Activity.RESULT_OK && data!=null){
-            state = Environment.getExternalStorageState();
-            if (!(state.equals(Environment.MEDIA_MOUNTED))) {
-                Toast.makeText(getActivity(), "There is no any sd card", Toast.LENGTH_LONG).show();
-            }
-            path =data.getData().getPath();
-
-            EditextReadWrite.setText("");
-            //titlefile.setText("");
-            s = "";
-            fileContent = "";
-            Log.d("titlefile",path);
-            try {
-                myFile = new File(path);
-                fIn = new FileInputStream(myFile);
-                myReader = new BufferedReader(
-                        new InputStreamReader(fIn));
-
-                while ((s = myReader.readLine()) != null) {
-                    fileContent += s + "\n";
-                }
-                myReader.close();
-
-                EditextReadWrite.setText(fileContent);
-                //titlefile.setText(path);
-            } catch (Exception e) {
-                //titlefile.setText("Error"+path);
-            }
-        }
-        else {
-            snackbar = Snackbar.make(getView(),"Oops! Something went wrong.", Snackbar.LENGTH_LONG);
-            snackbar.show();
-        }
-    }*/
 }
-
-/*git init
-git add -A
-git commit -m 'Added my project'
-git remote add origin git@github.com:scotch-io/my-new-project.git
-git push -u -f origin master*/

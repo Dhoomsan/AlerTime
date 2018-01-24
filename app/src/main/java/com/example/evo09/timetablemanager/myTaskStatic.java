@@ -11,10 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,11 +20,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -36,8 +32,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     Fragment frag;
     FragmentManager fm1;
     FragmentTransaction ft1;
-
-    Random random;
 
     private ProgressDialog csprogress;
     SQLiteDatabase SQLITEDATABASE;
@@ -52,7 +46,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     int TimeFlag=0,shour,smint,ehour,emint,intStartTime,intEndTime,intBreakStartTime;
     String getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore,StrStartTime,StrEndTime;
     Snackbar snackbar1;
-    //boolean CheckEmptyValidate;
     String getTime;
     private String Strday[] = new String[] { "Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday" };
     @Override
@@ -68,17 +61,12 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootview= inflater.inflate(R.layout.fragment_my_static_schedules, container, false);
         SQLITEHELPER = new SQLiteHelper(getActivity());
         csprogress = new ProgressDialog(getContext());
 
-        // random = new Random();
-        //add view
         dynamic=(Button) rootview.findViewById(R.id.dynamic);
-        //dynamic.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
         statically=(Button) rootview.findViewById(R.id.statically);
-        //statically.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(258), random.nextInt(260)));
         StartTime=(TextView)rootview.findViewById(R.id.StartTime);
         EndTime=(TextView)rootview.findViewById(R.id.EndTime);
         BreakStartTime=(TextView)rootview.findViewById(R.id.BreakStartTime);
@@ -87,7 +75,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         PeriodDuration=(EditText)rootview.findViewById(R.id.PeriodDuration);
         buttonSubmit=(Button)rootview.findViewById(R.id.buttonSubmit);
 
-        //add listener
         dynamic.setOnClickListener(this);
         statically.setOnClickListener(this);
         StartTime.setOnClickListener(this);
@@ -104,8 +91,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
 
     }
     public void onPrepareOptionsMenu(Menu main ) {
-        //menu.clear();
-        //menu.clear();
         main.clear();
     }
 
@@ -151,7 +136,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                 frag = new myTask();
                 ft1.replace(R.id.content_frame, frag);
                 ft1.commit();
-                //MenuItem bedMenuItem = getActivity().findItem(R.id.bedSwitch);
                 break;
             }
             case R.id.statically:
@@ -238,7 +222,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
         if(SQLITEDATABASE.isOpen()) {
-            //Log.d("SQ", "open");
             insertCreateddata(getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore);
         }
         else {
@@ -281,7 +264,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                 StrEndTime=String.format("%02d:%02d %s", ehour == 0 ? 12 : ehour, emint, ehour < 12 ? "AM" : "PM");
                 for(int i=0;i<7;i++) {
                     SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + "Break" + "', '" + "Break" + "' , '" + getAlarmbefore + "');");
-                  // Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
                 }
             }
             else {
@@ -295,13 +277,11 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                 StrEndTime=String.format("%02d:%02d %s", ehour == 0 ? 12 : ehour, emint, ehour < 12 ? "AM" : "PM");
                 for(int i=0;i<7;i++) {
                     SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + Strday[i] + "', '" + StrStartTime + "', '" + StrEndTime + "', '" + "Subject" + "', '" + "Venue" + "' , '" + getAlarmbefore + "');");
-                     //Log.d("StrEndTime",StrStartTime+"-"+StrEndTime+"-"+Strday[i]);
                 }
             }
 
             SST = STimedate.getHours() * 60 + STimedate.getMinutes();
 
-            //Log.d("StrEndTime","\n\n");
         }
         csprogress.setMessage("Loading...");
         csprogress.show();
@@ -318,7 +298,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                     }
                 }, 500);
             }
-        }, 2000);//just mention the time when you want to launch your action
+        }, 2000);
     }
     public void chechFragmentStatus(){
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME+" ORDER BY " + SQLITEHELPER.KEY_STime + " ASC", null);

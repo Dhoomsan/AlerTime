@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -100,9 +99,7 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View views= inflater.inflate(R.layout.fragment_mytask, container, false);
-        //getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         csprogress=new ProgressDialog(getActivity());
@@ -130,13 +127,12 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
         AlermRepeat=(CheckBox)views.findViewById(R.id.AlermRepeat);
         Allday=(CheckBox)views.findViewById(R.id.Allday);
 
-        //Creating the instance of ArrayAdapter containing list of language names
         sub = new ArrayAdapter<String>(getContext(),android.R.layout.select_dialog_item,autosub);
         ven = new ArrayAdapter<String>(getContext(),android.R.layout.select_dialog_item,autoven);
 
-        Subject.setThreshold(1);//will start working from first character
+        Subject.setThreshold(1);
         Subject.setAdapter(sub);
-        Venue.setThreshold(1);//will start working from first character
+        Venue.setThreshold(1);
         Venue.setAdapter(ven);
 
         ButtonAddUpdate.setOnClickListener(this);
@@ -393,12 +389,8 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-        if(SQLITEDATABASE.isOpen()) {
-            //Log.d("SQ", "open");
-        }
-        else {
-            //Log.d("SLV", "not open");
-        }
+        if(SQLITEDATABASE.isOpen()) {}
+        else {}
     }
     public void InsertDataInTable(String Strday,String StrStartTime,String StrEndTime,String StrSubject,String StrVenue,String StrAlembefor) {
         if(Allday.isChecked()){
@@ -544,7 +536,6 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
             if (((intstart >= updatestart && intstart < updateend) && (intend > updatestart && intend <=updateend)) ) {
                 updateScheduleTimeId(StrStartTime, StrEndTime,StrSubject,StrVenue,StrAlembefor, getStoreId);
             }
-            //Above
             else if(intstart < updatestart && intend<=updateend){
                 cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND " + SQLITEHELPER.KEY_STime + " < '" + Stimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
                 while (cursor != null && cursor.moveToNext()) {
@@ -575,7 +566,6 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
                 }
 
             }
-            //below
             else if(intstart >= updatestart && intend>updateend){
                 cursor= SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND "+ SQLITEHELPER.KEY_STime + " >= '" + Etimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
                 while (cursor != null && cursor.moveToNext()) {
@@ -605,9 +595,7 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
             }
 
 
-            //belowAbove
             else if(intstart < updatestart && intend>updateend){
-               //belowAbove above
                 cursor= SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND "+ SQLITEHELPER.KEY_STime + " < '" + Stimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
                 while (cursor != null && cursor.moveToNext()) {
                     storeupdatestart=updatestart-intstart;
@@ -630,7 +618,6 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
 
                     updateScheduleTime(ust, uet, strId);
                 }
-                //belowAbove below
                 cursor= SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND "+ SQLITEHELPER.KEY_STime + " >= '" + Etimeid + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
                 while (cursor != null && cursor.moveToNext()) {
                     storeupdateend=intend-updateend;
@@ -677,7 +664,6 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater li = LayoutInflater.from(getContext());
         View promptsView = li.inflate(R.layout.prompts, null);
-        // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView);
         final AlertDialog show = alertDialogBuilder.show();
        promptMessage=(TextView)promptsView.findViewById(R.id.promptMessage);

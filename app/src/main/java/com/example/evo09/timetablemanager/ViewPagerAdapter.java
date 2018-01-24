@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     final int PAGE_COUNT = 7;
     Fragment fragment=null;
-    // Tab Titles
     private String tabtitles[] = new String[] { "Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday" };
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
