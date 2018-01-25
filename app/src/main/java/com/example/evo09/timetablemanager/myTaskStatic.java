@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -23,7 +24,6 @@ import android.widget.TimePicker;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 import static android.content.Context.MODE_PRIVATE;
 
 public class myTaskStatic extends Fragment implements View.OnClickListener{
@@ -39,10 +39,9 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     Cursor cursor;
     Date STimedate,ETimedate,BSTimedate;
 
-    TextView StartTime,EndTime,BreakStartTime;
-    static Button dynamic,statically;
-    EditText PeriodDuration,BreakDuration,Alarmbefore;
-    Button buttonSubmit;
+    TextView  dynamic,statically;
+    EditText StartTime,EndTime,BreakStartTime,PeriodDuration,BreakDuration,Alarmbefore;
+    Button buttonSubmit,backstack;
     int TimeFlag=0,shour,smint,ehour,emint,intStartTime,intEndTime,intBreakStartTime;
     String getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore,StrStartTime,StrEndTime;
     Snackbar snackbar1;
@@ -65,16 +64,20 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         SQLITEHELPER = new SQLiteHelper(getActivity());
         csprogress = new ProgressDialog(getContext());
 
-        dynamic=(Button) rootview.findViewById(R.id.dynamic);
-        statically=(Button) rootview.findViewById(R.id.statically);
-        StartTime=(TextView)rootview.findViewById(R.id.StartTime);
-        EndTime=(TextView)rootview.findViewById(R.id.EndTime);
-        BreakStartTime=(TextView)rootview.findViewById(R.id.BreakStartTime);
+        dynamic=(TextView) rootview.findViewById(R.id.dynamic);
+        statically=(TextView) rootview.findViewById(R.id.statically);
+
+        StartTime=(EditText)rootview.findViewById(R.id.StartTime);
+        EndTime=(EditText)rootview.findViewById(R.id.EndTime);
+        BreakStartTime=(EditText)rootview.findViewById(R.id.BreakStartTime);
         Alarmbefore=(EditText) rootview.findViewById(R.id.Alarmbefore);
         BreakDuration=(EditText)rootview.findViewById(R.id.BreakDuration);
         PeriodDuration=(EditText)rootview.findViewById(R.id.PeriodDuration);
-        buttonSubmit=(Button)rootview.findViewById(R.id.buttonSubmit);
 
+        buttonSubmit=(Button)rootview.findViewById(R.id.buttonSubmit);
+        backstack=(Button)rootview.findViewById(R.id.backstack);
+
+        backstack.setOnClickListener(this);
         dynamic.setOnClickListener(this);
         statically.setOnClickListener(this);
         StartTime.setOnClickListener(this);
@@ -97,8 +100,15 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         LinearLayout Staticshowdata=(LinearLayout)getActivity().findViewById(R.id.Staticshowdata);
+        LinearLayout footer=(LinearLayout)getActivity().findViewById(R.id.footer);
         LinearLayout dynamicShowdata=(LinearLayout)getActivity().findViewById(R.id.dynamicShowdata);
         switch (view.getId()){
+            case R.id.backstack:{
+                dynamicShowdata.setVisibility(View.VISIBLE);
+                Staticshowdata.setVisibility(View.GONE);
+                footer.setVisibility(View.GONE);
+                break;
+            }
             case R.id.StartTime:{
                 TimeFlag=789;
                 SetTime();
@@ -121,6 +131,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
             case R.id.dynamic:
             {
                 Staticshowdata.setVisibility(View.GONE);
+                footer.setVisibility(View.GONE);
                 Date d = new Date();
                 String stime = String.format("%02d:%02d %s", d.getHours() == 0 ? 12 : d.getHours(), d.getMinutes(), d.getHours() < 12 ? "AM" : "PM");
                 String etime = String.format("%02d:%02d %s", d.getHours()+1 == 0 ? 12 : d.getHours()+1, d.getMinutes(), d.getHours()+1 < 12 ? "AM" : "PM");
@@ -143,6 +154,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
 
                 dynamicShowdata.setVisibility(View.GONE);
                 Staticshowdata.setVisibility(View.VISIBLE);
+                footer.setVisibility(View.VISIBLE);
                 break;
             }
         }

@@ -37,7 +37,7 @@
            android:id="@+id/updatelayout"
            android:layout_alignParentBottom="true"
            android:visibility="gone"
-           android:background="@color/white">
+           android:background="@color/colorWhite">
            <include layout="@layout/updatedata"/>
        <!-- //////////////////////////////////////////////////// -->
        </LinearLayout>

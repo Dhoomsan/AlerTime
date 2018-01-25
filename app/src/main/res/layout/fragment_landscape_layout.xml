@@ -1,21 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8" ?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/landscapid"
-    android:background="@color/underlinebar">
+    android:layout_height="wrap_content"
+    tools:context="com.example.evo09.timetablemanager.myTaskLandScape"
+    android:background="@color/colorPrimary">
+    <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
-        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center">
+        android:layout_height="match_parent">
+        <!-- 12//////////////////////////////////////////////////// -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/tsd"
-            android:background="@color/colorPrimaryDark"
             android:gravity="center">
             <TextView
                 android:id="@+id/texttim"
@@ -23,7 +22,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Time"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center" />
             <TextView
@@ -32,7 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Mon"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:padding="2dp"/>
@@ -42,7 +41,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Tue"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center"/>
             <TextView
@@ -51,7 +50,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Wed"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:padding="2dp" />
@@ -61,7 +60,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Thu"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center"/>
             <TextView
@@ -70,7 +69,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Fri"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:padding="2dp"/>
@@ -80,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Sat"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center"/>
             <TextView
@@ -89,84 +88,84 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Sun"
-                android:textColor="@color/white"
+                android:textColor="@color/colorTransparent"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:padding="2dp"/>
         </LinearLayout>
-    </RelativeLayout>
 
-    <ScrollView
-        android:id="@+id/container"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/header"
-        android:scrollbars="none"
-        android:layout_marginTop="2dp"
-        android:fillViewport="true">
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/container"
             android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:weightSum="8"
-            android:id="@+id/container1">
+            android:layout_height="fill_parent"
+            android:layout_below="@id/tsd"
+            android:scrollbars="none"
+            android:layout_marginTop="2dp"
+            android:fillViewport="true">
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="1px"
-                android:orientation="vertical"
-                android:id="@+id/linearLayouttime"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="1px"
-                android:orientation="vertical"
-                android:id="@+id/linearLayoutmon"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="1px"
-                android:orientation="vertical"
-                android:id="@+id/linearLayouttue"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="1px"
-                android:orientation="vertical"
-                android:id="@+id/linearLayoutwed"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="1px"
-                android:orientation="vertical"
-                android:id="@+id/linearLayoutthu"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="1px"
-                android:orientation="vertical"
-                android:id="@+id/linearLayoutfri"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="1px"
-                android:orientation="vertical"
-                android:id="@+id/linearLayoutsat"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:id="@+id/linearLayoutsun"/>
-        </LinearLayout>
-    </ScrollView>
-
-</RelativeLayout>
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:weightSum="8"
+                android:background="@color/colorBlack"
+                android:id="@+id/container1">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1px"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayouttime"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1px"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayoutmon"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1px"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayouttue"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1px"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayoutwed"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1px"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayoutthu"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1px"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayoutfri"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="1px"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayoutsat"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:id="@+id/linearLayoutsun"/>
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
+</FrameLayout>

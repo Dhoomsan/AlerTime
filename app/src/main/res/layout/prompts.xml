@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_root"
-    android:background="@color/grey"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -20,8 +19,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:background="@color/underlinebar"
-                    android:textColor="@color/white"
+                    android:background="@color/colorBlack"
+                    android:textColor="@color/colorWhite"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:text="WARNING : Time Overlapping !"
@@ -42,6 +41,8 @@
                     android:layout_height="match_parent"
                     android:text="Push"
                     android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold"
                     android:background="@color/colorPrimaryDark"
                     android:layout_weight="1"
                     android:id="@+id/promptPush" />

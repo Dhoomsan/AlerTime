@@ -114,10 +114,11 @@ public class SQLiteListAdapter extends BaseAdapter {
         dayOfTheWeek = sdf.format(d);
         currentday = "";
         if (ctime > storestime && ctime < storeetime ){
-            child.setBackgroundResource(R.color.highlight);
-        }
-        else if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){
-            child.setBackgroundResource(R.color.white);
+            child.setBackgroundResource(R.color.colorDarkGrey);
+        } else if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){
+            child.setBackgroundResource(R.color.colorWhite);
+        }else if((ctime > storestime && ctime < storeetime)&& (User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")) ){
+            child.setBackgroundResource(R.color.colorTransparent);
         }
         cb = User_Alarm.get(position);
         breaks = User_Venue.get(position);

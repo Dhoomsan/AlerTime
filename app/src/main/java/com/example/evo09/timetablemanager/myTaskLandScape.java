@@ -9,7 +9,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -31,12 +31,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
 import static android.content.Context.MODE_PRIVATE;
 
 public class myTaskLandScape extends Fragment {
@@ -61,18 +59,17 @@ public class myTaskLandScape extends Fragment {
     Toolbar.LayoutParams lp;
     LinearLayout.LayoutParams param1;
     LinearLayout Layouttime, LayoutMon, LayoutTue, LayoutWed, LayoutThu, LayoutFri, LayoutSat, LayoutSun;
-    LinearLayout LDay,datafield;
+    LinearLayout LDay,datafield,Landscapmain,updel;
     TextView Day;
     Display display;
     String[]SplitEtime,SplitStime, CStimeId,CStime, CEtime,CMonId, CMon, CMonSTime, CMonETime,CTueId, CTue, CTueETime, CTueTime,CWedId, CWed, CWedTime, CWedETime,CThuId, CThu, CThuTime, CThuETime,CFriId, CFri, CFriTime, CFriETime,CSatId, CSat, CSatTime, CSatETime,CSunId, CSun, CSunTime, CSunETime;
     String StrSubject,StrVenue,StrAlembefor,Error="All Field Are Required !",LastEndTime,SplitEtimeFirst,StartFirstTime,shourminute;
-    android.support.v7.app.AlertDialog show;
+    android.support.v7.app.AlertDialog alert;
 
-    Button ButtonAddUpdate,ButtonDelete;
+    Button ButtonAddUpdate,ButtonDelete,ButtonUpdate;
     static EditText AlermBefore;
     static AutoCompleteTextView Subject,Venue;
     static CheckBox AlermRepeat;
-    Snackbar snackbar1;
     boolean refreshcheck = false;
 
     Calendar cal;
@@ -80,7 +77,8 @@ public class myTaskLandScape extends Fragment {
     String[] SplitSTCompare,SplitETCompare;
     String st,et,dayOfTheWeek;
     SimpleDateFormat sdf;
-     @Override
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
         super.onSaveInstanceState(outState);
@@ -110,15 +108,15 @@ public class myTaskLandScape extends Fragment {
         if(cursor.getCount()!=0) {
             if (refreshcheck == false) {
                 refreshcheck = true;
-               csprogress.setMessage("Loading...");
+                csprogress.setMessage("Loading...");
                 csprogress.show();
                 csprogress.setCancelable(false);
                 new Handler().postDelayed(new Runnable() {
 
                     @Override
                     public void run() {
-                             AlarmDataShow();
-                            new Handler().postDelayed(new Runnable() {
+                        AlarmDataShow();
+                        new Handler().postDelayed(new Runnable() {
 
                             @Override
                             public void run() {
@@ -686,20 +684,33 @@ public class myTaskLandScape extends Fragment {
     }
 
     public void ConfirmUpdate(final int storDayId){
-        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
+        final BottomSheetDialog alertDialogBuilder = new BottomSheetDialog(getContext());
         LayoutInflater li = LayoutInflater.from(getContext());
         final View promptsView = li.inflate(R.layout.updatelandscapedata, null);
-        alertDialogBuilder.setView(promptsView);
-        show = alertDialogBuilder.show();
+        alertDialogBuilder.setContentView(promptsView);
+        alertDialogBuilder.getWindow().setGravity(Gravity.BOTTOM);
+        alertDialogBuilder.show();
 
+        updel=(LinearLayout)promptsView.findViewById(R.id.updel);
+        Landscapmain=(LinearLayout)promptsView.findViewById(R.id.Landscapmain);
         datafield=(LinearLayout)promptsView.findViewById(R.id.datafield);
         datafield.setVisibility(promptsView.GONE);
         ButtonAddUpdate=(Button) promptsView.findViewById(R.id.ButtonAddUpdate);
         ButtonDelete=(Button)promptsView.findViewById(R.id.ButtonDelete);
+        ButtonUpdate=(Button)promptsView.findViewById(R.id.ButtonUpdate);
         Subject=(AutoCompleteTextView) promptsView.findViewById(R.id.Subject);
         Venue=(AutoCompleteTextView) promptsView.findViewById(R.id.Venue);
         AlermBefore=(EditText)promptsView.findViewById(R.id.AlermBefore);
         AlermRepeat=(CheckBox)promptsView.findViewById(R.id.AlermRepeat);
+
+        ButtonUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updel.setVisibility(View.GONE);
+                datafield.setVisibility(promptsView.VISIBLE);
+            }
+        });
+
         ButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -710,6 +721,8 @@ public class myTaskLandScape extends Fragment {
                             public void onClick(DialogInterface dialog, int id) {
                                 SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                                 SQLITEDATABASE.execSQL("DELETE FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_ID + " = '" + storDayId + "'");
+
+                                alertDialogBuilder.cancel();
 
                                 fm1 = getActivity().getSupportFragmentManager();
                                 ft1 = fm1.beginTransaction();
@@ -724,35 +737,28 @@ public class myTaskLandScape extends Fragment {
                                 dialog.cancel();
                             }
                         });
-                android.support.v7.app.AlertDialog alert = builder.create();
+                alert = builder.create();
                 alert.show();
-
-                show.dismiss();
+                //show.dismiss();
             }
         });
         ButtonAddUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ButtonDelete.setVisibility(promptsView.GONE);
-                datafield.setVisibility(promptsView.VISIBLE);
                 StrSubject=Subject.getText().toString();
                 StrVenue=Venue.getText().toString();
                 StrAlembefor=AlermBefore.getText().toString();
                 if(StrSubject.length()==0) {
-                    Subject.requestFocus();
-                    Subject.setError(Error);
+                    Toast.makeText(getActivity(),Error, Toast.LENGTH_LONG).show();
                 }
                 else if(StrVenue.length()==0) {
-                    Venue.requestFocus();
-                    Venue.setError(Error);
+                    Toast.makeText(getActivity(),Error, Toast.LENGTH_LONG).show();
                 }
                 else if((StrAlembefor.length()==0) &&(AlermRepeat.isChecked())) {
-                    AlermBefore.requestFocus();
-                    AlermBefore.setError(Error);
+                    Toast.makeText(getActivity(),Error, Toast.LENGTH_LONG).show();
                 }
                 else if(!StrAlembefor.equals("") && !AlermRepeat.isChecked()){
-                    snackbar1 = Snackbar.make(getView(), "Tick Checkbox!", Snackbar.LENGTH_SHORT);
-                    snackbar1.show();
+                    Toast.makeText(getActivity(),"Tick Checkbox!" , Toast.LENGTH_LONG).show();
                 }
                 else {
                     if(StrAlembefor.length()==0){
@@ -761,13 +767,13 @@ public class myTaskLandScape extends Fragment {
                     SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                     SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET "  + SQLITEHELPER.KEY_Subject + "= '" + StrSubject + "' ," + SQLITEHELPER.KEY_Venue + "= '" + StrVenue + "' ," + SQLITEHELPER.KEY_AlermBefor + "= '" + StrAlembefor + "' WHERE " + SQLITEHELPER.KEY_ID + " = '" + storDayId + "'");
 
+                    alertDialogBuilder.cancel();
+
                     fm1 = getActivity().getSupportFragmentManager();
                     ft1 = fm1.beginTransaction();
                     frag = new myTaskLandScape();
                     ft1.replace(R.id.content_frame, frag);
                     ft1.commit();
-
-                    show.dismiss();
                 }
             }
         });

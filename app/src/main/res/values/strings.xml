@@ -15,7 +15,7 @@
     <string name="Break_Time">Break Time</string>
     <string name="Break_Duration">Break Duration</string>
     <string name="End_Time">End Time</string>
-    <string name="Alarm_Before">Alarm Before</string>
+    <string name="Alarm_Before">Remind Before</string>
     <string name="Schedule_Now">Schedule Now</string>
     <string name="Day_of_week">Day of Week</string>
     <string name="All_Day">All Day</string>

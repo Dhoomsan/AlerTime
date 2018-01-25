@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     dialog.cancel();
                                 }
                             });
-                    AlertDialog alert = builder.create();
+                        AlertDialog alert = builder.create();
                     alert.show();
                 }
                 else {

@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:background="@color/highlight">
-    <!--Statics-->
-    <LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.example.evo09.timetablemanager.myNotes">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:id="@+id/createstatictable"
-        android:orientation="vertical"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:weightSum="2"
+            android:visibility="visible"
             android:id="@+id/dynamicShowdata">
 
-            <Button
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -25,262 +23,201 @@
                 android:textAllCaps="false"
                 android:typeface="monospace"
                 android:textColor="@color/colorPrimary"
-                android:background="@drawable/gradientbackground"
+                android:background="@drawable/roundedboarder"
+                android:layout_margin="10sp"
                 android:textStyle="bold"
                 android:id="@+id/dynamic"
                 android:gravity="center"/>
-            <Button
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:id="@+id/statically"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:typeface="monospace"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/colorPrimary"
                 android:textAllCaps="false"
                 android:textStyle="bold"
-                android:background="@drawable/gradientbackground"
+                android:background="@drawable/roundedboarder"
+                android:layout_margin="10sp"
                 android:text="@string/Start_with_a_table_skeleton"/>
         </LinearLayout>
-        <ScrollView
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollbars="none">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="7"
-                android:visibility="gone"
-                android:id="@+id/Staticshowdata"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="1dp"
-                    android:orientation="horizontal"
-                    android:layout_weight="1"
-                    android:weightSum="2">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/Start_Time"
-                        android:textStyle="bold"
-                        android:padding="5dp"
-                        android:typeface="monospace"
-                        android:layout_weight="1.2"
-                        android:background="@color/Transparent"
-                        android:gravity="center|end"/>
-
-                    <TextView
-                        android:id="@+id/StartTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="start|center"
-                        android:padding="5dp"
-                        android:hint="Ex. 08:00AM"
-                        android:typeface="monospace"
-                        android:layout_weight="0.8"
-                        android:background="@color/grey"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="1dp"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/Period_Duration"
-                        android:layout_weight="1.2"
-                        android:textStyle="bold"
-                        android:padding="5dp"
-                        android:typeface="monospace"
-                        android:background="@color/Transparent"
-                        android:gravity="center|end"/>
-
-                    <EditText
-                        android:id="@+id/PeriodDuration"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="number"
-                        android:maxLength="2"
-                        android:padding="5dp"
-                        android:layout_weight="0.8"
-                        android:gravity="start|center"
-                        android:typeface="monospace"
-                        android:textColor="@color/underlinebar"
-                        android:hint="Ex.45M"
-                        android:background="@color/grey"
-                        android:imeOptions="actionNext"/>
-
-                </LinearLayout>
-
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="1dp"
-                    android:orientation="horizontal"
-                    android:layout_weight="1"
-                    android:weightSum="2">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/Break_Start_Time"
-                        android:background="@color/Transparent"
-                        android:layout_column="0"
-                        android:padding="5dp"
-                        android:typeface="monospace"
-                        android:layout_weight="1.2"
-                        android:textStyle="bold"
-                        android:gravity="center|end" />
-
-                    <TextView
-                        android:id="@+id/BreakStartTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="start|center"
-                        android:padding="5dp"
-                        android:hint="Ex. 12:30PM"
-                        android:typeface="monospace"
-                        android:background="@color/grey"
-                        android:layout_weight="0.8"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:weightSum="2"
-                    android:layout_marginTop="1dp"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/Break_Duration"
-                        android:background="@color/Transparent"
-                        android:layout_column="0"
-                        android:padding="5dp"
-                        android:textStyle="bold"
-                        android:typeface="monospace"
-                        android:layout_weight="1.2"
-                        android:gravity="center|end" />
-
-                    <EditText
-                        android:id="@+id/BreakDuration"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="number"
-                        android:maxLength="2"
-                        android:padding="5dp"
-                        android:gravity="start|center"
-                        android:hint="Ex.45M"
-                        android:typeface="monospace"
-                        android:textColor="@color/underlinebar"
-                        android:background="@color/grey"
-                        android:layout_weight="0.8"
-                        android:imeOptions="normal"/>
-
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="1dp"
-                    android:weightSum="2"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/End_Time"
-                        android:background="@color/Transparent"
-                        android:layout_weight="1.2"
-                        android:padding="5dp"
-                        android:typeface="monospace"
-                        android:textStyle="bold"
-                        android:gravity="center|end" />
-
-                    <TextView
-                        android:id="@+id/EndTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.8"
-                        android:padding="5dp"
-                        android:typeface="monospace"
-                        android:background="@color/grey"
-                        android:gravity="start|center"
-                        android:hint="Ex. 02:00PM" />
-
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="1dp"
-                    android:weightSum="2"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/Alarm_Before"
-                        android:background="@color/Transparent"
-                        android:layout_weight="1.2"
-                        android:typeface="monospace"
-                        android:padding="5dp"
-                        android:textStyle="bold"
-                        android:gravity="center|end" />
-
-                    <EditText
-                        android:id="@+id/Alarmbefore"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="number"
-                        android:maxLength="2"
-                        android:padding="5dp"
-                        android:typeface="monospace"
-                        android:gravity="start|center"
-                        android:hint="Ex.10M (optional)"
-                        android:background="@color/grey"
-                        android:textColor="@color/underlinebar"
-                        android:layout_weight="0.8"
-                        android:imeOptions="normal"/>
-
-                </LinearLayout>
+            android:layout_above="@+id/footer"
+            android:visibility="gone"
+            android:id="@+id/Staticshowdata"
+            android:orientation="vertical">
+            <ScrollView
+                android:id="@+id/container"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
                 <LinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_weight="1">
-                    <Button
-                        android:id="@+id/buttonSubmit"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp">
+
+                    <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textSize="16dp"
                         android:layout_weight="1"
-                        android:text="@string/Create"
-                        android:typeface="monospace"
-                        android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:background="@color/colorPrimary"/>
+                        android:textSize="16dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/StartTime"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="start|center"
+                            android:hint="Start Time Ex. 08:00AM"
+                            android:textColor="@color/colorPrimary"
+                            android:typeface="monospace"
+                            android:focusable="false">
+                            <requestFocus/>
+                        </EditText>
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textSize="16dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/PeriodDuration"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:gravity="start|center"
+                            android:typeface="monospace"
+                            android:textColor="@color/colorPrimary"
+                            android:hint="Period Duration Ex.45M"
+                            android:imeOptions="actionNext">
+                            <requestFocus/>
+                        </EditText>
+                    </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textSize="16dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/BreakStartTime"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="start|center"
+                            android:textColor="@color/colorPrimary"
+                            android:hint="Break Start Time Ex. 12:30PM"
+                            android:typeface="monospace"
+                            android:focusable="false">
+                            <requestFocus/>
+                        </EditText>
+                    </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textSize="16dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/BreakDuration"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:gravity="start|center"
+                            android:hint="Break Duration Ex.45M"
+                            android:typeface="monospace"
+                            android:textColor="@color/colorPrimary"
+                            android:imeOptions="normal">
+                            <requestFocus/>
+                        </EditText>
+                    </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textSize="16dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/EndTime"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/colorPrimary"
+                            android:typeface="monospace"
+                            android:gravity="start|center"
+                            android:hint="End Time Ex. 02:00PM"
+                            android:focusable="false">
+                            <requestFocus/>
+                        </EditText>
+                    </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textSize="16dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/Alarmbefore"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:typeface="monospace"
+                            android:textColor="@color/colorPrimary"
+                            android:gravity="start|center"
+                            android:hint="Remind Before Ex.10M (optional)"
+                            android:imeOptions="normal">
+                            <requestFocus/>
+                        </EditText>
+                    </android.support.design.widget.TextInputLayout>
 
                 </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-        <!-- //////////////////////////////////////////////////// -->
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/ShowStatus"
-        android:text=""
-        android:typeface="monospace"
-        android:gravity="center"/>
+            </ScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:id="@+id/footer"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/buttonSubmit"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="@string/Create"
+                android:typeface="monospace"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:background="@color/colorAccent" />
+
+            <Button
+                android:id="@+id/backstack"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="Back"
+                android:typeface="monospace"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:background="@color/colorPrimary"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
 </FrameLayout>

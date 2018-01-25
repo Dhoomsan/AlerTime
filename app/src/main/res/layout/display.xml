@@ -3,98 +3,98 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/rippleefect"
-        android:gravity="center">
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/textViewSTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Start_Time"
-                android:typeface="monospace"
-                android:textAlignment="center"
-                android:textColor="@color/colorPrimary"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-            <TextView
-                android:id="@+id/space"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/to"
-                android:typeface="monospace"
-                android:textAlignment="center"
-                android:textSize="10dp"
-                android:textColor="@color/hue"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-            <TextView
-                android:id="@+id/textViewETime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/End_Time"
-                android:textSize="10dp"
-                android:typeface="monospace"
-                android:textAlignment="center"
-                android:textColor="@color/red"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="0.9">
-            <TextView
-                android:id="@+id/textViewSubject"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16dp"
-                android:typeface="monospace"
-                android:textColor="@color/orange"
-                android:text="@string/Subject"
-                android:textAlignment="center"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_weight="1.1">
-            <TextView
-                android:id="@+id/textViewVenue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textSize="16dp"
-                android:typeface="monospace"
-                android:textColor="@color/green"
-                android:text="@string/Venue"
-                android:textAlignment="center"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-            <TextView
-                android:id="@+id/textViewAlarm"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:text=""
-                android:textSize="8dp"
+            android:weightSum="3"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/rippleefect"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="left"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/textViewSTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Start_Time"
+                    android:typeface="monospace"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <TextView
+                    android:id="@+id/space"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/to"
+                    android:typeface="monospace"
+                    android:textAlignment="center"
+                    android:textSize="10dp"
+                    android:textColor="@color/colorBlack"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <TextView
+                    android:id="@+id/textViewETime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/End_Time"
+                    android:textSize="10dp"
+                    android:typeface="monospace"
+                    android:textColor="@color/colorBlack"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:gravity="center"
-                android:typeface="monospace"
-                android:textStyle="bold"
-                android:textColor="@color/underlinebar"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:padding="5dp"
+                android:orientation="horizontal"
+                android:layout_weight="0.9">
+                <TextView
+                    android:id="@+id/textViewSubject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="16dp"
+                    android:typeface="monospace"
+                    android:textColor="@color/colorBlack"
+                    android:text="@string/Subject"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1.1">
+                <TextView
+                    android:id="@+id/textViewVenue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:textSize="16dp"
+                    android:typeface="monospace"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="@string/Venue"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TextView
+                    android:id="@+id/textViewAlarm"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:text=""
+                    android:textSize="8dp"
+                    android:gravity="center"
+                    android:typeface="monospace"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorBlack"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 </LinearLayout>

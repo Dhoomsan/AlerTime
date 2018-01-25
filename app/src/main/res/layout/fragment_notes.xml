@@ -24,13 +24,13 @@
                     android:layout_height="fill_parent"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:background="@color/white">
+                    android:background="@color/colorWhite">
                     <EditText
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:inputType="textNoSuggestions|textUri"
                         android:layout_margin="5dp"
-                        android:background="@color/Transparent"
+                        android:background="@color/colorTransparent"
                         android:gravity="top"
                         android:typeface="monospace"
                         android:id="@+id/EditextReadWrite"
@@ -54,10 +54,10 @@
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="New"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:layout_margin="2dp"
-                android:background="@color/underlinebar"
+                android:background="@color/colorBlack"
                 android:id="@+id/newButton"/>
 
             <Button
@@ -66,9 +66,9 @@
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="Save"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
-                android:background="@color/green"
+                android:background="@color/colorPrimary"
                 android:layout_margin="2dp"
                 android:id="@+id/saveButton"/>
 
@@ -78,10 +78,10 @@
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="Search"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:layout_margin="2dp"
-                android:background="@color/orange"
+                android:background="@color/colorAccent"
                 android:id="@+id/searchButton"/>
             <Button
                 android:layout_weight="1"
@@ -89,7 +89,7 @@
                 android:layout_height="fill_parent"
                 android:gravity="center"
                 android:text="Read"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:layout_margin="2dp"
                 android:background="@color/colorPrimary"
