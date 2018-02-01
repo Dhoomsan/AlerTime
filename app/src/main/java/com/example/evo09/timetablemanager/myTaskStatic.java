@@ -15,11 +15,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,9 +37,8 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     Cursor cursor;
     Date STimedate,ETimedate,BSTimedate;
 
-    TextView  dynamic,statically;
     EditText StartTime,EndTime,BreakStartTime,PeriodDuration,BreakDuration,Alarmbefore;
-    Button buttonSubmit,backstack;
+    Button buttonSubmit,backstack,dynamic,statically;
     int TimeFlag=0,shour,smint,ehour,emint,intStartTime,intEndTime,intBreakStartTime;
     String getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore,StrStartTime,StrEndTime;
     Snackbar snackbar1;
@@ -64,8 +61,8 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         SQLITEHELPER = new SQLiteHelper(getActivity());
         csprogress = new ProgressDialog(getContext());
 
-        dynamic=(TextView) rootview.findViewById(R.id.dynamic);
-        statically=(TextView) rootview.findViewById(R.id.statically);
+        dynamic=(Button) rootview.findViewById(R.id.dynamic);
+        statically=(Button) rootview.findViewById(R.id.statically);
 
         StartTime=(EditText)rootview.findViewById(R.id.StartTime);
         EndTime=(EditText)rootview.findViewById(R.id.EndTime);
@@ -313,7 +310,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         }, 2000);
     }
     public void chechFragmentStatus(){
-        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME+" ORDER BY " + SQLITEHELPER.KEY_STime + " ASC", null);
+        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME +" ORDER BY " + SQLITEHELPER.KEY_STime + " ASC", null);
         if(cursor.getCount()>0){
             fm1 = getActivity().getSupportFragmentManager();
             ft1 = fm1.beginTransaction();

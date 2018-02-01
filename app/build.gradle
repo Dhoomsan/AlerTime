@@ -31,11 +31,4 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
     compile 'com.github.d-max:spots-dialog:0.7@aar'
     testCompile 'junit:junit:4.12'
-
-
-    /*git init
-        git add -A
-        git commit -m 'Added my project'
-        git remote add origin git@github.com:scotch-io/my-new-project.git
-        git push -u -f origin master*/
 }

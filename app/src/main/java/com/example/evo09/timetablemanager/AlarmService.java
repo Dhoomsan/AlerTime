@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -36,11 +37,9 @@ public class AlarmService extends Service  {
     Cursor cursor;
     private static final int NOTIFICATION_ID = 1;
 
-    Button notificationclose;
-    TextView textViewSTime;
-
     public AlarmService(Context applicationContext) {
         super();
+        Log.i("HERE", "here I am!");
     }
 
     public AlarmService() {
@@ -56,6 +55,7 @@ public class AlarmService extends Service  {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i("EXIT", "ondestroy!");
         Intent broadcastIntent = new Intent("com.example.evo09.timetablemanager.RestartSensor");
         sendBroadcast(broadcastIntent);
         stoptimertask();
@@ -64,20 +64,28 @@ public class AlarmService extends Service  {
     private Timer timer;
     private TimerTask timerTask;
     public void startTimer() {
+        //set a new Timer
         timer = new Timer();
+
+        //initialize the TimerTask's job
         initializeTimerTask();
+
+        //schedule the timer, to wake up every 1 second
         timer.schedule(timerTask, mInterval, mInterval); //
     }
 
+    /**
+     * it sets the timer to print the counter every x seconds
+     */
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-               new AsyncTaskRunner().execute();
+                new AsyncTaskRunner().execute();
             }
         };
     }
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-        String resp="";
+        private String resp = "";
         private String Stime,Abefore,Sday,sub,ven,StineSplitStime,CSTime;
         private int hour,mint;
         Date date1,date3;
@@ -91,10 +99,14 @@ public class AlarmService extends Service  {
         @Override
         protected void onPreExecute() {
             SQLITEDATABASE = getApplicationContext().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-            String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
+            String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
             SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-            if(SQLITEDATABASE.isOpen()) {}
-            else {}
+            if(SQLITEDATABASE.isOpen()) {
+                //Log.d("SQ", "open");
+            }
+            else {
+                //Log.d("SLV", "not open");
+            }
         }
         @Override
         protected String doInBackground(String... params) {
@@ -115,7 +127,7 @@ public class AlarmService extends Service  {
                     hour = date3.getHours();
                     mint = date3.getMinutes();
                     CSTime = String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM");
-                    //Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
+                    Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
                     if ((dayOfTheWeek.equals(Sday)) && (ctime.equals(CSTime))) {
                         notification(sub,ven,Stime);
                         resp= sub + " ( " + ven + " ) \n at " + Stime;
@@ -135,8 +147,8 @@ public class AlarmService extends Service  {
                 final AlertDialog alert = builders.create();
                 alert.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
                 alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-                notificationclose = (Button) dialogView.findViewById(R.id.notificationclose);
-                textViewSTime = (TextView) dialogView.findViewById(R.id.textViewSTime);
+                Button notificationclose = (Button) dialogView.findViewById(R.id.notificationclose);
+                TextView textViewSTime = (TextView) dialogView.findViewById(R.id.textViewSTime);
                 textViewSTime.setText(result);
                 notificationclose.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -189,8 +201,11 @@ public class AlarmService extends Service  {
 
         super.onTaskRemoved(rootIntent);
     }
-
+    /**
+     * not needed
+     */
     public void stoptimertask() {
+        //stop the timer, if it's not already null
         if (timer != null) {
             timer.cancel();
             timer = null;

@@ -48,6 +48,7 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:padding="10dp"
+                    android:background="@color/colorWhite"
                     android:gravity="center">
                     <TextView
                         android:id="@+id/textViewSTime"
