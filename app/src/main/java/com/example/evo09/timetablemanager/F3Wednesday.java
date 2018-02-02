@@ -31,7 +31,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class F3Wednesday extends Fragment implements AdapterView.OnItemClickListener,AbsListView.MultiChoiceModeListener {
     SQLiteHelper SQLITEHELPER;
-    myTask myTask;
+    MyTask MyTask;
     SQLiteDatabase SQLITEDATABASE;
     Cursor cursor;
     SQLiteListAdapter ListAdapter ;
@@ -68,7 +68,7 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
 
-        myTask =new myTask();
+        MyTask =new MyTask();
 
         LISTVIEW.setAdapter(ListAdapter);
         LISTVIEW.setOnItemClickListener(this);
@@ -131,23 +131,23 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
         slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
         String data=(String)adapterView.getItemAtPosition(position);
 
-        myTask.Subject.setText("");
-        myTask.Venue.setText("");
-        myTask.StartTime.setText("");
-        myTask.EndTime.setText("");
-        myTask.Subject.setText(((TextView)view.findViewById(R.id.textViewSubject)).getText().toString());
-        myTask.Venue.setText(((TextView)view.findViewById(R.id.textViewVenue)).getText().toString());
-        myTask.StartTime.setText(((TextView)view.findViewById(R.id.textViewSTime)).getText().toString());
-        myTask.EndTime.setText(((TextView)view.findViewById(R.id.textViewETime)).getText().toString());
-        myTask.Allday.setVisibility(View.GONE);
+        MyTask.Subject.setText("");
+        MyTask.Venue.setText("");
+        MyTask.StartTime.setText("");
+        MyTask.EndTime.setText("");
+        MyTask.Subject.setText(((TextView)view.findViewById(R.id.textViewSubject)).getText().toString());
+        MyTask.Venue.setText(((TextView)view.findViewById(R.id.textViewVenue)).getText().toString());
+        MyTask.StartTime.setText(((TextView)view.findViewById(R.id.textViewSTime)).getText().toString());
+        MyTask.EndTime.setText(((TextView)view.findViewById(R.id.textViewETime)).getText().toString());
+        MyTask.Allday.setVisibility(View.GONE);
 
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor+ " != '" + "00" + "' AND " + SQLITEHELPER.KEY_ID + " = '"+ data +"'" , null);
-        myTask.AlermBefore.setText("");
-        myTask.AlermRepeat.setChecked(false);
+        MyTask.AlermBefore.setText("");
+        MyTask.AlermRepeat.setChecked(false);
         while (cursor != null && cursor.moveToNext()) {
 
-            myTask.AlermBefore.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor)));
-            myTask.AlermRepeat.setChecked(true);
+            MyTask.AlermBefore.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_AlermBefor)));
+            MyTask.AlermRepeat.setChecked(true);
         }
 
 

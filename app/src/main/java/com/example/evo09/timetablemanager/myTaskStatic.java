@@ -17,20 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TimePicker;
-import java.text.SimpleDateFormat;
+
 import java.util.Calendar;
 import java.util.Date;
 import static android.content.Context.MODE_PRIVATE;
 
 public class myTaskStatic extends Fragment implements View.OnClickListener{
-
-    Fragment fragment=null;
-    Fragment frag;
-    FragmentManager fm1;
-    FragmentTransaction ft1;
-
     private ProgressDialog csprogress;
     SQLiteDatabase SQLITEDATABASE;
     SQLiteHelper SQLITEHELPER;
@@ -38,7 +31,7 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     Date STimedate,ETimedate,BSTimedate;
 
     EditText StartTime,EndTime,BreakStartTime,PeriodDuration,BreakDuration,Alarmbefore;
-    Button buttonSubmit,backstack,dynamic,statically;
+    Button buttonSubmit,backstack;
     int TimeFlag=0,shour,smint,ehour,emint,intStartTime,intEndTime,intBreakStartTime;
     String getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore,StrStartTime,StrEndTime;
     Snackbar snackbar1;
@@ -57,12 +50,9 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootview= inflater.inflate(R.layout.fragment_my_static_schedules, container, false);
+        View rootview= inflater.inflate(R.layout.fragment_staticform, container, false);
         SQLITEHELPER = new SQLiteHelper(getActivity());
         csprogress = new ProgressDialog(getContext());
-
-        dynamic=(Button) rootview.findViewById(R.id.dynamic);
-        statically=(Button) rootview.findViewById(R.id.statically);
 
         StartTime=(EditText)rootview.findViewById(R.id.StartTime);
         EndTime=(EditText)rootview.findViewById(R.id.EndTime);
@@ -75,8 +65,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         backstack=(Button)rootview.findViewById(R.id.backstack);
 
         backstack.setOnClickListener(this);
-        dynamic.setOnClickListener(this);
-        statically.setOnClickListener(this);
         StartTime.setOnClickListener(this);
         EndTime.setOnClickListener(this);
         BreakStartTime.setOnClickListener(this);
@@ -96,14 +84,9 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        LinearLayout Staticshowdata=(LinearLayout)getActivity().findViewById(R.id.Staticshowdata);
-        LinearLayout footer=(LinearLayout)getActivity().findViewById(R.id.footer);
-        LinearLayout dynamicShowdata=(LinearLayout)getActivity().findViewById(R.id.dynamicShowdata);
         switch (view.getId()){
             case R.id.backstack:{
-                dynamicShowdata.setVisibility(View.VISIBLE);
-                Staticshowdata.setVisibility(View.GONE);
-                footer.setVisibility(View.GONE);
+                ((MainActivity) getActivity()).WhenNullRecord();
                 break;
             }
             case R.id.StartTime:{
@@ -123,35 +106,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
             }
             case R.id.buttonSubmit:{
                 ButtonSubmit();
-                break;
-            }
-            case R.id.dynamic:
-            {
-                Staticshowdata.setVisibility(View.GONE);
-                footer.setVisibility(View.GONE);
-                Date d = new Date();
-                String stime = String.format("%02d:%02d %s", d.getHours() == 0 ? 12 : d.getHours(), d.getMinutes(), d.getHours() < 12 ? "AM" : "PM");
-                String etime = String.format("%02d:%02d %s", d.getHours()+1 == 0 ? 12 : d.getHours()+1, d.getMinutes(), d.getHours()+1 < 12 ? "AM" : "PM");
-                SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-                final String dayOfTheWeek = sdf.format(d);
-
-                SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
-                String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
-                SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-                SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + dayOfTheWeek + "', '" + stime + "', '" + etime + "', '" + "Math" + "', '" + "Room 101" + "' , '" + "5" + "');");
-                fm1 = getActivity().getSupportFragmentManager();
-                ft1 = fm1.beginTransaction();
-                frag = new myTask();
-                ft1.replace(R.id.content_frame, frag);
-                ft1.commit();
-                break;
-            }
-            case R.id.statically:
-            {
-
-                dynamicShowdata.setVisibility(View.GONE);
-                Staticshowdata.setVisibility(View.VISIBLE);
-                footer.setVisibility(View.VISIBLE);
                 break;
             }
         }
@@ -305,18 +259,14 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                     public void run() {
                         csprogress.dismiss();
                     }
-                }, 500);
+                }, 200);
             }
         }, 2000);
     }
     public void chechFragmentStatus(){
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME +" ORDER BY " + SQLITEHELPER.KEY_STime + " ASC", null);
         if(cursor.getCount()>0){
-            fm1 = getActivity().getSupportFragmentManager();
-            ft1 = fm1.beginTransaction();
-            frag = new myTask();
-            ft1.replace(R.id.content_frame, frag);
-            ft1.commit();
+            ((MainActivity) getActivity()).WhenRecord();
         }
     }
 }

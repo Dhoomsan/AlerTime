@@ -39,7 +39,6 @@ public class AlarmService extends Service  {
 
     public AlarmService(Context applicationContext) {
         super();
-        Log.i("HERE", "here I am!");
     }
 
     public AlarmService() {
@@ -55,7 +54,6 @@ public class AlarmService extends Service  {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i("EXIT", "ondestroy!");
         Intent broadcastIntent = new Intent("com.example.evo09.timetablemanager.RestartSensor");
         sendBroadcast(broadcastIntent);
         stoptimertask();
@@ -127,7 +125,6 @@ public class AlarmService extends Service  {
                     hour = date3.getHours();
                     mint = date3.getMinutes();
                     CSTime = String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM");
-                    Log.d("TodayTask",dayOfTheWeek+"-"+Sday+" -"+ctime+"-"+CSTime+"-"+Abefore);
                     if ((dayOfTheWeek.equals(Sday)) && (ctime.equals(CSTime))) {
                         notification(sub,ven,Stime);
                         resp= sub + " ( " + ven + " ) \n at " + Stime;

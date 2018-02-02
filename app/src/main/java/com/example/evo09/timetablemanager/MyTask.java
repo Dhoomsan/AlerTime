@@ -38,15 +38,10 @@ import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class myTask extends Fragment implements View.OnClickListener,ViewPager.OnPageChangeListener {
+public class MyTask extends Fragment implements View.OnClickListener,ViewPager.OnPageChangeListener {
 
     AlertDialog.Builder builder;
     AlertDialog alert;
-
-    Fragment fragment=null;
-    Fragment frag;
-    FragmentManager fm1;
-    FragmentTransaction ft1;
 
     Button ButtonAddUpdate,ButtonCancel;
     static TextView Dayofweek,StartTime,EndTime;
@@ -184,7 +179,7 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
                 Calendar calendar = Calendar.getInstance();
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 Log.d("dayOfWeek", String.valueOf(dayOfWeek));
-                if (dayOfWeek > 1 && dayOfWeek <= 7) {
+                if (dayOfWeek > 1 && dayOfWeek <= tabtitles.length) {
                     pager.setCurrentItem(dayOfWeek - 2);
                     Dayofweek.setText(tabtitles[dayOfWeek - 2]);
                     cday = tabtitles[dayOfWeek - 2];
@@ -197,11 +192,7 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
             AddData();
        }
         else {
-            fm1 = getActivity().getSupportFragmentManager();
-            ft1 = fm1.beginTransaction();
-            frag = new myTaskStatic();
-            ft1.replace(R.id.content_frame, frag);
-            ft1.commit();
+            ((MainActivity) getActivity()).WhenNullRecord();
         }
     }
     @Override
@@ -709,4 +700,5 @@ public class myTask extends Fragment implements View.OnClickListener,ViewPager.O
         SQLITEDATABASE.execSQL(" UPDATE " + SQLITEHELPER.TABLE_NAME + " SET " + SQLITEHELPER.KEY_STime + " = '" + ust + "' ," + SQLITEHELPER.KEY_ETime + "= '" + uet + "'  WHERE " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' AND " + SQLITEHELPER.KEY_ID + " = '" + strId + "'");
         changeoccur();
     }
+
 }

@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Display;
@@ -39,11 +37,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class myTaskLandScape extends Fragment {
     private ProgressDialog csprogress;
-    Fragment fragment=null;
-    Fragment frag;
-    FragmentManager fm1;
-    FragmentTransaction ft1;
-
     static int t = 0,j,  ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0;
     static String[] Timedata, Mondata, Tuedata, Weddata, Thudata, Fridata, Satdata, Sundata, SplitMondSTCompare, SplitMonETCompare;
     static String[] MondST, MonET, TueST, TueET, WedST, WedET, ThuST, ThuET, FriST, FriET, SatST, SatET, SunST, SunET;
@@ -77,7 +70,6 @@ public class myTaskLandScape extends Fragment {
     String[] SplitSTCompare,SplitETCompare;
     String st,et,dayOfTheWeek;
     SimpleDateFormat sdf;
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
@@ -127,11 +119,8 @@ public class myTaskLandScape extends Fragment {
                 }, 200);//just mention the Day when you want to launch your action*/
             }
         }else {
-            fm1 = getActivity().getSupportFragmentManager();
-            ft1 = fm1.beginTransaction();
-            frag = new myTaskStatic();
-            ft1.replace(R.id.content_frame, frag);
-            ft1.commit();
+            ((MainActivity) getActivity()).WhenRecord();
+           // myTask.WhenRecord();
         }
     }
 
@@ -724,11 +713,7 @@ public class myTaskLandScape extends Fragment {
 
                                 alertDialogBuilder.cancel();
 
-                                fm1 = getActivity().getSupportFragmentManager();
-                                ft1 = fm1.beginTransaction();
-                                frag = new myTaskLandScape();
-                                ft1.replace(R.id.content_frame, frag);
-                                ft1.commit();
+                                ((MainActivity) getActivity()).WhenLandScape();
 
                             }
                         })
@@ -769,11 +754,7 @@ public class myTaskLandScape extends Fragment {
 
                     alertDialogBuilder.cancel();
 
-                    fm1 = getActivity().getSupportFragmentManager();
-                    ft1 = fm1.beginTransaction();
-                    frag = new myTaskLandScape();
-                    ft1.replace(R.id.content_frame, frag);
-                    ft1.commit();
+                    ((MainActivity) getActivity()).WhenLandScape();
                 }
             }
         });

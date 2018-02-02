@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/bg_screen"
+    tools:context="com.example.evo09.timetablemanager.Skeleton">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:id="@+id/headerImg"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/slide_2_title"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/slide_title"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/headerImg"
+        android:layout_above="@+id/footer"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:alpha=".5"
+            android:background="@android:color/white" />
+        <ScrollView
+            android:id="@+id/container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/slide_desc"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/slide_2_desc"
+                    android:typeface="monospace"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/slide_desc" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    android:paddingTop="@dimen/toppadding"
+                    android:text="Schedule Time in Grid View"/>
+
+                <ImageView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:src="@drawable/imgskeleton"
+                    android:scaleType="fitXY"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    android:paddingTop="@dimen/toppadding"
+                    android:text="Click View Mode Icon to View Record in Landscape View"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/imglandscape"
+                    android:scaleType="fitXY"/>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/footer"
+        android:gravity="center"
+        android:background="@color/bg_screen"
+        android:layout_marginBottom="@dimen/dots_margin_bottom"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/statically"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/Start_with_a_table_skeleton"
+            android:typeface="monospace"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:textAllCaps="false"
+            android:background="@drawable/rounded"
+            android:textColor="@color/colorWhite"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</RelativeLayout>

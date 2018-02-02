@@ -36,7 +36,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-//#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end #parse("File Header.java") public class ${NAME} { }
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int TIME_DELAY = 2000;
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return ctx;
     }
 
-    myTask myTask;
+    MyTask MyTask;
     Fragment fragment=null;
     Fragment frag;
     FragmentManager fm1;
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SQLITEHELPER = new SQLiteHelper(this);
         DBCreate();
-        myTask =new myTask();
+        MyTask =new MyTask();
 
         csprogress = new ProgressDialog(this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -124,24 +123,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
             cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
             if(cursor.getCount()!=0) {
-                fm1 = MainActivity.this.getSupportFragmentManager();
-                ft1 = fm1.beginTransaction();
-                frag = new myTask();
-                ft1.replace(R.id.content_frame, frag);
-                ft1.commit();
+                WhenRecord();
             }
             else {
-                fm1 = MainActivity.this.getSupportFragmentManager();
-                ft1 = fm1.beginTransaction();
-                frag = new myTaskStatic();
-                ft1.replace(R.id.content_frame, frag);
-                ft1.commit();
+                WhenNullRecord();
             }
         }
     }
 
     public void DBCreate(){
-        SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        SQLITEDATABASE =openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
         if(SQLITEDATABASE.isOpen()) {
@@ -213,19 +204,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch(item.getItemId()) {
             case R.id.action_LANDSCAPE: {
-                fm1 = MainActivity.this.getSupportFragmentManager();
-                ft1 = fm1.beginTransaction();
-                frag = new myTaskLandScape();
-                ft1.replace(R.id.content_frame, frag);
-                ft1.commit();
+                WhenLandScape();
                 break;
             }
             case R.id.action_PORTRAIT: {
-                fm1 = MainActivity.this.getSupportFragmentManager();
-                ft1 = fm1.beginTransaction();
-                frag = new myTask();
-                ft1.replace(R.id.content_frame, frag);
-                ft1.commit();
+                WhenRecord();
                 break;
             }
             case R.id.action_add: {
@@ -236,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 b.setText(R.string.Add);
                 layout.setVisibility(View.VISIBLE);
                 layout.startAnimation(slideUp);
-                myTask.Allday.setVisibility(View.VISIBLE);
+                MyTask.Allday.setVisibility(View.VISIBLE);
                 break;
             }
         }
@@ -250,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         switch (id) {
             case R.id.My_schedule: {
-                fragment = new myTask();
+                fragment = new MyTask();
                 break;
             }
             case R.id.nav_notes: {
@@ -262,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
                 if(cursor.getCount()!=0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Are you sure you want to Delete Schedule?" + "\n" + "it will delete all record")
+                    builder.setMessage("Do you really want to Delete All Record?" + "\n" + "We Recommend you to update Your Record")
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -282,12 +265,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                         @Override
                                         public void run() {
-                                            Toast.makeText(getApplicationContext(), "Deleted Successfully.", Toast.LENGTH_LONG).show();
-                                            fm1 = MainActivity.this.getSupportFragmentManager();
-                                            ft1 = fm1.beginTransaction();
-                                            frag = new myTaskStatic();
-                                            ft1.replace(R.id.content_frame, frag);
-                                            ft1.commit();
+                                            WhenNullRecord();
                                             new Handler().postDelayed(new Runnable() {
 
                                                 @Override
@@ -344,5 +322,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
         startService(mServiceIntent);
         Log.i("MAINACT", "onDestroy!");
+    }
+
+    public void WhenNullRecord(){
+        fm1 = this.getSupportFragmentManager();
+        ft1 = fm1.beginTransaction();
+        frag = new Instruction();
+        ft1.replace(R.id.content_frame, frag);
+        ft1.commit();
+    }
+    public void WhenRecord(){
+        fm1 = this.getSupportFragmentManager();
+        ft1 = fm1.beginTransaction();
+        frag = new MyTask();
+        ft1.replace(R.id.content_frame, frag);
+        ft1.commit();
+    }
+    public void WhenLandScape(){
+        fm1 = this.getSupportFragmentManager();
+        ft1 = fm1.beginTransaction();
+        frag = new myTaskLandScape();
+        ft1.replace(R.id.content_frame, frag);
+        ft1.commit();
+    }
+    public void WhenStatic(){
+        fm1 = this.getSupportFragmentManager();
+        ft1 = fm1.beginTransaction();
+        frag = new myTaskStatic();
+        ft1.replace(R.id.content_frame, frag);
+        ft1.commit();
     }
 }
