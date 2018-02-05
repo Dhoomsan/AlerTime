@@ -5,11 +5,6 @@
     android:orientation="vertical"
     android:background="@color/colorTransparent"
     android:id="@+id/btn_bottom_sheet">
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
@@ -22,21 +17,22 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="5dp"
-                    android:background="@drawable/gradientbackground"/>
+                    android:background="@color/bg_screen"/>
                 <!-- //////////////////////////////////////////////////// -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:orientation="horizontal"
-                    android:weightSum="3"
+                    android:weightSum="2"
                     android:padding="5dp">
                     <TextView
+                        android:id="@+id/Dayofweek"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:text="@string/Day_of_week"
+                        android:layout_weight="1"
                         android:typeface="monospace"
                         android:gravity="bottom"
-                        android:layout_weight="1"/>
+                        android:layout_height="match_parent"
+                        android:hint=""/>
                     <CheckBox
                         android:layout_width="0dp"
                         android:layout_marginTop="5dp"
@@ -46,14 +42,6 @@
                         android:typeface="monospace"
                         android:checked="false"
                         android:text="@string/All_Day"/>
-                    <TextView
-                        android:id="@+id/Dayofweek"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:typeface="monospace"
-                        android:gravity="bottom"
-                        android:layout_height="match_parent"
-                        android:hint=""/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -242,5 +230,4 @@
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
-    </HorizontalScrollView>
 </LinearLayout>

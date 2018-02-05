@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -27,10 +29,10 @@ public class Instruction extends Fragment implements ViewPager.OnPageChangeListe
     private TextView[] dots;
     private int[] layouts;
 
-    Scrach scrach;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle(R.string.Create_Time_Grid);
     }
 
     @Override
@@ -71,7 +73,9 @@ public class Instruction extends Fragment implements ViewPager.OnPageChangeListe
         for (int i = 0; i < dots.length; i++) {
             dots[i] = new TextView(getContext());
             dots[i].setText(Html.fromHtml("&#8226;"));
-            dots[i].setTextSize(35);
+            dots[i].setTextSize(25);
+            dots[i].setPadding(5,0,5,0);
+            dots[i].setGravity(Gravity.CENTER_HORIZONTAL);
             dots[i].setTextColor(colorsInactive[currentPage]);
             dotsLayout.addView(dots[i]);
         }

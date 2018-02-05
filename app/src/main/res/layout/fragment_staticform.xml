@@ -1,149 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/footer"
         android:orientation="vertical">
+
         <ScrollView
             android:id="@+id/container"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true">
+
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
+                android:padding="@dimen/desc_padding">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:textSize="16dp"
+                    android:paddingTop="@dimen/static_edit_padding"
                     android:layout_height="wrap_content">
                     <EditText
                         android:id="@+id/StartTime"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="start|center"
                         android:hint="Start Time Ex. 08:00AM"
                         android:textColor="@color/colorPrimary"
                         android:typeface="monospace"
-                        android:textSize="@dimen/slide_desc"
-                        android:focusable="false">
-                        <requestFocus/>
+                        android:textSize="@dimen/desc_padding"
+                        android:focusable="false"
+                        android:imeOptions="actionNext">
                     </EditText>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:textSize="16dp"
+                    android:paddingTop="@dimen/static_edit_padding"
                     android:layout_height="wrap_content">
                     <EditText
                         android:id="@+id/PeriodDuration"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:maxLength="2"
-                        android:textSize="@dimen/slide_desc"
+                        android:maxLength="3"
+                        android:textSize="@dimen/desc_padding"
                         android:gravity="start|center"
                         android:typeface="monospace"
                         android:textColor="@color/colorPrimary"
                         android:hint="Period Duration Ex.45M"
                         android:imeOptions="actionNext">
-                        <requestFocus/>
                     </EditText>
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:textSize="16dp"
+                    android:paddingTop="@dimen/static_edit_padding"
                     android:layout_height="wrap_content">
                     <EditText
                         android:id="@+id/BreakStartTime"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="start|center"
-                        android:textSize="@dimen/slide_desc"
+                        android:textSize="@dimen/desc_padding"
+                        android:focusable="false"
                         android:textColor="@color/colorPrimary"
                         android:hint="Break Start Time Ex. 12:30PM"
                         android:typeface="monospace"
-                        android:focusable="false">
-                        <requestFocus/>
+                        android:imeOptions="actionNext">
                     </EditText>
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:textSize="16dp"
+                    android:paddingTop="@dimen/static_edit_padding"
                     android:layout_height="wrap_content">
                     <EditText
                         android:id="@+id/BreakDuration"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:textSize="@dimen/slide_desc"
-                        android:maxLength="2"
+                        android:textSize="@dimen/desc_padding"
+                        android:maxLength="3"
                         android:gravity="start|center"
                         android:hint="Break Duration Ex.45M"
                         android:typeface="monospace"
                         android:textColor="@color/colorPrimary"
-                        android:imeOptions="normal">
-                        <requestFocus/>
+                        android:imeOptions="actionNext">
                     </EditText>
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:textSize="16dp"
+                    android:paddingTop="@dimen/static_edit_padding"
                     android:layout_height="wrap_content">
                     <EditText
                         android:id="@+id/EndTime"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:textColor="@color/colorPrimary"
                         android:typeface="monospace"
-                        android:textSize="@dimen/slide_desc"
+                        android:textSize="@dimen/desc_padding"
+                        android:focusable="false"
                         android:gravity="start|center"
                         android:hint="End Time Ex. 02:00PM"
-                        android:focusable="false">
-                        <requestFocus/>
+                        android:imeOptions="actionNext">
                     </EditText>
                 </android.support.design.widget.TextInputLayout>
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:textSize="16dp"
+                    android:paddingTop="@dimen/static_edit_padding"
                     android:layout_height="wrap_content">
                     <EditText
                         android:id="@+id/Alarmbefore"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:inputType="number"
-                        android:maxLength="2"
-                        android:textSize="@dimen/slide_desc"
+                        android:maxLength="3"
+                        android:textSize="@dimen/desc_padding"
                         android:typeface="monospace"
                         android:textColor="@color/colorPrimary"
                         android:gravity="start|center"
                         android:hint="Remind Before Ex.10M (optional)"
                         android:imeOptions="normal">
-                        <requestFocus/>
                     </EditText>
                 </android.support.design.widget.TextInputLayout>
+
             </LinearLayout>
+
         </ScrollView>
+
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -151,6 +154,7 @@
         android:id="@+id/footer"
         android:gravity="center"
         android:layout_alignParentBottom="true">
+
         <Button
             android:id="@+id/buttonSubmit"
             android:layout_weight="1"
@@ -176,6 +180,7 @@
             android:textColor="@color/colorWhite"
             android:textStyle="bold"
             android:background="@color/colorPrimary"/>
+
     </LinearLayout>
 
 </RelativeLayout>

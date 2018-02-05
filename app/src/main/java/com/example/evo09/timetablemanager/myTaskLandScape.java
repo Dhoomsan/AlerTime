@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Display;
@@ -78,7 +79,7 @@ public class myTaskLandScape extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle(R.string.Table_View);
+        getActivity().setTitle(R.string.Grid_View);
         setHasOptionsMenu(true);
     }
 
@@ -638,9 +639,9 @@ public class myTaskLandScape extends Fragment {
         if (ctime > storestime && ctime < storeetime && cday.equals(dayOfTheWeek)){
             Day.setBackgroundResource(R.drawable.highlightcolor);
         }
-        else if (ctime > storestime && ctime < storeetime){
+        /*else if (ctime > storestime && ctime < storeetime){
             Day.setBackgroundResource(R.drawable.highlightct);
-        }
+        }*/
         else {
             Day.setBackgroundResource(R.drawable.gradientbottom);
         }
@@ -663,6 +664,7 @@ public class myTaskLandScape extends Fragment {
         LDay = new LinearLayout(getContext());
         Day = new TextView(getContext());
         Day.setText(" ");
+        Day.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorTransparent));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
         }

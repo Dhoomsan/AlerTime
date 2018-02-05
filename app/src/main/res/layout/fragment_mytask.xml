@@ -1,46 +1,41 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context="com.example.evo09.timetablemanager.MyTask">
-    <!-- TODO: Update blank fragment layout -->
-   <RelativeLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
-<!-- 12//////////////////////////////////////////////////// -->
-       <android.support.v4.view.ViewPager
-           android:id="@+id/pager"
-           android:padding="3dp"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:layout_alignParentTop="true"
-           android:layout_alignParentLeft="true"
-           android:layout_above="@+id/updatelayout"
-           android:overScrollMode="never"
-           android:layout_alignParentStart="true">
 
-           <android.support.v4.view.PagerTabStrip
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_gravity="top"
-               android:typeface="monospace"
-               android:textColor="#000000" />
-       </android.support.v4.view.ViewPager>
-<!--Popup -->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/updatelayout"
+        android:overScrollMode="never"
+        android:layout_alignParentStart="true">
 
-       <!--ADD/UPDATE-->
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:orientation="vertical"
-           android:id="@+id/updatelayout"
-           android:layout_alignParentBottom="true"
-           android:visibility="gone"
-           android:background="@color/colorWhite">
-           <include layout="@layout/updatedata"/>
-       <!-- //////////////////////////////////////////////////// -->
-       </LinearLayout>
-   <!-- /Popup -->
-   </RelativeLayout>
-</FrameLayout>
+          <android.support.v4.view.PagerTabStrip
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top"
+              android:padding="5dp"
+              android:typeface="monospace"
+              android:background="@color/colorPrimary"
+              android:textColor="@color/colorWhite" />
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/updatelayout"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@color/colorWhite">
+
+            <include layout="@layout/updatedata"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
