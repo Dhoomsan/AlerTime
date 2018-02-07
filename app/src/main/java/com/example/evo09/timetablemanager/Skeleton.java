@@ -1,22 +1,16 @@
 package com.example.evo09.timetablemanager;
 
-import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Date;
 
 public class Skeleton extends Fragment implements View.OnClickListener {
     TextView statically;
@@ -26,6 +20,7 @@ public class Skeleton extends Fragment implements View.OnClickListener {
     Cursor cursor;
 
     EditText StartTime,EndTime;
+    WebView skeletonWebView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,15 +29,25 @@ public class Skeleton extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootview = inflater.inflate(R.layout.skeleton, container, false);
+        View rootview = inflater.inflate(R.layout.grid_layout, container, false);
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
 
-        statically=(TextView) rootview.findViewById(R.id.statically);
+        statically = (TextView) rootview.findViewById(R.id.statically);
         statically.setOnClickListener(this);
+        skeletonWebView=(WebView)rootview.findViewById(R.id.skeletonWebView);
+        skeletonWebView.getSettings();
+        skeletonWebView.setBackgroundColor(Color.TRANSPARENT);
+
+        String slide_2_desc = getString(R.string.slide_2_desc);
+        String myHtmlString = "<html><body align='justify'>" +
+                "<p><u>GRID</u> -: " + slide_2_desc+"</p>\n" +
+                "</body></html>";
+        skeletonWebView.loadData(myHtmlString, "text/html", null);
+
+
         return rootview;
     }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

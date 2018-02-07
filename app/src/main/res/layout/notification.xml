@@ -35,11 +35,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Today Task..."
-                        android:typeface="monospace"
                         android:textAlignment="center"
                         android:inputType="time"
                         android:padding="2dp"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@android:color/white"
                         android:textStyle="bold"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
@@ -48,14 +47,13 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:padding="10dp"
-                    android:background="@color/colorWhite"
+                    android:background="@android:color/white"
                     android:gravity="center">
                     <TextView
                         android:id="@+id/textViewSTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:typeface="monospace"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -69,11 +67,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@string/Cancel"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@android:color/white"
                         android:background="@color/colorPrimary"
                         android:layout_weight="1"
                         android:textAllCaps="false"
-                        android:typeface="monospace"
                         android:id="@+id/notificationclose" />
                 </LinearLayout>
             </LinearLayout>

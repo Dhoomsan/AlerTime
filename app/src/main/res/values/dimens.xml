@@ -12,4 +12,5 @@
     <dimen name="desc_padding">20dp</dimen>
     <dimen name="toppadding">5dp</dimen>
     <dimen name="static_edit_padding">5dp</dimen>
+    <dimen name="dialog">20dp</dimen>
 </resources>

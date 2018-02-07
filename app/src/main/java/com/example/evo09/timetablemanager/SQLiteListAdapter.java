@@ -114,9 +114,9 @@ public class SQLiteListAdapter extends BaseAdapter {
         dayOfTheWeek = sdf.format(d);
         currentday = "";
         if (ctime > storestime && ctime < storeetime ){
-            child.setBackgroundResource(R.color.colorDarkGrey);
+            child.setBackgroundResource(R.color.colorGrey);
         } else if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){
-            child.setBackgroundResource(R.color.colorWhite);
+            child.setBackgroundResource(R.color.colorTransparent);
         }else if((ctime > storestime && ctime < storeetime)&& (User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")) ){
             child.setBackgroundResource(R.color.colorTransparent);
         }

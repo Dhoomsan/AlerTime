@@ -22,7 +22,7 @@
               android:padding="5dp"
               android:typeface="monospace"
               android:background="@color/colorPrimary"
-              android:textColor="@color/colorWhite" />
+              android:textColor="@android:color/white" />
     </android.support.v4.view.ViewPager>
 
     <LinearLayout
@@ -32,7 +32,7 @@
         android:id="@+id/updatelayout"
         android:layout_alignParentBottom="true"
         android:visibility="gone"
-        android:background="@color/colorWhite">
+        android:background="@android:color/white">
 
             <include layout="@layout/updatedata"/>
 

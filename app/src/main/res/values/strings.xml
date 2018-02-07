@@ -3,11 +3,10 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="Create_Time_Grid">Choose View</string>
     <string name="Day_View">Day View</string>
     <string name="Grid_View">Grid View</string>
-    <string name="Start_from_scratch">Start With SCRATCH</string>
-    <string name="Start_with_a_table_skeleton">Start With GRID</string>
+    <string name="Start_from_scratch">Start From SCRATCH</string>
+    <string name="Start_from_skeleton">Start From GRID</string>
     <string name="Start_Time">Start Time</string>
     <string name="to">to</string>
     <string name="Period_Duration">Period Duration</string>
@@ -23,13 +22,13 @@
     <string name="Add">Add</string>
     <string name="Update">Update</string>
     <string name="Cancel">Cancel</string>
-    <string name="Delete_Grid">Delete Record</string>
-    <string name="Notes">Notes</string>
+    <string name="Delete_Grid">Delete Data</string>
+    <string name="Helpinfo">Instruction</string>
     <string name="Create">Create</string>
-    <string name="slide_1_title">Scratch View</string>
-    <string name="slide_1_desc"><u>"SCRATCH-:"</u> work schedules cycle employees through day, swing, and night shifts. This cycle helps to distribute different shifts between all employees so that no one is stuck with just the less desirable hours.This work schedule is not as common but can be seen in many careers like the military, construction work, roadwork jobs, power plants, and hospitals. These shifts can cycle weekly or quarterly, depending on the type of work required. For many employees, the transition between the different schedules can be tricky. Sleep and eating patterns change and the employee may see their family and friends less because of their Scratch schedule. This type of timetable does have some benefits. Employees are able to spend more time with family and friends during their normal work hours, and may be able to run errands they normally would not be able to complete.<u>" Hours can cycle between day shifts (7:00 AM - 3:00 PM), swing shifts (1:00 PM - 9:00 PM)"</u>, and weekend, night or overnight shifts.</string>
+    <string name="scratch_title">Scratch</string>
+    <string name="slide_1_desc"> Schedule is a type of scheduling in which the scheduler can schedule own plan. The goal of Scratch scheduling is to adapt to dynamically changing progress and form an optimal configuration in self-sustained manner.An example of a Grid schedule would be Monday from 8:30 AM to 10:00 AM ,Tuesday from 8:00 AM to 12:00 AM or Thursday - Sunday 3:00 PM to 11:00 PM.</string>
 
-    <string name="slide_2_title">Grid View</string>
-    <string name="slide_2_desc"><u>"GRID-:"</u> work schedule is a timetable that generally consists of the same number of hours and days worked per week. Grid work schedules tend to stay consistent once the number of hours and days have been agreed upon by both the employer and the worker. <u>"An example of a Grid schedule would be Monday - Friday from 8:30 AM to 5:00 PM or Thursday - Sunday 3:00 PM to 11:00 PM."</u></string>
+    <string name="skeleton_title">Grid</string>
+    <string name="slide_2_desc"> Schedule is a timetable that generally consists of the same number of hours and days worked per week. Grid schedules tend to stay consistent once the number of hours and days have been agreed upon Scheduler. An example of a Grid schedule would be Monday - Friday from 8:30 AM to 5:00 PM or Thursday - Sunday 3:00 PM to 11:00 PM.</string>
 
 </resources>

@@ -20,9 +20,11 @@ public class AlermNotificationReciever extends BroadcastReceiver {
         wl.acquire();
 
         // Put here YOUR code.
-        context.startService(new Intent(context, AlarmService.class));
-
+        if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
+            context.startService(new Intent(context, AlarmService.class));
+        }
         wl.release();
 
     }
+
 }

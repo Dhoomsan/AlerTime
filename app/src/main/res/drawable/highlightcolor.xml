@@ -11,7 +11,7 @@
     <!-- Background -->
     <item>
         <shape>
-            <solid android:color="@color/colorDarkGrey"/>
+            <solid android:color="@color/colorGrey"/>
 
         </shape>
     </item>

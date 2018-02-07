@@ -41,7 +41,6 @@
                     android:layout_height="match_parent"
                     android:hint="@string/Subject"
                     android:textSize="16dp"
-                    android:typeface="monospace"
                     android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                     android:textColorHighlight="@android:color/black"
                     android:singleLine="true"
@@ -73,7 +72,6 @@
                     android:layout_height="match_parent"
                     android:hint="@string/Venue"
                     android:textSize="16dp"
-                    android:typeface="monospace"
                     android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                     android:textColorHighlight="@android:color/black"
                     android:singleLine="true"
@@ -102,7 +100,6 @@
                     android:hint="@string/Alarm_Before"
                     android:inputType="number"
                     android:maxLength="2"
-                    android:typeface="monospace"
                     android:imeOptions="flagNoExtractUi"
                     android:textSize="16dp" >
                     <requestFocus/>
@@ -128,9 +125,8 @@
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:text="@string/Update"
-                android:textColor="@color/colorWhite"
+                android:textColor="@android:color/white"
                 android:textStyle="bold"
-                android:typeface="monospace"
                 android:textAllCaps="false"
                 android:background="@color/colorAccent"
                 android:layout_height="fill_parent"/>
@@ -150,9 +146,8 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:text="@string/Update"
-            android:textColor="@color/colorWhite"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:typeface="monospace"
             android:textAllCaps="false"
             android:background="@color/colorAccent"
             android:layout_height="fill_parent"/>
@@ -162,9 +157,8 @@
             android:layout_weight="1"
             android:text="Delete"
             android:gravity="center"
-            android:textColor="@color/colorWhite"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:typeface="monospace"
             android:textAllCaps="false"
             android:background="@color/colorPrimary"
             android:layout_height="fill_parent"/>

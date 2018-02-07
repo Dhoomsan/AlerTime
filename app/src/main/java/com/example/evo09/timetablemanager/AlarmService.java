@@ -16,7 +16,6 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -54,9 +53,8 @@ public class AlarmService extends Service  {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Intent broadcastIntent = new Intent("com.example.evo09.timetablemanager.RestartSensor");
+        Intent broadcastIntent = new Intent("com.example.evo09.timetablemanager.AlarmService");
         sendBroadcast(broadcastIntent);
-        stoptimertask();
     }
 
     private Timer timer;
@@ -197,16 +195,6 @@ public class AlarmService extends Service  {
                 restartServicePendingIntent);
 
         super.onTaskRemoved(rootIntent);
-    }
-    /**
-     * not needed
-     */
-    public void stoptimertask() {
-        //stop the timer, if it's not already null
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
     }
 
     @Nullable

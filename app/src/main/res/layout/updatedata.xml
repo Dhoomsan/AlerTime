@@ -16,8 +16,8 @@
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="5dp"
-                    android:background="@color/bg_screen"/>
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimary"/>
                 <!-- //////////////////////////////////////////////////// -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -29,7 +29,6 @@
                         android:id="@+id/Dayofweek"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:typeface="monospace"
                         android:gravity="bottom"
                         android:layout_height="match_parent"
                         android:hint=""/>
@@ -39,7 +38,6 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:id="@+id/Allday"
-                        android:typeface="monospace"
                         android:checked="false"
                         android:text="@string/All_Day"/>
                 </LinearLayout>
@@ -61,7 +59,6 @@
                         android:layout_weight="0.95"
                         android:textSize="16dp"
                         android:gravity="bottom"
-                        android:typeface="monospace"
                         android:hint="@string/Start_Time"
                         android:background="@drawable/borderbottom"
                         android:layout_height="match_parent"/>
@@ -79,7 +76,6 @@
                         android:layout_weight="0.95"
                         android:textSize="16dp"
                         android:gravity="bottom"
-                        android:typeface="monospace"
                         android:hint="@string/End_Time"
                         android:background="@drawable/borderbottom"
                         android:layout_height="match_parent"/>
@@ -103,8 +99,7 @@
                             android:layout_height="match_parent"
                             android:hint="@string/Subject"
                             android:textSize="16dp"
-                            android:textColor="@color/colorBlack"
-                            android:typeface="monospace"
+                            android:textColor="@android:color/background_dark"
                             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                             android:textColorHighlight="@android:color/black"
                             android:singleLine="true"
@@ -136,8 +131,7 @@
                             android:layout_height="match_parent"
                             android:hint="@string/Venue"
                             android:textSize="16dp"
-                            android:typeface="monospace"
-                            android:textColor="@color/colorBlack"
+                            android:textColor="@android:color/background_dark"
                             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
                             android:textColorHighlight="@android:color/black"
                             android:singleLine="true"
@@ -166,8 +160,7 @@
                             android:hint="@string/Alarm_Before"
                             android:inputType="number"
                             android:maxLength="2"
-                            android:typeface="monospace"
-                            android:textColor="@color/colorBlack"
+                            android:textColor="@android:color/background_dark"
                             android:imeOptions="flagNoExtractUi"
                             android:textSize="16dp" >
                             <requestFocus/>
@@ -188,8 +181,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.95"
                         android:id="@+id/AlermRepeat"
-                        android:typeface="monospace"
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@android:color/background_dark"
                         android:checked="false"
                         android:text="@string/Set"/>
                 </LinearLayout>
@@ -208,10 +200,9 @@
                         android:layout_width="0dp"
                         android:gravity="center"
                         android:text="@string/Add"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@android:color/background_dark"
                         android:textStyle="bold"
                         android:textAllCaps="false"
-                        android:typeface="monospace"
                         android:background="@color/colorAccent"
                         android:layout_weight="1"
                         android:layout_height="fill_parent"/>
@@ -221,9 +212,8 @@
                         android:layout_weight="1"
                         android:text="@string/Cancel"
                         android:gravity="center"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@android:color/background_dark"
                         android:textStyle="bold"
-                        android:typeface="monospace"
                         android:textAllCaps="false"
                         android:background="@color/colorPrimary"
                         android:layout_height="fill_parent"/>

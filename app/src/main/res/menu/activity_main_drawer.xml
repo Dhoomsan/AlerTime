@@ -1,30 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/My_schedule"
-            android:icon="@drawable/ic_schedulesicon"
-            android:title="@string/app_name" />
+            android:id="@+id/action_helpinfo"
+            android:icon="@drawable/ic_information"
+            android:title="@string/Helpinfo" />
         <item
-            android:id="@+id/nav_notes"
-            android:icon="@drawable/ic_notes"
-            android:title="@string/Notes" />
+            android:id="@+id/action_deleteStatic"
+            android:icon="@drawable/ic_deleteicon"
+            android:title="@string/Delete_Grid"/>
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Share" />
     </group>
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-        </menu>
-    </item>
-    <item android:title="Operation">
-        <menu>
-            <item
-                android:id="@+id/action_deleteStatic"
-                android:icon="@drawable/ic_deleteicon"
-                android:title="@string/Delete_Grid"/>
-        </menu>
-    </item>
 </menu>

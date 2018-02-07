@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.evo09.timetablemanager.Skeleton">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/statically"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical">
+        <ScrollView
+            android:id="@+id/container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/slide_desc"
+                android:orientation="vertical">
+
+                <WebView
+                    android:id="@+id/skeletonWebView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorTransparent"
+                    android:textColor="@android:color/background_dark"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/img_grid_icon"
+                    android:scaleType="fitXY"
+                    android:layout_marginTop="10dp"/>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/statically"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/desc_padding"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/Start_from_skeleton"
+        android:padding="10dp"
+        android:layout_gravity="center"
+        android:textAllCaps="false"
+        android:background="@drawable/rounded"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+</RelativeLayout>

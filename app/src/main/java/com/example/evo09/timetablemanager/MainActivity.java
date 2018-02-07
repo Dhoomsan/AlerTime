@@ -3,6 +3,7 @@ package com.example.evo09.timetablemanager;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,8 +22,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -33,10 +39,18 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import me.relex.circleindicator.CircleIndicator;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final int TIME_DELAY = 2000;
     private static long back_pressed;
@@ -61,6 +75,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     boolean permissiongrant=false;
     TextView evolvan;
     LinearLayout layout;
+
+    ImageView ButtonCancel;
+    private static ViewPager DialogViewPager;
+    private static int currentPage = 0;
+    private static final Integer[] XMEN= {R.drawable.img_grid,R.drawable.img_add,R.drawable.img_updata,R.drawable.img_delete,R.drawable.img_landscape};
+    private ArrayList<Integer> XMENArray = new ArrayList<Integer>();
+    CircleIndicator indicator;
+    Handler handler;
+    Runnable Update;
+
     Animation slideUp,slideDown;
     SharedPreferences sharedpreferences;
     private SharedPreferences.Editor mEditor;
@@ -68,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String AddUpdateFlag = "AddUpdateFlag";
     String insertdata="INSERTDATA";
 
+    NavigationView navigationView;
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
@@ -104,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DBCreate();
         MyTask =new MyTask();
 
+
         csprogress = new ProgressDialog(this);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -129,7 +155,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 WhenNullRecord();
             }
         }
+
+        check_autorun_permission();
     }
+
 
     public void DBCreate(){
         SQLITEDATABASE =openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
@@ -150,6 +179,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         return false;
+    }
+
+    private void hideItem() {
+        SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
+        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu action_menu = navigationView.getMenu();
+        if(cursor.getCount()==0) {
+            action_menu.findItem(R.id.action_deleteStatic).setVisible(false);
+        }
+        else {
+            action_menu.findItem(R.id.action_deleteStatic).setVisible(true);
+        }
     }
 
     @Override
@@ -191,10 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+    public boolean onCreateOptionsMenu(Menu menu) {getMenuInflater().inflate(R.menu.main, menu);return true;}
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -232,12 +271,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.My_schedule: {
-                fragment = new MyTask();
-                break;
-            }
-            case R.id.nav_notes: {
-                fragment = new myNotes();
+            case R.id.action_helpinfo: {
+                instruction_dialog();
                 break;
             }
             case R.id.action_deleteStatic: {
@@ -257,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     mEditor.clear();
                                     mEditor.commit();
 
-                                    //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
                                     csprogress.setMessage("Deleting...");
                                     csprogress.show();
                                     csprogress.setCancelable(false);
@@ -325,19 +359,70 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void WhenNullRecord(){
+        hideItem();
         fm1 = this.getSupportFragmentManager();
         ft1 = fm1.beginTransaction();
         frag = new Instruction();
         ft1.replace(R.id.content_frame, frag);
         ft1.commit();
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+    public void instruction_dialog(){
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.fragment_help_info, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        ButtonCancel=(ImageView)promptsView.findViewById(R.id.ButtonCancel);
+
+        for(int i=0;i<XMEN.length;i++)
+            XMENArray.add(XMEN[i]);
+
+        DialogViewPager = (ViewPager) promptsView.findViewById(R.id.DialogViewPager);
+        DialogViewPager.setAdapter(new MyAdapter(MainActivity.this,XMENArray));
+        indicator = (CircleIndicator)promptsView. findViewById(R.id.indicator);
+        indicator.setViewPager(DialogViewPager);
+
+        ButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.cancel();
+            }
+        });
+        /*// Auto start of viewpager
+        handler = new Handler();
+        Update = new Runnable() {
+            public void run() {
+                if (currentPage == XMEN.length) {
+                    currentPage = 0;
+                }
+                DialogViewPager.setCurrentItem(currentPage++, true);
+            }
+        };
+        Timer swipeTimer = new Timer();
+        swipeTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(Update);
+            }
+        }, TIME_DELAY*5, TIME_DELAY*5);*/
+
+        alertDialog.show();
+    }
     public void WhenRecord(){
+        hideItem();
         fm1 = this.getSupportFragmentManager();
         ft1 = fm1.beginTransaction();
         frag = new MyTask();
         ft1.replace(R.id.content_frame, frag);
         ft1.commit();
     }
+
     public void WhenLandScape(){
         fm1 = this.getSupportFragmentManager();
         ft1 = fm1.beginTransaction();
@@ -345,6 +430,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft1.replace(R.id.content_frame, frag);
         ft1.commit();
     }
+
     public void WhenStatic(){
         fm1 = this.getSupportFragmentManager();
         ft1 = fm1.beginTransaction();
@@ -352,4 +438,105 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft1.replace(R.id.content_frame, frag);
         ft1.commit();
     }
+
+    public void check_autorun_permission(){
+        //'''''''''''
+        Log.d("Build.BRAND",android.os.Build.MANUFACTURER);
+        if(android.os.Build.MANUFACTURER.equalsIgnoreCase("xiaomi") ){
+            try {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+                startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
+                    startActivity(intent);
+
+                } catch (Exception ex) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
+                        startActivity(intent);
+                    } catch (Exception exx) {
+
+                    }
+                }
+            }
+        }else if(android.os.Build.MANUFACTURER.equalsIgnoreCase("Letv")){
+            try {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+                startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
+                    startActivity(intent);
+
+                } catch (Exception ex) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
+                        startActivity(intent);
+                    } catch (Exception exx) {
+
+                    }
+                }
+            }
+
+        } else if(android.os.Build.MANUFACTURER.equalsIgnoreCase("Honor")){
+            try {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+                startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
+                    startActivity(intent);
+
+                } catch (Exception ex) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
+                        startActivity(intent);
+                    } catch (Exception exx) {
+
+                    }
+                }
+            }
+
+        } else if (android.os.Build.MANUFACTURER.equalsIgnoreCase("oppo")) {
+            try {
+                Intent intent = new Intent();
+                intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity");
+                startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
+                    startActivity(intent);
+
+                } catch (Exception ex) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
+                        startActivity(intent);
+                    } catch (Exception exx) {
+
+                    }
+                }
+            }
+        }
+        //''''''''''''
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Start service and provide it a way to communicate with this class.
+        Intent startServiceIntent = new Intent(this, AlarmService.class);
+        startService(startServiceIntent);
+    }
+
 }

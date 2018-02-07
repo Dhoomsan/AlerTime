@@ -639,14 +639,11 @@ public class myTaskLandScape extends Fragment {
         if (ctime > storestime && ctime < storeetime && cday.equals(dayOfTheWeek)){
             Day.setBackgroundResource(R.drawable.highlightcolor);
         }
-        /*else if (ctime > storestime && ctime < storeetime){
-            Day.setBackgroundResource(R.drawable.highlightct);
-        }*/
         else {
             Day.setBackgroundResource(R.drawable.gradientbottom);
         }
         Day.setPadding(0,5,0,5);
-        Day.setText(Html.fromHtml("<small><font size=\"10 \" color=\"#008080\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
+        Day.setText(Html.fromHtml("<small><font size=\"10 \" color=\"#006B60\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
         Day.setGravity(Gravity.CENTER_HORIZONTAL);
         Day.setEllipsize(TextUtils.TruncateAt.END);
         Day.setMaxLines(DStandEt / 30);

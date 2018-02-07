@@ -97,7 +97,7 @@
         android:layout_below="@id/tsd"
         android:scrollbars="none"
         android:layout_centerInParent="true"
-        android:background="@color/colorBlack"
+        android:background="@android:color/background_dark"
         android:fillViewport="true">
         <LinearLayout
             android:layout_width="fill_parent"
