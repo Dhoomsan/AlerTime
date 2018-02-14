@@ -5,9 +5,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
         <item name="android:typeface">serif</item>
-    </style>
+    <!--</style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar">-->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/splash</item>

@@ -173,9 +173,9 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
                 if((intEndTime-(intBreakStartTime+Integer.parseInt(getBreakDuration)))%Integer.parseInt(getPeriodDuration)==0){
                     StaticDBCreate(getStartTime,getEndTime,getBreakStartTime,getPeriodDuration,getBreakDuration,getAlarmbefore);
                 }
-                else {
-                    snackbar1 = Snackbar.make(getView(), "Error! Provided data is not valid!", Snackbar.LENGTH_SHORT);snackbar1.show();
-                }
+            }
+            else {
+                snackbar1 = Snackbar.make(getView(), "Error! Provided data is not valid!", Snackbar.LENGTH_SHORT);snackbar1.show();
             }
         }
     }

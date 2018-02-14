@@ -1,6 +1,7 @@
 package com.example.evo09.timetablemanager;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -17,42 +18,47 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import me.relex.circleindicator.CircleIndicator;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION;
+import static android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final int TIME_DELAY = 2000;
+    int enableAutoStartCode=147;
+    public static final int RequestPermissionCode = 741;
     private static long back_pressed;
 
     private ProgressDialog csprogress;
@@ -66,55 +72,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return ctx;
     }
 
-    MyTask MyTask;
     Fragment fragment=null;
-    Fragment frag;
-    FragmentManager fm1;
-    FragmentTransaction ft1;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
 
-    boolean permissiongrant=false;
-    TextView evolvan;
     LinearLayout layout;
 
     ImageView ButtonCancel;
     private static ViewPager DialogViewPager;
-    private static int currentPage = 0;
-    private static final Integer[] XMEN= {R.drawable.img_grid,R.drawable.img_add,R.drawable.img_updata,R.drawable.img_delete,R.drawable.img_landscape};
     private ArrayList<Integer> XMENArray = new ArrayList<Integer>();
     CircleIndicator indicator;
-    Handler handler;
-    Runnable Update;
 
     Animation slideUp,slideDown;
     SharedPreferences sharedpreferences;
     private SharedPreferences.Editor mEditor;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
     public static final String AddUpdateFlag = "AddUpdateFlag";
-    String insertdata="INSERTDATA";
+    String insertdata="INSERTDATA", appname ;
 
     NavigationView navigationView;
+
+    boolean permissiongrant=false;
+
+    Intent intent;
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
         super.onSaveInstanceState(outState);
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ctx = this;
         setContentView(R.layout.activity_main);
-        mSensorService = new AlarmService(getCtx());
-        mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
-        if (!isMyServiceRunning(mSensorService.getClass())) {
-            startService(mServiceIntent);
-        }
-        startService(new Intent(this, AlarmService.class));
+
+        appname = getString(R.string.app_name);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
         sharedpreferences =getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         mEditor = sharedpreferences.edit();
@@ -127,48 +123,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SQLITEHELPER = new SQLiteHelper(this);
         DBCreate();
-        MyTask =new MyTask();
 
+        mSensorService = new AlarmService(getCtx());
+        mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
 
         csprogress = new ProgressDialog(this);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        View headerview = navigationView.getHeaderView(0);
-        evolvan = (TextView) headerview.findViewById(R.id.evolvan);
-        evolvan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Uri uri = Uri.parse("http://evolvan.com/"); // missing 'http://' will cause crashed
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        });
 
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE , RECEIVE_BOOT_COMPLETED,ACTION_MANAGE_OVERLAY_PERMISSION, ACTION_MANAGE_WRITE_SETTINGS}, RequestPermissionCode);
 
         if(permissiongrant=true) {
             SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
             cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
-            if(cursor.getCount()!=0) {
+            if (cursor.getCount() != 0) {
                 WhenRecord();
-            }
-            else {
+            } else {
                 WhenNullRecord();
             }
         }
-
-        check_autorun_permission();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            enableAutoStart();
+        }
     }
-
 
     public void DBCreate(){
         SQLITEDATABASE =openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-        if(SQLITEDATABASE.isOpen()) {
-        }
-        else {
-            DBCreate();
-        }
+        if(SQLITEDATABASE.isOpen()) {}
+        else {DBCreate();}
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -197,37 +181,77 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            permissiongrant=true;
-                        }
-                    }, 2000);
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Permission is necessary "+"\n"+"Allow it")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.RECEIVE_BOOT_COMPLETED}, 1);
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+            case RequestPermissionCode: {
+                if (grantResults.length > 0) {
+
+                    boolean WRITE = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean READ = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean RECEIVE = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    boolean OVERLAY = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                    boolean SETTINGS = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+
+                    if (WRITE || READ || RECEIVE || OVERLAY || SETTINGS) {
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                permissiongrant = true;
+                            }
+                        }, 2000);
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage("Permission is necessary " + "\n" + "Allow it")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, RECEIVE_BOOT_COMPLETED, ACTION_MANAGE_OVERLAY_PERMISSION, ACTION_MANAGE_WRITE_SETTINGS}, RequestPermissionCode);
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.setIcon(R.drawable.logo);// dialog  Icon
+                        alert.setTitle("Confirmation"); // dialog  Title
+                        alert.show();
+                    }
                 }
             }
         }
     }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 258: {
+                if (Settings.canDrawOverlays(this)) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startService(new Intent(getApplicationContext(), AlarmService.class));
+                        }
+                    }, 2000);
+                }
+            }
+            case 147: {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Permission granted!", Toast.LENGTH_LONG).show();
+                        }
+                    }, 2000);
+                }
+            }
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
             super.onBackPressed();
         } else {
-            Toast.makeText(getBaseContext(), "Press once again to exit!",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "Press once again to exit!", Toast.LENGTH_SHORT).show();
         }
         back_pressed = System.currentTimeMillis();
     }
@@ -258,7 +282,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 b.setText(R.string.Add);
                 layout.setVisibility(View.VISIBLE);
                 layout.startAnimation(slideUp);
-                MyTask.Allday.setVisibility(View.VISIBLE);
+                ((MyTask) fragment).Allday.setVisibility(View.VISIBLE);
+                ((MyTask) fragment).AddData();
                 break;
             }
         }
@@ -318,6 +343,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             });
                     AlertDialog alert = builder.create();
+                    alert.setIcon(R.drawable.logo);// dialog  Icon
+                    alert.setTitle("Confirmation"); // dialog  Title
                     alert.show();
                 }
                 else {
@@ -351,20 +378,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        startService(mServiceIntent);
-        Log.i("MAINACT", "onDestroy!");
-    }
-
     public void WhenNullRecord(){
         hideItem();
-        fm1 = this.getSupportFragmentManager();
-        ft1 = fm1.beginTransaction();
-        frag = new Instruction();
-        ft1.replace(R.id.content_frame, frag);
-        ft1.commit();
+        fragmentManager = this.getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragment = new Instruction();
+        fragmentTransaction.replace(R.id.content_frame, fragment);
+        fragmentTransaction.commit();
+    }
+
+    public void WhenRecord(){
+        hideItem();
+        fragmentManager = this.getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragment = new MyTask();
+        fragmentTransaction.replace(R.id.content_frame, fragment);
+        fragmentTransaction.commit();
+
+        mSensorService = new AlarmService(getCtx());
+        mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
+        if (!isMyServiceRunning(mSensorService.getClass())) {
+            if (checkDrawOverlayPermission()) {
+                startService(mServiceIntent);
+            }
+        }
+
+    }
+
+    public void WhenLandScape(){
+        fragmentManager = this.getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragment = new myTaskLandScape();
+        fragmentTransaction.replace(R.id.content_frame, fragment);
+        fragmentTransaction.commit();
+    }
+
+    public void WhenStatic(){
+        fragmentManager = this.getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragment = new myTaskStatic();
+        fragmentTransaction.replace(R.id.content_frame, fragment);
+        fragmentTransaction.commit();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
@@ -380,9 +434,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ButtonCancel=(ImageView)promptsView.findViewById(R.id.ButtonCancel);
 
-        for(int i=0;i<XMEN.length;i++)
-            XMENArray.add(XMEN[i]);
-
         DialogViewPager = (ViewPager) promptsView.findViewById(R.id.DialogViewPager);
         DialogViewPager.setAdapter(new MyAdapter(MainActivity.this,XMENArray));
         indicator = (CircleIndicator)promptsView. findViewById(R.id.indicator);
@@ -394,149 +445,160 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 alertDialog.cancel();
             }
         });
-        /*// Auto start of viewpager
-        handler = new Handler();
-        Update = new Runnable() {
-            public void run() {
-                if (currentPage == XMEN.length) {
-                    currentPage = 0;
-                }
-                DialogViewPager.setCurrentItem(currentPage++, true);
-            }
-        };
-        Timer swipeTimer = new Timer();
-        swipeTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(Update);
-            }
-        }, TIME_DELAY*5, TIME_DELAY*5);*/
 
         alertDialog.show();
     }
-    public void WhenRecord(){
-        hideItem();
-        fm1 = this.getSupportFragmentManager();
-        ft1 = fm1.beginTransaction();
-        frag = new MyTask();
-        ft1.replace(R.id.content_frame, frag);
-        ft1.commit();
-    }
 
-    public void WhenLandScape(){
-        fm1 = this.getSupportFragmentManager();
-        ft1 = fm1.beginTransaction();
-        frag = new myTaskLandScape();
-        ft1.replace(R.id.content_frame, frag);
-        ft1.commit();
-    }
-
-    public void WhenStatic(){
-        fm1 = this.getSupportFragmentManager();
-        ft1 = fm1.beginTransaction();
-        frag = new myTaskStatic();
-        ft1.replace(R.id.content_frame, frag);
-        ft1.commit();
-    }
-
-    public void check_autorun_permission(){
-        //'''''''''''
-        Log.d("Build.BRAND",android.os.Build.MANUFACTURER);
-        if(android.os.Build.MANUFACTURER.equalsIgnoreCase("xiaomi") ){
-            try {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-                startActivity(intent);
-            } catch (Exception e) {
-                try {
-                    Intent intent = new Intent();
-                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
-                    startActivity(intent);
-
-                } catch (Exception ex) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
-                        startActivity(intent);
-                    } catch (Exception exx) {
-
-                    }
-                }
-            }
-        }else if(android.os.Build.MANUFACTURER.equalsIgnoreCase("Letv")){
-            try {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
-                startActivity(intent);
-            } catch (Exception e) {
-                try {
-                    Intent intent = new Intent();
-                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
-                    startActivity(intent);
-
-                } catch (Exception ex) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
-                        startActivity(intent);
-                    } catch (Exception exx) {
-
-                    }
-                }
-            }
-
-        } else if(android.os.Build.MANUFACTURER.equalsIgnoreCase("Honor")){
-            try {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
-                startActivity(intent);
-            } catch (Exception e) {
-                try {
-                    Intent intent = new Intent();
-                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
-                    startActivity(intent);
-
-                } catch (Exception ex) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
-                        startActivity(intent);
-                    } catch (Exception exx) {
-
-                    }
-                }
-            }
-
-        } else if (android.os.Build.MANUFACTURER.equalsIgnoreCase("oppo")) {
-            try {
-                Intent intent = new Intent();
-                intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity");
-                startActivity(intent);
-            } catch (Exception e) {
-                try {
-                    Intent intent = new Intent();
-                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
-                    startActivity(intent);
-
-                } catch (Exception ex) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
-                        startActivity(intent);
-                    } catch (Exception exx) {
-
-                    }
-                }
-            }
+    public boolean checkDrawOverlayPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
         }
-        //''''''''''''
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Start service and provide it a way to communicate with this class.
-        Intent startServiceIntent = new Intent(this, AlarmService.class);
-        startService(startServiceIntent);
+        if (!Settings.canDrawOverlays(this)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enable Overlay")
+                    .setMessage("Please allow Overlay to always run the Notification,else our services can't be run."+"\n"+"Enable"+appname)
+                    .setCancelable(false)
+                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            intent = new Intent(ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intent, 258);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+
+            return false;
+        } else {
+            return true;
+        }
     }
 
+    private void enableAutoStart() {
+        String manufacturer = android.os.Build.MANUFACTURER;
+        if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enable AutoStart")
+                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
+                    .setCancelable(false)
+                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+                            startActivityForResult(intent,enableAutoStartCode);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setIcon(R.drawable.logo);// dialog  Icon
+            alert.show();
+        }  else if ("Letv".equalsIgnoreCase(manufacturer)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enable AutoStart")
+                    .setCancelable(false)
+                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
+                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+                            startActivityForResult(intent,enableAutoStartCode);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setIcon(R.drawable.logo);// dialog  Icon
+            alert.show();
+        }  else if ("Honor".equalsIgnoreCase(manufacturer)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enable AutoStart")
+                    .setCancelable(false)
+                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
+                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+                            startActivityForResult(intent,enableAutoStartCode);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setIcon(R.drawable.logo);// dialog  Icon
+            alert.show();
+        }  else if ("oppo".equalsIgnoreCase(manufacturer)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enable AutoStart")
+                    .setCancelable(false)
+                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
+                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            try {
+                                intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity");
+                                startActivityForResult(intent,enableAutoStartCode);
+                            } catch (Exception e) {
+                                try {
+                                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
+                                    startActivityForResult(intent,enableAutoStartCode);
+                                } catch (Exception ex) {
+                                    try {
+                                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
+                                        startActivityForResult(intent,enableAutoStartCode);
+                                    } catch (Exception exx) {
+                                        try {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                if (!android.provider.Settings.System.canWrite(ctx)){
+                                                    intent = new Intent(ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + getPackageName()));
+                                                    startActivityForResult(intent,enableAutoStartCode);
+                                                }
+                                            }
+                                        }catch (Exception exxxxx){
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setIcon(R.drawable.logo);// dialog  Icon
+            alert.show();
+        }  else if ("vivo".contains(manufacturer)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enable AutoStart")
+                    .setCancelable(false)
+                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
+                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            try {
+                                 intent = new Intent();
+                                intent.setComponent(new ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity"));
+                                startActivityForResult(intent,enableAutoStartCode);
+                            } catch (Exception e) {
+                                try {
+                                    intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+                                    startActivityForResult(intent,enableAutoStartCode);
+                                } catch (Exception ex) {
+                                    try {
+                                        intent.setClassName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager");
+                                        startActivityForResult(intent,enableAutoStartCode);
+                                    } catch (Exception exx) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setIcon(R.drawable.logo);// dialog  Icon
+            alert.show();
+        }
+        else if ("huawei".equalsIgnoreCase(manufacturer)) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enable AutoStart")
+                    .setCancelable(false)
+                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
+                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+                            startActivityForResult(intent,enableAutoStartCode);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setIcon(R.drawable.logo);// dialog  Icon
+            alert.show();
+        }
+    }
 }

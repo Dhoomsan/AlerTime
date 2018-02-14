@@ -11,17 +11,19 @@ import java.util.ArrayList;
 
 public class MyAdapter extends PagerAdapter {
 
-    final int PAGE_COUNT = 5;
-    private ArrayList<Integer> images;
-    private LayoutInflater inflater;
-    Context context;
+    private Context mContext;
 
     public MyAdapter(Context context, ArrayList<Integer> images) {
-        this.context = context;
-        this.images=images;
-        inflater = LayoutInflater.from(context);
+        mContext = context;
     }
-
+    @Override
+    public Object instantiateItem(ViewGroup collection, int position) {
+        ModelObject modelObject = ModelObject.values()[position];
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        ViewGroup layout = (ViewGroup) inflater.inflate(modelObject.getLayoutResId(), collection, false);
+        collection.addView(layout);
+        return layout;
+    }
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
@@ -29,19 +31,8 @@ public class MyAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return ModelObject.values().length;
     }
-
-    @Override
-    public Object instantiateItem(ViewGroup view, int position) {
-        View myImageLayout = inflater.inflate(R.layout.slide, view, false);
-        ImageView myImage = (ImageView) myImageLayout
-                .findViewById(R.id.image);
-        myImage.setImageResource(images.get(position));
-        view.addView(myImageLayout, 0);
-        return myImageLayout;
-    }
-
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view.equals(object);

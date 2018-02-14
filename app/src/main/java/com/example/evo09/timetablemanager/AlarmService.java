@@ -22,12 +22,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
 public class AlarmService extends Service  {
 
     private int mInterval = 40000;
@@ -35,7 +35,10 @@ public class AlarmService extends Service  {
     SQLiteHelper SQLITEHELPER;
     Cursor cursor;
     private static final int NOTIFICATION_ID = 1;
-
+    NotificationCompat.Builder builder;
+    Intent mainIntent;
+    PendingIntent pendingIntent;
+    NotificationManager manager;
     public AlarmService(Context applicationContext) {
         super();
     }
@@ -45,16 +48,9 @@ public class AlarmService extends Service  {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
         SQLITEHELPER = new SQLiteHelper(this);
         startTimer();
-        return START_STICKY;
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Intent broadcastIntent = new Intent("com.example.evo09.timetablemanager.AlarmService");
-        sendBroadcast(broadcastIntent);
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private Timer timer;
@@ -134,31 +130,44 @@ public class AlarmService extends Service  {
         @Override
         protected void onPostExecute(String result ) {
             if(result.length()>0) {
-                AlertDialog.Builder builders = new AlertDialog.Builder(getApplicationContext().getApplicationContext());
-                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-                View dialogView = inflater.inflate(R.layout.notification, null);
-                builders.setView(dialogView);
-                builders.setCancelable(false);
-                final AlertDialog alert = builders.create();
-                alert.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-                alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-                Button notificationclose = (Button) dialogView.findViewById(R.id.notificationclose);
-                TextView textViewSTime = (TextView) dialogView.findViewById(R.id.textViewSTime);
-                textViewSTime.setText(result);
-                notificationclose.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        alert.dismiss();
-                    }
-                });
-                alert.show();
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                Window window = alert.getWindow();
-                lp.copyFrom(window.getAttributes());
-                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                window.setAttributes(lp);
-            }
+                    AlertDialog.Builder builders = new AlertDialog.Builder(getApplicationContext().getApplicationContext());
+                    LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                    View dialogView = inflater.inflate(R.layout.notification, null);
+                    builders.setView(dialogView);
+                    builders.setCancelable(false);
+                    final AlertDialog alert = builders.create();
+                    alert.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                    alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                    Button notificationclose = (Button) dialogView.findViewById(R.id.notificationclose);
+                    Button notificationOpen = (Button) dialogView.findViewById(R.id.notificationOpen);
+                    TextView textViewSTime = (TextView) dialogView.findViewById(R.id.textViewSTime);
+                    textViewSTime.setText(result);
+                    notificationclose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            alert.dismiss();
+                        }
+                    });
+                    notificationOpen.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            final String appPackageName = getApplicationContext().getPackageName();
+                            Intent intent = getPackageManager().getLaunchIntentForPackage(appPackageName);
+                            if (intent != null) {
+                                alert.dismiss();
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                    alert.show();
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    Window window = alert.getWindow();
+                    lp.copyFrom(window.getAttributes());
+                    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    window.setAttributes(lp);
+                }
         }
         @Override
         protected void onProgressUpdate(String... text) {
@@ -168,7 +177,7 @@ public class AlarmService extends Service  {
     private void notification(String sub,String ven,String Stime){
         String appname = getString(R.string.app_name);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+        builder = new NotificationCompat.Builder(getApplicationContext());
         builder.setContentTitle(appname)
                 .setContentText("Today Task is " + sub + " ( " + ven + " ) \n at " + Stime)
                 .setVibrate(new long[]{150, 300, 150, 600})
@@ -176,10 +185,10 @@ public class AlarmService extends Service  {
                 .setSmallIcon(R.drawable.logo)
                 .setAutoCancel(true);
 
-        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
+        mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+        pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
         builder.setContentIntent(pendingIntent);
-        NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(NOTIFICATION_ID, builder.build());
     }
     @Override
@@ -193,7 +202,7 @@ public class AlarmService extends Service  {
                 AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + 1000,
                 restartServicePendingIntent);
-
+        System.exit(1);
         super.onTaskRemoved(rootIntent);
     }
 

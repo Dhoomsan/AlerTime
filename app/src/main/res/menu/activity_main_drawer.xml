@@ -4,7 +4,7 @@
         <item
             android:id="@+id/action_helpinfo"
             android:icon="@drawable/ic_information"
-            android:title="@string/Helpinfo" />
+            android:title="@string/Instruction" />
         <item
             android:id="@+id/action_deleteStatic"
             android:icon="@drawable/ic_deleteicon"

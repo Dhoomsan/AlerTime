@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
-public class InstallBroadcastReceiver extends BroadcastReceiver {
+public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -18,10 +18,12 @@ public class InstallBroadcastReceiver extends BroadcastReceiver {
             String dataString = intent.getDataString();
             if (dataString != null && dataString.equals(context.getPackageName())) {
                 PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "wakeup");
                 wl.acquire();
 
-                context.startService(new Intent(context, AlarmService.class));
+                Intent myStarterIntent = new Intent(context, AlarmService.class);
+                myStarterIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startService(myStarterIntent);
 
                 wl.release();
             }

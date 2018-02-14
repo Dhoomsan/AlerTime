@@ -52,4 +52,6 @@ dependencies {
     compile 'com.github.bluejamesbond:textjustify-android:2.1.6'
     testCompile 'junit:junit:4.12'
     compile 'me.relex:circleindicator:1.2.2@aar'
+    compile 'com.jaredrummler:android-device-names:1.0.9'
+
 }

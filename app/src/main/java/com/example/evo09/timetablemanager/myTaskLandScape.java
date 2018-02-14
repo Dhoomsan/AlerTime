@@ -67,7 +67,7 @@ public class myTaskLandScape extends Fragment {
     boolean refreshcheck = false;
 
     Calendar cal;
-    int sshour,ssmint,ctime,storeshour,storesmint,storestime,storeehour,storeemint,storeetime;
+    int sshour,ssmint,ctime,storestime,storeetime;
     String[] SplitSTCompare,SplitETCompare;
     String st,et,dayOfTheWeek;
     SimpleDateFormat sdf;
@@ -121,7 +121,6 @@ public class myTaskLandScape extends Fragment {
             }
         }else {
             ((MainActivity) getActivity()).WhenRecord();
-           // myTask.WhenRecord();
         }
     }
 
@@ -603,16 +602,14 @@ public class myTaskLandScape extends Fragment {
         SplitETCompare = MonETCompare.split(" ");
         st = SplitSTCompare[0];
         et = SplitETCompare[0];
+
         date1 = new Date();
         date1.setTime((((Integer.parseInt(st.split(":")[0])) * 60 + (Integer.parseInt(st.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-        storeshour = date1.getHours();
-        storesmint = date1.getMinutes();
-        storestime = storeshour * 60 + storesmint;
+        storestime =  date1.getHours() * 60 + date1.getMinutes();
+
         date2 = new Date();
         date2.setTime((((Integer.parseInt(et.split(":")[0])) * 60 + (Integer.parseInt(et.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-        storeehour = date2.getHours();
-        storeemint = date2.getMinutes();
-        storeetime = storeehour * 60 + storeemint;
+        storeetime = date2.getHours() * 60 + date2.getMinutes();
 
         SplitMondSTCompare = DaySTCompare.split(" ");
         shourSplitMondSTCompare = SplitMondSTCompare[0];
@@ -622,6 +619,7 @@ public class myTaskLandScape extends Fragment {
 
         SplitMonETCompare = MonETCompare.split(" ");
         shourSplitMonETCompare = SplitMonETCompare[0];
+
         dateETime = new Date();
         dateETime.setTime((((Integer.parseInt(shourSplitMonETCompare.split(":")[0])) * 60 + (Integer.parseInt(shourSplitMonETCompare.split(":")[1]))) + dateETime.getTimezoneOffset()) * 60000);
         ET = dateETime.getHours() * 60 + dateETime.getMinutes();

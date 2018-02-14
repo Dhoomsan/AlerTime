@@ -2,14 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical">
         <LinearLayout
+            android:id="@+id/displayContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="3"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="@dimen/padding5"
+            android:layout_marginBottom="@dimen/padding5"
             android:background="@drawable/rippleefect"
             android:gravity="center">
             <LinearLayout
@@ -32,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/to"
                     android:textAlignment="center"
-                    android:textSize="10dp"
+                    android:textSize="@dimen/padding10"
                     android:textColor="@android:color/background_dark"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
                 <TextView
@@ -40,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/End_Time"
-                    android:textSize="10dp"
+                    android:textSize="@dimen/padding10"
                     android:textColor="@android:color/background_dark"
                     android:textAlignment="center"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -49,7 +51,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:padding="5dp"
+                android:padding="@dimen/padding5"
                 android:orientation="horizontal"
                 android:layout_weight="0.9">
                 <TextView
@@ -57,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="16dp"
+                    android:textSize="@dimen/padding16"
                     android:textColor="@android:color/background_dark"
                     android:text="@string/Subject"
                     android:textAlignment="center"
@@ -68,24 +70,24 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="@dimen/padding5"
                 android:layout_weight="1.1">
                 <TextView
                     android:id="@+id/textViewVenue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight=".5"
-                    android:textSize="16dp"
+                    android:textSize="@dimen/padding16"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/Venue"
                     android:textAlignment="center"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
                 <TextView
                     android:id="@+id/textViewAlarm"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/padding20"
+                    android:layout_height="@dimen/padding20"
                     android:text=""
-                    android:textSize="8dp"
+                    android:textSize="@dimen/padding8"
                     android:gravity="center"
                     android:textStyle="bold"
                     android:textColor="@android:color/background_dark"

@@ -3,14 +3,17 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="dots_height">30dp</dimen>
-    <dimen name="dots_margin_bottom">35dp</dimen>
-    <dimen name="img_width_height">120dp</dimen>
-    <dimen name="slide_title">30dp</dimen>
-    <dimen name="slide_desc">16dp</dimen>
-    <dimen name="desc_padding">20dp</dimen>
-    <dimen name="toppadding">5dp</dimen>
-    <dimen name="static_edit_padding">5dp</dimen>
-    <dimen name="dialog">20dp</dimen>
+    <dimen name="padding1">1dp</dimen>
+    <dimen name="padding2">2dp</dimen>
+    <dimen name="padding5">5dp</dimen>
+    <dimen name="padding8">8dp</dimen>
+    <dimen name="padding10">10dp</dimen>
+    <dimen name="padding15">15dp</dimen>
+    <dimen name="padding16">16dp</dimen>
+    <dimen name="padding20">20dp</dimen>
+    <dimen name="padding30">30dp</dimen>
+    <dimen name="padding35">35dp</dimen>
+    <dimen name="padding40">40dp</dimen>
+    <dimen name="padding50">50dp</dimen>
+    <dimen name="padding120">120dp</dimen>
 </resources>

@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/DialogViewPager"
-                android:layout_width="fill_parent"
-                android:layout_marginTop="@dimen/dialog"
-                android:layout_marginLeft="@dimen/dialog"
-                android:layout_marginRight="@dimen/dialog"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_above="@+id/indicator"/>
-            <me.relex.circleindicator.CircleIndicator
-                android:id="@+id/indicator"
-                android:background="@android:color/background_dark"
-                android:layout_alignParentBottom="true"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dots_height"/>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/DialogViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/indicator"
+        android:background="@android:color/transparent"
+        android:layout_centerHorizontal="true"/>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:background="@color/colorGrey"
+        app:ci_drawable="@drawable/circleindicator_round"
+        android:layout_height="@dimen/padding20"/>
 
     <ImageView
         android:id="@+id/ButtonCancel"
-        android:layout_width="40dp"
+        android:layout_width="@dimen/padding40"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_x_button"
         android:layout_gravity="right"
-        android:alpha="0.6"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/padding40"
+        android:alpha="0.7"
         android:scaleType="fitXY"/>
+
 </RelativeLayout>

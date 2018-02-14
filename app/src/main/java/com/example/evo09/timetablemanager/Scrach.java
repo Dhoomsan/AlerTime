@@ -1,6 +1,5 @@
 package com.example.evo09.timetablemanager;
 
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -44,13 +43,9 @@ public class Scrach extends Fragment implements View.OnClickListener {
         scratchWebView=(WebView)rootview.findViewById(R.id.scratchWebView);
         WebSettings settings =scratchWebView.getSettings();
         scratchWebView.setBackgroundColor(Color.TRANSPARENT);
-        /*Resources res = getResources();
-        settings.setDefaultFontSize((int)res.getDimension(R.dimen.slide_desc));*/
 
-        String slide_1_desc = getString(R.string.slide_1_desc);
-        String myHtmlString = "<html><body align='justify'>" +
-                "<p><u>SCRATCH</u> -: " + slide_1_desc+"</p>\n" +
-                "</body></html>";
+        String slide_1_desc = getString(R.string.scratch_data);
+        String myHtmlString = "<html><body align='justify'>" + "<p>" + slide_1_desc+"</p>\n" + "</body></html>";
         scratchWebView.loadData(myHtmlString, "text/html", null);
 
 
@@ -67,7 +62,7 @@ public class Scrach extends Fragment implements View.OnClickListener {
     }
     public void dynamicdata(){
         Date d = new Date();
-        String stime = String.format("%02d:%02d %s", d.getHours() == 0 ? 12 : d.getHours(), d.getMinutes()+6, d.getHours() < 12 ? "AM" : "PM");
+        String stime = String.format("%02d:%02d %s", d.getHours() == 0 ? 12 : d.getHours(), d.getMinutes(), d.getHours() < 12 ? "AM" : "PM");
         String etime = String.format("%02d:%02d %s", d.getHours()+1 == 0 ? 12 : d.getHours()+1, d.getMinutes(), d.getHours()+1 < 12 ? "AM" : "PM");
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
         final String dayOfTheWeek = sdf.format(d);
@@ -75,7 +70,7 @@ public class Scrach extends Fragment implements View.OnClickListener {
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
-        SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + dayOfTheWeek + "', '" + stime + "', '" + etime + "', '" + "Math" + "', '" + "Room 101" + "' , '" + "5" + "');");
+        SQLITEDATABASE.execSQL("INSERT or replace INTO " + SQLITEHELPER.TABLE_NAME + " " + "(" + SQLITEHELPER.KEY_DOWeek + "," + SQLITEHELPER.KEY_STime + "," + SQLITEHELPER.KEY_ETime + "," + SQLITEHELPER.KEY_Subject + "," + SQLITEHELPER.KEY_Venue + "," + SQLITEHELPER.KEY_AlermBefor + ")" + " VALUES('" + dayOfTheWeek + "', '" + stime + "', '" + etime + "', '" + "Math" + "', '" + "Room 101" + "' , '" + "00" + "');");
         ((MainActivity)getActivity()).WhenRecord();
     }
 }

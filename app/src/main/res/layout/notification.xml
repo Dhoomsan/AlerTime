@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_root"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical">
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollbars="none">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -21,14 +12,14 @@
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/padding40"
                     android:orientation="horizontal"
-                    android:background="@color/colorPrimaryDark">
+                    android:background="@color/colorPink">
                     <ImageView
                         android:id="@+id/image"
-                        android:layout_width="30dp"
+                        android:layout_width="@dimen/padding40"
                         android:layout_height="match_parent"
-                        android:layout_margin="2dp"
+                        android:layout_margin="@dimen/padding2"
                         android:src="@drawable/logo"/>
                     <TextView
                         android:id="@+id/title"
@@ -37,32 +28,46 @@
                         android:text="Today Task..."
                         android:textAlignment="center"
                         android:inputType="time"
-                        android:padding="2dp"
+                        android:padding="@dimen/padding2"
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp"
+                    android:padding="@dimen/padding10"
                     android:background="@android:color/white"
                     android:gravity="center">
-                    <TextView
-                        android:id="@+id/textViewSTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        android:textAlignment="center"
-                        android:textColor="@color/colorPrimary"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
+                    <ScrollView
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:fillViewport="true"
+                        android:scrollbars="none">
+                        <TextView
+                            android:id="@+id/textViewSTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                    </ScrollView>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/padding40"
                     android:orientation="horizontal">
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/Open"
+                        android:textColor="@android:color/white"
+                        android:background="@color/colorPrimaryDark"
+                        android:layout_weight="1"
+                        android:textAllCaps="false"
+                        android:id="@+id/notificationOpen" />
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -74,6 +79,4 @@
                         android:id="@+id/notificationclose" />
                 </LinearLayout>
             </LinearLayout>
-        </ScrollView>
-    </HorizontalScrollView>
 </LinearLayout>

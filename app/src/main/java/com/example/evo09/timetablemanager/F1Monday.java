@@ -127,6 +127,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
         layout = (LinearLayout) getActivity().findViewById(R.id.updatelayout);
         slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
         slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);

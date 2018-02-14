@@ -3,27 +3,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:id="@+id/fragment_mytask"
     tools:context="com.example.evo09.timetablemanager.MyTask">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_above="@+id/updatelayout"
-        android:overScrollMode="never"
-        android:layout_alignParentStart="true">
+        android:orientation="vertical">
 
-          <android.support.v4.view.PagerTabStrip
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="top"
-              android:padding="5dp"
-              android:typeface="monospace"
-              android:background="@color/colorPrimary"
-              android:textColor="@android:color/white" />
-    </android.support.v4.view.ViewPager>
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:overScrollMode="never">
+
+                          <android.support.v4.view.PagerTabStrip
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_gravity="top"
+                              android:padding="@dimen/padding5"
+                              android:background="@color/colorPrimary"
+                              android:textColor="@android:color/white" />
+                    </android.support.v4.view.ViewPager>
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

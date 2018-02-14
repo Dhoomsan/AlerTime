@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,11 +17,10 @@ public class SQLiteListAdapter extends BaseAdapter {
 
     Calendar cal;
     int sshour,ssmint,ctime,storeshour,storesmint,storestime,storeehour,storeemint,storeetime;
-    String shour,ehour,st,et,cb,dayOfTheWeek,currentday,breaks;
-    SimpleDateFormat sdf;
+    String shour,ehour,st,et,cb;
     String[] SplitStime,Splitetime;
-    Date date1,date2,d;
-    Holder holder;
+    Date date1,date2;
+    Holder holder = null;
     LayoutInflater layoutInflater;
     Context context;
     ArrayList<String> userID;
@@ -63,18 +60,36 @@ public class SQLiteListAdapter extends BaseAdapter {
         // TODO Auto-generated method stub
         return userID.get(position);
     }
+
     public long getItemId(int position) {
         // TODO Auto-generated method stub
         return position;
     }
+
+    private  class Holder {
+        TextView textviewstime;
+        TextView textviewetime;
+        TextView textviewsubject;
+        TextView textviewvenue;
+        TextView textviewalarm;
+    }
+    @Override
+    public int getViewTypeCount() {
+
+        return getCount();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        return position;
+    }
     @RequiresApi(api = Build.VERSION_CODES.N)
     public View getView(int position, View child, ViewGroup parent) {
-
         if (child == null) {
+            holder = new Holder();
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             child = layoutInflater.inflate(R.layout.display, null, true);
-
-            holder = new Holder();
 
             holder.textviewstime = (TextView) child.findViewById(R.id.textViewSTime);
             holder.textviewetime = (TextView) child.findViewById(R.id.textViewETime);
@@ -88,7 +103,27 @@ public class SQLiteListAdapter extends BaseAdapter {
             holder = (Holder) child.getTag();
         }
 
+        cb = User_Alarm.get(position);
 
+        if (cb.equals("00") || cb.equals("")) {
+            holder.textviewstime.setText(UserSTime.get(position));
+            holder.textviewetime.setText(UserETime.get(position));
+            holder.textviewsubject.setText(UserSubject.get(position));
+            holder.textviewvenue.setText(User_Venue.get(position));
+        } else{
+            holder.textviewalarm.setBackgroundResource(R.drawable.ic_alarm);
+            holder.textviewstime.setText(UserSTime.get(position));
+            holder.textviewetime.setText(UserETime.get(position));
+            holder.textviewsubject.setText(UserSubject.get(position));
+            holder.textviewvenue.setText(User_Venue.get(position));
+            holder.textviewalarm.setText(User_Alarm.get(position));
+        }
+        highLight(position,child);
+        return child;
+    }
+
+
+    public void highLight(int position, View child){
         cal = Calendar.getInstance();
         sshour = cal.get(Calendar.HOUR_OF_DAY);
         ssmint = cal.get(Calendar.MINUTE);
@@ -109,49 +144,24 @@ public class SQLiteListAdapter extends BaseAdapter {
         storeehour = date2.getHours();
         storeemint = date2.getMinutes();
         storeetime = storeehour * 60 + storeemint;
-        sdf = new SimpleDateFormat("EEEE");
-        d = new Date();
-        dayOfTheWeek = sdf.format(d);
-        currentday = "";
-        if (ctime > storestime && ctime < storeetime ){
+
+        if (ctime > storestime && ctime < storeetime){
             child.setBackgroundResource(R.color.colorGrey);
-        } else if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){
-            child.setBackgroundResource(R.color.colorTransparent);
-        }else if((ctime > storestime && ctime < storeetime)&& (User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")) ){
+        }
+        if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){
             child.setBackgroundResource(R.color.colorTransparent);
         }
-        cb = User_Alarm.get(position);
-        breaks = User_Venue.get(position);
-        if (cb.equals("00") || cb.equals("")) {
-            holder.textviewstime.setText(UserSTime.get(position));
-            holder.textviewetime.setText(UserETime.get(position));
-            holder.textviewsubject.setText(UserSubject.get(position));
-            holder.textviewvenue.setText(User_Venue.get(position));
-        } else{
-            holder.textviewalarm.setBackgroundResource(R.drawable.ic_alarm);
-            holder.textviewstime.setText(UserSTime.get(position));
-            holder.textviewetime.setText(UserETime.get(position));
-            holder.textviewsubject.setText(UserSubject.get(position));
-            holder.textviewvenue.setText(User_Venue.get(position));
-            holder.textviewalarm.setText(User_Alarm.get(position));
-         }
-        return child;
     }
 
-    public class Holder {
-        TextView textviewstime;
-        TextView textviewetime;
-        TextView textviewsubject;
-        TextView textviewvenue;
-        TextView textviewalarm;
-    }
     public void  toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }
+
     public void  removeSelection() {
         mSelectedItemsIds = new  SparseBooleanArray();
         notifyDataSetChanged();
     }
+
     public void selectView(int position, boolean value) {
         if (value)
             mSelectedItemsIds.put(position,  value);
@@ -160,6 +170,7 @@ public class SQLiteListAdapter extends BaseAdapter {
             mSelectedItemsIds.delete(position);
         notifyDataSetChanged();
     }
+
     public int  getSelectedCount() {
         return mSelectedItemsIds.size();
     }

@@ -12,12 +12,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import me.relex.circleindicator.CircleIndicator;
+
 
 public class Instruction extends Fragment implements ViewPager.OnPageChangeListener{
     private ViewPager viewPager;
-    private LinearLayout dotsLayout;
-    private TextView[] dots;
-    private int[] layouts;
+    CircleIndicator indicator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,17 +34,8 @@ public class Instruction extends Fragment implements ViewPager.OnPageChangeListe
         viewPager.setAdapter(new ViewInstAdapter(getChildFragmentManager()));
         viewPager.getAdapter().notifyDataSetChanged();
         viewPager.addOnPageChangeListener(this);
-
-        dotsLayout = (LinearLayout) rootview.findViewById(R.id.layoutDots);
-
-        // layouts of all welcome sliders
-        // add few more layouts if you want
-        layouts = new int[]{
-                R.layout.scratch_layout,
-                R.layout.grid_layout};
-
-        // adding bottom dots
-        addBottomDots(0);
+        indicator = (CircleIndicator)rootview. findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
 
         setHasOptionsMenu(true);
         return rootview;
@@ -53,27 +44,6 @@ public class Instruction extends Fragment implements ViewPager.OnPageChangeListe
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
     }
-    private void addBottomDots(int currentPage) {
-        dots = new TextView[layouts.length];
-
-        int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
-        int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
-
-        dotsLayout.removeAllViews();
-        for (int i = 0; i < dots.length; i++) {
-            dots[i] = new TextView(getContext());
-            dots[i].setText(Html.fromHtml("&#8226;"));
-            //dots[i].setTextSize(20);
-            dots[i].setPadding(5,0,5,0);
-            dots[i].setGravity(Gravity.CENTER_HORIZONTAL);
-            dots[i].setTextColor(colorsInactive[currentPage]);
-            dotsLayout.addView(dots[i]);
-        }
-
-        if (dots.length > 0)
-            dots[currentPage].setTextColor(colorsActive[currentPage]);
-    }
-
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -81,7 +51,7 @@ public class Instruction extends Fragment implements ViewPager.OnPageChangeListe
 
     @Override
     public void onPageSelected(int position) {
-        addBottomDots(position);
+       // addBottomDots(position);
     }
 
     @Override

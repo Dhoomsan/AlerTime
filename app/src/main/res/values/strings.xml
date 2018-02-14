@@ -22,13 +22,27 @@
     <string name="Add">Add</string>
     <string name="Update">Update</string>
     <string name="Cancel">Cancel</string>
+    <string name="Open">Open</string>
     <string name="Delete_Grid">Delete Data</string>
-    <string name="Helpinfo">Instruction</string>
+    <string name="Instruction">Instruction</string>
     <string name="Create">Create</string>
     <string name="scratch_title">Scratch</string>
-    <string name="slide_1_desc"> Schedule is a type of scheduling in which the scheduler can schedule own plan. The goal of Scratch scheduling is to adapt to dynamically changing progress and form an optimal configuration in self-sustained manner.An example of a Grid schedule would be Monday from 8:30 AM to 10:00 AM ,Tuesday from 8:00 AM to 12:00 AM or Thursday - Sunday 3:00 PM to 11:00 PM.</string>
+    <string name="scratch_data">Create your time grid slot by slot, one at a time. Suitable when it all varies per day.</string>
 
-    <string name="skeleton_title">Grid</string>
-    <string name="slide_2_desc"> Schedule is a timetable that generally consists of the same number of hours and days worked per week. Grid schedules tend to stay consistent once the number of hours and days have been agreed upon Scheduler. An example of a Grid schedule would be Monday - Friday from 8:30 AM to 5:00 PM or Thursday - Sunday 3:00 PM to 11:00 PM.</string>
+    <string name="grid_title">Grid</string>
+    <string name="grid_data">Start with an empty table and add details later. Suitable when mostly it is same for all days.</string>
+    <string name="ins_grid_title">GRID SCHEDULE</string>
+    <string name="ins_grid_txt">Choose Start from GRID to Schedule standard (fixed) grid Schedules.</string>
 
+    <string name="ins_add_title">ADD SCHEDULE</string>
+    <string name="ins_add_txt">Click on + PlusIcon to add Schedules.</string>
+
+    <string name="ins_update_title">UPDATE SCHEDULE</string>
+    <string name="ins_update_txt">Click List Items to Update Schedules one by one.</string>
+
+    <string name="ins_delete_title">DELETE SCHEDULE</string>
+    <string name="ins_delete_txt">Hold List Items to Delete Selected Schedules.</string>
+
+    <string name="ins_landscape_title">LANDSCAPE VIEW SCHEDULE</string>
+    <string name="ins_landscape_txt">Click View Mode Icon to View Schelues in Portrait mode or Landscape mode.</string>
 </resources>

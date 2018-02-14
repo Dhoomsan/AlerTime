@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context="com.example.evo09.timetablemanager.myTaskLandScape">
         <!-- 12//////////////////////////////////////////////////// -->
     <LinearLayout
@@ -30,7 +31,7 @@
             android:textColor="@color/colorTransparent"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:padding="2dp"/>
+            android:padding="@dimen/padding2"/>
         <TextView
             android:id="@+id/texttu"
             android:layout_weight="1"
@@ -49,7 +50,7 @@
             android:textColor="@color/colorTransparent"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:padding="2dp" />
+            android:padding="@dimen/padding2" />
         <TextView
             android:id="@+id/textth"
             android:layout_weight="1"
@@ -68,7 +69,7 @@
             android:textColor="@color/colorTransparent"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:padding="2dp"/>
+            android:padding="@dimen/padding2"/>
         <TextView
             android:id="@+id/textsa"
             android:layout_weight="1"
@@ -87,7 +88,7 @@
             android:textColor="@color/colorTransparent"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:padding="2dp"/>
+            android:padding="@dimen/padding2"/>
     </LinearLayout>
 
     <ScrollView

@@ -39,9 +39,9 @@ public class Skeleton extends Fragment implements View.OnClickListener {
         skeletonWebView.getSettings();
         skeletonWebView.setBackgroundColor(Color.TRANSPARENT);
 
-        String slide_2_desc = getString(R.string.slide_2_desc);
+        String slide_2_desc = getString(R.string.grid_data);
         String myHtmlString = "<html><body align='justify'>" +
-                "<p><u>GRID</u> -: " + slide_2_desc+"</p>\n" +
+                "<p>" + slide_2_desc+"</p>\n" +
                 "</body></html>";
         skeletonWebView.loadData(myHtmlString, "text/html", null);
 

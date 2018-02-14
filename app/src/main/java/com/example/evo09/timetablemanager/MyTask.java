@@ -3,6 +3,7 @@ package com.example.evo09.timetablemanager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -184,6 +185,7 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
                     Dayofweek.setText(tabtitles[dayOfWeek - 2]);
                     cday = tabtitles[dayOfWeek - 2];
                     getdataposition = tabtitles[dayOfWeek - 2];
+
                 } else {
                     pager.setCurrentItem(0);
                 }
@@ -387,7 +389,7 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
         if(SQLITEDATABASE.isOpen()) {}
-        else {}
+        else {DBCreate();}
     }
     public void InsertDataInTable(String Strday,String StrStartTime,String StrEndTime,String StrSubject,String StrVenue,String StrAlembefor) {
         if(Allday.isChecked()){
@@ -424,7 +426,6 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
         //pageposition = state;
     }
     public void autocomplete() {
-        DBCreate();
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         cursor = SQLITEDATABASE.rawQuery("SELECT " + SQLITEHELPER.KEY_Subject +"," + SQLITEHELPER.KEY_Venue + " FROM " + SQLITEHELPER.TABLE_NAME +" GROUP BY " + SQLITEHELPER.KEY_Subject + " ORDER BY " + SQLITEHELPER.KEY_Subject + " DESC", null);
         autosub.clear();
@@ -435,7 +436,6 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
         }
     }
     public void AddData() {
-        DBCreate();
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
         while (cursor != null && cursor.moveToNext()) {
