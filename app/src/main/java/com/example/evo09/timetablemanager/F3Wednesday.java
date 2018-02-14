@@ -47,9 +47,6 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
     public static final String StoreId = "StoreId";
     public static final String AddUpdateFlag = "AddUpdateFlag";
     String updatedata="UPDATE";
-    LinearLayout layout;
-    Animation slideUp,slideDown;
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
@@ -126,9 +123,8 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-        layout = (LinearLayout) getActivity().findViewById(R.id.updatelayout);
-        slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
-        slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
+        ((MainActivity)getActivity()).layoutUpdate();
+
         String data=(String)adapterView.getItemAtPosition(position);
 
         MyTask.Subject.setText("");
@@ -158,10 +154,6 @@ public class F3Wednesday extends Fragment implements AdapterView.OnItemClickList
 
 
         editor.commit();
-        Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
-        b.setText(R.string.Update);
-        layout.setVisibility(View.VISIBLE);
-        layout.startAnimation(slideUp);
     }
 
     @Override

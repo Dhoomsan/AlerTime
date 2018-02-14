@@ -15,7 +15,7 @@ import android.widget.TextView;
 import me.relex.circleindicator.CircleIndicator;
 
 
-public class Instruction extends Fragment implements ViewPager.OnPageChangeListener{
+public class Instruction extends Fragment {
     private ViewPager viewPager;
     CircleIndicator indicator;
 
@@ -33,29 +33,8 @@ public class Instruction extends Fragment implements ViewPager.OnPageChangeListe
         viewPager = (ViewPager)rootview. findViewById(R.id.view_pager);
         viewPager.setAdapter(new ViewInstAdapter(getChildFragmentManager()));
         viewPager.getAdapter().notifyDataSetChanged();
-        viewPager.addOnPageChangeListener(this);
         indicator = (CircleIndicator)rootview. findViewById(R.id.indicator);
         indicator.setViewPager(viewPager);
-
-        setHasOptionsMenu(true);
         return rootview;
-    }
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        menu.clear();
-    }
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-       // addBottomDots(position);
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
     }
 }

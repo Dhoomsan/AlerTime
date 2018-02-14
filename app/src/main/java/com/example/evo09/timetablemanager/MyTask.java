@@ -19,6 +19,7 @@ import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -197,17 +198,40 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
             ((MainActivity) getActivity()).WhenNullRecord();
         }
     }
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem item1=menu.findItem(R.id.action_PORTRAIT);
-        item1.setVisible(false);
-    }
 
+    @Override
+    public void onCreateOptionsMenu(
+            Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_landscape, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        layout = (LinearLayout) getActivity().findViewById(R.id.updatelayout);
+        slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
+        switch(item.getItemId()) {
+            case R.id.action_add: {
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(AddUpdateFlag, insertdata);
+                editor.commit();
+                Button b = (Button) layout.findViewById(R.id.ButtonAddUpdate);
+                b.setText(R.string.Add);
+                layout.setVisibility(View.VISIBLE);
+                layout.startAnimation(slideUp);
+                Allday.setVisibility(View.VISIBLE);
+                AddData();
+                break;
+            }
+            case R.id.action_LANDSCAPE: {
+                ((MainActivity)getActivity()).WhenLandScape();
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onClick(View view) {
         layout = (LinearLayout) getActivity().findViewById(R.id.updatelayout);
-        slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
         slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
         switch (view.getId())
         {

@@ -83,12 +83,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Integer> XMENArray = new ArrayList<Integer>();
     CircleIndicator indicator;
 
-    Animation slideUp,slideDown;
+    Animation slideUp;
     SharedPreferences sharedpreferences;
     private SharedPreferences.Editor mEditor;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
-    public static final String AddUpdateFlag = "AddUpdateFlag";
-    String insertdata="INSERTDATA", appname ;
+    String  appname ;
 
     NavigationView navigationView;
 
@@ -256,41 +255,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         back_pressed = System.currentTimeMillis();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {getMenuInflater().inflate(R.menu.main, menu);return true;}
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        layout = (LinearLayout) findViewById(R.id.updatelayout);
-        slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
-        slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
-
-        switch(item.getItemId()) {
-            case R.id.action_LANDSCAPE: {
-                WhenLandScape();
-                break;
-            }
-            case R.id.action_PORTRAIT: {
-                WhenRecord();
-                break;
-            }
-            case R.id.action_add: {
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putString(AddUpdateFlag, insertdata);
-                editor.commit();
-                Button b = (Button) layout.findViewById(R.id.ButtonAddUpdate);
-                b.setText(R.string.Add);
-                layout.setVisibility(View.VISIBLE);
-                layout.startAnimation(slideUp);
-                ((MyTask) fragment).Allday.setVisibility(View.VISIBLE);
-                ((MyTask) fragment).AddData();
-                break;
-            }
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -421,6 +385,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.commit();
     }
 
+    public void layoutUpdate(){
+        layout = (LinearLayout) findViewById(R.id.updatelayout);
+        slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
+        b.setText(R.string.Update);
+        layout.setVisibility(View.VISIBLE);
+        layout.startAnimation(slideUp);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     public void instruction_dialog(){
         LayoutInflater li = LayoutInflater.from(this);
@@ -465,6 +438,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     });
             AlertDialog alert = builder.create();
+            alert.setIcon(R.drawable.logo);// dialog  Icon
             alert.show();
 
             return false;
@@ -479,7 +453,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enable AutoStart")
                     .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
-                    .setCancelable(false)
                     .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
@@ -492,7 +465,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }  else if ("Letv".equalsIgnoreCase(manufacturer)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enable AutoStart")
-                    .setCancelable(false)
                     .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
                     .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -506,7 +478,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }  else if ("Honor".equalsIgnoreCase(manufacturer)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enable AutoStart")
-                    .setCancelable(false)
                     .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
                     .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -520,7 +491,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }  else if ("oppo".equalsIgnoreCase(manufacturer)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enable AutoStart")
-                    .setCancelable(false)
                     .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
                     .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -557,7 +527,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }  else if ("vivo".contains(manufacturer)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enable AutoStart")
-                    .setCancelable(false)
                     .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
                     .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -588,7 +557,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enable AutoStart")
-                    .setCancelable(false)
                     .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
                     .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

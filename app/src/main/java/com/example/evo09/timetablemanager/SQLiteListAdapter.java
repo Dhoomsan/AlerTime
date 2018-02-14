@@ -3,6 +3,7 @@ package com.example.evo09.timetablemanager;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import java.util.Date;
 
 public class SQLiteListAdapter extends BaseAdapter {
 
+    int count;
     Calendar cal;
     int sshour,ssmint,ctime,storeshour,storesmint,storestime,storeehour,storeemint,storeetime;
     String shour,ehour,st,et,cb;
@@ -75,8 +77,12 @@ public class SQLiteListAdapter extends BaseAdapter {
     }
     @Override
     public int getViewTypeCount() {
-
-        return getCount();
+        count=getCount();
+        Log.d("getCoun", String.valueOf(count));
+        if(count<1){
+            count=1;
+        }
+        return count;
     }
 
     @Override

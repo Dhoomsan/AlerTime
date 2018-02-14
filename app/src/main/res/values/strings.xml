@@ -31,18 +31,19 @@
 
     <string name="grid_title">Grid</string>
     <string name="grid_data">Start with an empty table and add details later. Suitable when mostly it is same for all days.</string>
-    <string name="ins_grid_title">GRID SCHEDULE</string>
-    <string name="ins_grid_txt">Choose Start from GRID to Schedule standard (fixed) grid Schedules.</string>
 
-    <string name="ins_add_title">ADD SCHEDULE</string>
-    <string name="ins_add_txt">Click on + PlusIcon to add Schedules.</string>
+    <string name="ins_grid_title">GRID</string>
+    <string name="ins_grid_txt">Choose start from GRID for standard (fixed) grid.</string>
 
-    <string name="ins_update_title">UPDATE SCHEDULE</string>
-    <string name="ins_update_txt">Click List Items to Update Schedules one by one.</string>
+    <string name="ins_add_title">ADD</string>
+    <string name="ins_add_txt">Click on + icon to add.</string>
 
-    <string name="ins_delete_title">DELETE SCHEDULE</string>
-    <string name="ins_delete_txt">Hold List Items to Delete Selected Schedules.</string>
+    <string name="ins_update_title">UPDATE</string>
+    <string name="ins_update_txt">Click list items to update one by one.</string>
 
-    <string name="ins_landscape_title">LANDSCAPE VIEW SCHEDULE</string>
-    <string name="ins_landscape_txt">Click View Mode Icon to View Schelues in Portrait mode or Landscape mode.</string>
+    <string name="ins_delete_title">DELETE</string>
+    <string name="ins_delete_txt">Hold list items to delete.</string>
+
+    <string name="ins_landscape_title">VIEW</string>
+    <string name="ins_landscape_txt">Click view mode icon to view in portrait mode or landscape mode.</string>
 </resources>

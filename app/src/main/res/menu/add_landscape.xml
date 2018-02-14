@@ -11,9 +11,5 @@
         android:icon="@drawable/portland"
         android:title="landScape"
         app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_PORTRAIT"
-        android:icon="@drawable/portland"
-        android:title="Portrait"
-        app:showAsAction="always"/>
+
 </menu>

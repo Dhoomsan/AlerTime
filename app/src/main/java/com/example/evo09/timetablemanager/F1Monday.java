@@ -38,6 +38,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
     SQLiteDatabase SQLITEDATABASE;
     Cursor cursor;
     SQLiteListAdapter ListAdapter ;
+
     ArrayList<String> ID_ArrayList = new ArrayList<String>();
     ArrayList<String> STIME_ArrayList = new ArrayList<String>();
     ArrayList<String> ETIME_ArrayList = new ArrayList<String>();
@@ -45,14 +46,12 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
     ArrayList<String> VENUE_ArrayList = new ArrayList<String>();
     ArrayList<String> ALARM_ArrayList = new ArrayList<String>();
     ListView LISTVIEW;
+
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
     public static final String StoreId = "StoreId";
     public static final String AddUpdateFlag = "AddUpdateFlag";
-
     String updatedata="UPDATE";
-    LinearLayout layout;
-    Animation slideUp,slideDown;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,16 +120,13 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
         );
 
         LISTVIEW.setAdapter(ListAdapter);
-
         cursor.close();
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        ((MainActivity)getActivity()).layoutUpdate();
 
-        layout = (LinearLayout) getActivity().findViewById(R.id.updatelayout);
-        slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
-        slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
         String data=(String)adapterView.getItemAtPosition(position);
         MyTask.Subject.setText("");
         MyTask.Venue.setText("");
@@ -156,10 +152,6 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
         editor.putString(AddUpdateFlag, updatedata);
         editor.commit();
 
-        Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
-        b.setText(R.string.Update);
-        layout.setVisibility(View.VISIBLE);
-        layout.startAnimation(slideUp);
     }
 
     @Override

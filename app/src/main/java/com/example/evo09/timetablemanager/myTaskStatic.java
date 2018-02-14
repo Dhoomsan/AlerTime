@@ -45,7 +45,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,9 +75,6 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
         // TODO Auto-generated method stub
         super.onResume();
 
-    }
-    public void onPrepareOptionsMenu(Menu main ) {
-        main.clear();
     }
 
     @Override

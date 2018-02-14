@@ -3,6 +3,7 @@ package com.example.evo09.timetablemanager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -18,10 +19,12 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -37,6 +40,7 @@ import java.util.Date;
 import static android.content.Context.MODE_PRIVATE;
 
 public class myTaskLandScape extends Fragment {
+    int zoomcell =2;
     private ProgressDialog csprogress;
     static int t = 0,j,  ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0;
     static String[] Timedata, Mondata, Tuedata, Weddata, Thudata, Fridata, Satdata, Sundata, SplitMondSTCompare, SplitMonETCompare;
@@ -125,13 +129,21 @@ public class myTaskLandScape extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu main) {
-        MenuItem item = main.findItem(R.id.action_add);
-        item.setVisible(false);
-        MenuItem item2 = main.findItem(R.id.action_LANDSCAPE);
-        item2.setVisible(false);
+    public void onCreateOptionsMenu(
+            Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.portrait, menu);
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch(item.getItemId()) {
+            case R.id.action_PORTRAIT: {
+                ((MainActivity)getActivity()).WhenRecord();
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
     public void DBCreate(){
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
@@ -311,7 +323,7 @@ public class myTaskLandScape extends Fragment {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             display = ((WindowManager) getActivity().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             width = display.getWidth() / 8;
-            height = 120;
+            height = 120* zoomcell;
             Layouttime = (LinearLayout) getActivity().findViewById(R.id.linearLayouttime);
             LayoutMon = (LinearLayout) getActivity().findViewById(R.id.linearLayoutmon);
             LayoutTue = (LinearLayout) getActivity().findViewById(R.id.linearLayouttue);
@@ -354,7 +366,7 @@ public class myTaskLandScape extends Fragment {
                         Day.setTextColor(Color.parseColor("#4a5a71"));
                         Day.setGravity(Gravity.CENTER_HORIZONTAL);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height - Sminutes * 2);
+                            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height - Sminutes * zoomcell);
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             LDay.addView(Day, lp);
@@ -644,9 +656,9 @@ public class myTaskLandScape extends Fragment {
         Day.setText(Html.fromHtml("<small><font size=\"10 \" color=\"#006B60\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
         Day.setGravity(Gravity.CENTER_HORIZONTAL);
         Day.setEllipsize(TextUtils.TruncateAt.END);
-        Day.setMaxLines(DStandEt / 30);
+        Day.setMaxLines(DStandEt / 30* zoomcell);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DStandEt);
+            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DStandEt* zoomcell);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             LDay.addView(Day, lp);
@@ -661,7 +673,7 @@ public class myTaskLandScape extends Fragment {
         Day.setText(" ");
         Day.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorTransparent));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
+            lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, zoomcell *2);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             LDay.addView(Day, lp);

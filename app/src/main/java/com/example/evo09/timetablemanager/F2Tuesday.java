@@ -119,15 +119,12 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
         );
 
         LISTVIEW.setAdapter(ListAdapter);
-
         cursor.close();
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        layout = (LinearLayout) getActivity().findViewById(R.id.updatelayout);
-        slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
-        slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
+        ((MainActivity)getActivity()).layoutUpdate();
         String data=(String)adapterView.getItemAtPosition(position);
 
         MyTask.Subject.setText("");
@@ -155,10 +152,6 @@ public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListen
         editor.putString(AddUpdateFlag, updatedata);
 
         editor.commit();
-        Button b =(Button)layout.findViewById(R.id.ButtonAddUpdate);
-        b.setText(R.string.Update);
-        layout.setVisibility(View.VISIBLE);
-        layout.startAnimation(slideUp);
     }
     @Override
     public boolean onCreateActionMode (ActionMode actionMode, Menu menu){
