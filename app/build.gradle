@@ -12,7 +12,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "27.0.0"
     defaultConfig {
-        applicationId "com.example.evo09.timetablemanager"
+        applicationId 'com.evolvan.timegrid'
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
@@ -53,5 +53,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'me.relex:circleindicator:1.2.2@aar'
     compile 'com.jaredrummler:android-device-names:1.0.9'
-
 }

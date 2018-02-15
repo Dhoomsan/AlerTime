@@ -4,6 +4,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
+        <item name="actionModeStyle">@style/AppBaseThemeMaterial.ActionMode</item>
         <item name="android:typeface">serif</item>
     <!--</style>
 
@@ -17,4 +18,7 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppBaseThemeMaterial.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/colorAccent</item>
+    </style>
 </resources>

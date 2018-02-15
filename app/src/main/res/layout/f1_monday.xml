@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.example.evo09.timetablemanager.F2Tuesday">
+    tools:context="com.evolvan.evo09.timegrid.F2Tuesday">
 
     <!-- TODO: Update blank fragment layout -->
     <ListView

@@ -14,7 +14,7 @@
         android:paddingTop="@dimen/padding20"
         android:paddingLeft="@dimen/padding20"
         android:paddingRight="@dimen/padding20"
-        android:background="@android:color/holo_orange_light">
+        android:background="@android:color/holo_blue_dark">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

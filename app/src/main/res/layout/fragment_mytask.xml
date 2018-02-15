@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:id="@+id/fragment_mytask"
-    tools:context="com.example.evo09.timetablemanager.MyTask">
+    tools:context="com.evolvan.evo09.timegrid.MyTask">
 
     <LinearLayout
         android:layout_width="match_parent"
