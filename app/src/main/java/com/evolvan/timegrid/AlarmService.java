@@ -128,9 +128,6 @@ public class AlarmService extends Service  {
                         pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
                         builder.setContentIntent(pendingIntent);
 
-                        AlarmManager alarmManager=(AlarmManager)getSystemService(ALARM_SERVICE);
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmtime, pendingIntent);
-
                         manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                         manager.notify(NOTIFICATION_ID, builder.build());
                     }

@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,14 +16,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
+
 import static android.content.Context.MODE_PRIVATE;
 
-public class F7Sunday extends Fragment implements AdapterView.OnItemClickListener,AbsListView.MultiChoiceModeListener {
+public class F2Tuesday extends Fragment implements AdapterView.OnItemClickListener,AbsListView.MultiChoiceModeListener {
     SQLiteHelper SQLITEHELPER;
     MyTask MyTask;
     SQLiteDatabase SQLITEDATABASE;
@@ -41,6 +45,8 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
     public static final String StoreId = "StoreId";
     public static final String AddUpdateFlag = "AddUpdateFlag";
     String updatedata="UPDATE";
+    LinearLayout layout;
+    Animation slideUp,slideDown;
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
@@ -53,9 +59,9 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view= inflater.inflate(com.evolvan.evo09.timegrid.R.layout.f7_sunday, container, false);
+        View view= inflater.inflate(com.evolvan.timegrid.R.layout.f2_tuesday, container, false);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        LISTVIEW = (ListView) view.findViewById(com.evolvan.evo09.timegrid.R.id.DynamiclistView);
+        LISTVIEW = (ListView) view.findViewById(com.evolvan.timegrid.R.id.DynamiclistView);
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
 
@@ -64,7 +70,6 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
         LISTVIEW.setAdapter(ListAdapter);
         LISTVIEW.setOnItemClickListener(this);
         LISTVIEW.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        // Capture ListView item click
         LISTVIEW.setMultiChoiceModeListener(this);
         return view;
     }@Override
@@ -79,7 +84,7 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
         String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR)";
         SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
 
-        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = 'Sunday' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
+        cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = 'Tuesday' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
 
         ID_ArrayList.clear();
         STIME_ArrayList.clear();
@@ -112,23 +117,22 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
         );
 
         LISTVIEW.setAdapter(ListAdapter);
-
         cursor.close();
     }
+
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         ((MainActivity)getActivity()).layoutUpdate();
-
         String data=(String)adapterView.getItemAtPosition(position);
 
         MyTask.Subject.setText("");
         MyTask.Venue.setText("");
         MyTask.StartTime.setText("");
         MyTask.EndTime.setText("");
-        MyTask.Subject.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewSubject)).getText().toString());
-        MyTask.Venue.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewVenue)).getText().toString());
-        MyTask.StartTime.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewSTime)).getText().toString());
-        MyTask.EndTime.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewETime)).getText().toString());
+        MyTask.Subject.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewSubject)).getText().toString());
+        MyTask.Venue.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewVenue)).getText().toString());
+        MyTask.StartTime.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewSTime)).getText().toString());
+        MyTask.EndTime.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewETime)).getText().toString());
         MyTask.Allday.setVisibility(View.GONE);
 
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor+ " != '" + "00" + "' AND " + SQLITEHELPER.KEY_ID + " = '"+ data +"'" , null);
@@ -140,14 +144,16 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
             MyTask.AlermRepeat.setChecked(true);
         }
 
+
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(StoreId, data);
         editor.putString(AddUpdateFlag, updatedata);
+
         editor.commit();
     }
     @Override
     public boolean onCreateActionMode (ActionMode actionMode, Menu menu){
-        actionMode.getMenuInflater().inflate(com.evolvan.evo09.timegrid.R.menu.menu, menu);
+        actionMode.getMenuInflater().inflate(com.evolvan.timegrid.R.menu.menu, menu);
         return true;
     }
 
@@ -160,7 +166,7 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
     public boolean onActionItemClicked ( final ActionMode actionMode, MenuItem menuItem){
         // TODO  Auto-generated method stub
         switch (menuItem.getItemId()) {
-            case com.evolvan.evo09.timegrid.R.id.selectAll:
+            case com.evolvan.timegrid.R.id.selectAll:
                 final int checkedCount = ID_ArrayList.size();
                 ListAdapter.removeSelection();
                 for (int i = 0; i < checkedCount; i++) {
@@ -168,7 +174,7 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
                 }
                 actionMode.setTitle(checkedCount + "  Selected");
                 return true;
-            case com.evolvan.evo09.timegrid.R.id.delete:
+            case com.evolvan.timegrid.R.id.delete:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("Do you  want to delete selected record(s)?");
 
@@ -198,15 +204,14 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
                                 ShowSQLiteDBdata();
                             }
                         }
-
                         actionMode.finish();
                         selected.clear();
 
                     }
                 });
                 AlertDialog alert = builder.create();
-                alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);
-                alert.setTitle("Confirmation");
+                alert.setIcon(com.evolvan.timegrid.R.drawable.logo);// dialog  Icon
+                alert.setTitle("Confirmation"); // dialog  Title
                 alert.show();
                 return true;
             default:
@@ -217,9 +222,7 @@ public class F7Sunday extends Fragment implements AdapterView.OnItemClickListene
     public void onItemCheckedStateChanged (ActionMode mode,int position, long id, boolean checked){
         // TODO  Auto-generated method stub
         final int checkedCount = LISTVIEW.getCheckedItemCount();
-        // Set the  CAB title according to total checked items
         mode.setTitle(checkedCount + "  Selected");
-        // Calls  toggleSelection method from ListViewAdapter Class
         ListAdapter.toggleSelection(position);
     }
     @Override

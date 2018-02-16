@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -56,9 +56,9 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view= inflater.inflate(com.evolvan.evo09.timegrid.R.layout.f1_monday, container, false);
+        View view= inflater.inflate(com.evolvan.timegrid.R.layout.f1_monday, container, false);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        LISTVIEW = (ListView) view.findViewById(com.evolvan.evo09.timegrid.R.id.DynamiclistView);
+        LISTVIEW = (ListView) view.findViewById(com.evolvan.timegrid.R.id.DynamiclistView);
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
 
@@ -128,10 +128,10 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
         MyTask.Venue.setText("");
         MyTask.StartTime.setText("");
         MyTask.EndTime.setText("");
-        MyTask.Subject.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewSubject)).getText().toString());
-        MyTask.Venue.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewVenue)).getText().toString());
-        MyTask.StartTime.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewSTime)).getText().toString());
-        MyTask.EndTime.setText(((TextView)view.findViewById(com.evolvan.evo09.timegrid.R.id.textViewETime)).getText().toString());
+        MyTask.Subject.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewSubject)).getText().toString());
+        MyTask.Venue.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewVenue)).getText().toString());
+        MyTask.StartTime.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewSTime)).getText().toString());
+        MyTask.EndTime.setText(((TextView)view.findViewById(com.evolvan.timegrid.R.id.textViewETime)).getText().toString());
         MyTask.Allday.setVisibility(View.GONE);
 
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_AlermBefor+ " != '" + "00" + "' AND " + SQLITEHELPER.KEY_ID + " = '"+ data +"'" , null);
@@ -152,7 +152,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
 
     @Override
     public boolean onCreateActionMode (ActionMode actionMode, Menu menu){
-        actionMode.getMenuInflater().inflate(com.evolvan.evo09.timegrid.R.menu.menu, menu);
+        actionMode.getMenuInflater().inflate(com.evolvan.timegrid.R.menu.menu, menu);
         return true;
     }
 
@@ -165,7 +165,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
     public boolean onActionItemClicked ( final ActionMode actionMode, MenuItem menuItem){
         // TODO  Auto-generated method stub
         switch (menuItem.getItemId()) {
-            case com.evolvan.evo09.timegrid.R.id.selectAll:
+            case com.evolvan.timegrid.R.id.selectAll:
                 final int checkedCount = ID_ArrayList.size();
                 ListAdapter.removeSelection();
                 for (int i = 0; i < checkedCount; i++) {
@@ -173,7 +173,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
                 }
                 actionMode.setTitle(checkedCount + "  Selected");
                 return true;
-            case com.evolvan.evo09.timegrid.R.id.delete:
+            case com.evolvan.timegrid.R.id.delete:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("Do you  want to delete selected record(s)?");
 
@@ -210,7 +210,7 @@ public class F1Monday extends Fragment implements AdapterView.OnItemClickListene
                     }
                 });
                 AlertDialog alert = builder.create();
-                alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
+                alert.setIcon(com.evolvan.timegrid.R.drawable.logo);// dialog  Icon
                 alert.setTitle("Confirmation"); // dialog  Title
                 alert.show();
                 return true;

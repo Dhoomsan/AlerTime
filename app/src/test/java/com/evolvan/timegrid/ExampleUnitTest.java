@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid.timegrid1;
 
 import org.junit.Test;
 
