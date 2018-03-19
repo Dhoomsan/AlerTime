@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,18 +17,18 @@ public class Instruction extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle(com.evolvan.evo09.timegrid.R.string.app_name);
+        getActivity().setTitle(com.evolvan.timegrid.R.string.app_name);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootview= inflater.inflate(com.evolvan.evo09.timegrid.R.layout.fragment_instruction, container, false);
+        View rootview= inflater.inflate(com.evolvan.timegrid.R.layout.fragment_instruction, container, false);
 
-        viewPager = (ViewPager)rootview. findViewById(com.evolvan.evo09.timegrid.R.id.view_pager);
+        viewPager = (ViewPager)rootview. findViewById(com.evolvan.timegrid.R.id.view_pager);
         viewPager.setAdapter(new ViewInstAdapter(getChildFragmentManager()));
         viewPager.getAdapter().notifyDataSetChanged();
-        indicator = (CircleIndicator)rootview. findViewById(com.evolvan.evo09.timegrid.R.id.indicator);
+        indicator = (CircleIndicator)rootview. findViewById(com.evolvan.timegrid.R.id.indicator);
         indicator.setViewPager(viewPager);
         return rootview;
     }

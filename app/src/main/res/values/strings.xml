@@ -9,10 +9,6 @@
     <string name="Start_from_skeleton">Start From GRID</string>
     <string name="Start_Time">Start Time</string>
     <string name="to">to</string>
-    <string name="Period_Duration">Period Duration</string>
-    <string name="Break_Start_Time">Break Start Time</string>
-    <string name="Break_Time">Break Time</string>
-    <string name="Break_Duration">Break Duration</string>
     <string name="End_Time">End Time</string>
     <string name="Alarm_Before">Remind Before</string>
     <string name="All_Day">All Day</string>
@@ -22,7 +18,6 @@
     <string name="Add">Add</string>
     <string name="Update">Update</string>
     <string name="Cancel">Cancel</string>
-    <string name="Open">Open</string>
     <string name="Delete_Grid">Delete Data</string>
     <string name="Instruction">Instruction</string>
     <string name="Create">Create</string>

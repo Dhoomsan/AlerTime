@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.content.Context;
 import android.os.Build;
@@ -78,7 +78,6 @@ public class SQLiteListAdapter extends BaseAdapter {
     @Override
     public int getViewTypeCount() {
         count=getCount();
-        Log.d("getCoun", String.valueOf(count));
         if(count<1){
             count=1;
         }
@@ -95,13 +94,13 @@ public class SQLiteListAdapter extends BaseAdapter {
         if (child == null) {
             holder = new Holder();
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            child = layoutInflater.inflate(com.evolvan.evo09.timegrid.R.layout.display, null, true);
+            child = layoutInflater.inflate(com.evolvan.timegrid.R.layout.display, null, true);
 
-            holder.textviewstime = (TextView) child.findViewById(com.evolvan.evo09.timegrid.R.id.textViewSTime);
-            holder.textviewetime = (TextView) child.findViewById(com.evolvan.evo09.timegrid.R.id.textViewETime);
-            holder.textviewsubject = (TextView) child.findViewById(com.evolvan.evo09.timegrid.R.id.textViewSubject);
-            holder.textviewvenue = (TextView) child.findViewById(com.evolvan.evo09.timegrid.R.id.textViewVenue);
-            holder.textviewalarm = (TextView) child.findViewById(com.evolvan.evo09.timegrid.R.id.textViewAlarm);
+            holder.textviewstime = (TextView) child.findViewById(com.evolvan.timegrid.R.id.textViewSTime);
+            holder.textviewetime = (TextView) child.findViewById(com.evolvan.timegrid.R.id.textViewETime);
+            holder.textviewsubject = (TextView) child.findViewById(com.evolvan.timegrid.R.id.textViewSubject);
+            holder.textviewvenue = (TextView) child.findViewById(com.evolvan.timegrid.R.id.textViewVenue);
+            holder.textviewalarm = (TextView) child.findViewById(com.evolvan.timegrid.R.id.textViewAlarm);
 
             child.setTag(holder);
 
@@ -117,7 +116,7 @@ public class SQLiteListAdapter extends BaseAdapter {
             holder.textviewsubject.setText(UserSubject.get(position));
             holder.textviewvenue.setText(User_Venue.get(position));
         } else{
-            holder.textviewalarm.setBackgroundResource(com.evolvan.evo09.timegrid.R.drawable.ic_alarm);
+            holder.textviewalarm.setBackgroundResource(com.evolvan.timegrid.R.drawable.ic_alarm);
             holder.textviewstime.setText(UserSTime.get(position));
             holder.textviewetime.setText(UserETime.get(position));
             holder.textviewsubject.setText(UserSubject.get(position));
@@ -152,10 +151,10 @@ public class SQLiteListAdapter extends BaseAdapter {
         storeetime = storeehour * 60 + storeemint;
 
         if (ctime > storestime && ctime < storeetime){
-            child.setBackgroundResource(com.evolvan.evo09.timegrid.R.color.colorGrey);
+            child.setBackgroundResource(com.evolvan.timegrid.R.color.colorGrey);
         }
         if(User_Venue.get(position).equals("Break") || User_Venue.get(position).equals("") || UserSubject.get(position).equals("Break") || UserSubject.get(position).equals("")){
-            child.setBackgroundResource(com.evolvan.evo09.timegrid.R.color.colorTransparent);
+            child.setBackgroundResource(com.evolvan.timegrid.R.color.colorTransparent);
         }
     }
 

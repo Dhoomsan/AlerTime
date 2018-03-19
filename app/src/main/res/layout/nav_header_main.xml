@@ -14,8 +14,7 @@
          android:layout_height="80dip"
          android:paddingTop="@dimen/nav_header_vertical_spacing"
          android:scaleType="fitXY"
-         app:srcCompat="@drawable/logo"
-         android:id="@+id/imageView" />
+         app:srcCompat="@drawable/logo" />
 
     <TextView
         android:layout_width="wrap_content"

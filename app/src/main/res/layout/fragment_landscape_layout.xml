@@ -4,17 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.evolvan.evo09.timegrid.myTaskLandScape">
-        <!-- 12//////////////////////////////////////////////////// -->
+    tools:context="com.evolvan.timegrid.myTaskLandScape">
+    <!-- 12//////////////////////////////////////////////////// -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/tsd"
+        android:layout_alignParentTop="true"
         android:background="@color/colorPrimary"
         android:gravity="center">
         <TextView
-            android:id="@+id/texttim"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -23,7 +23,6 @@
             android:textStyle="bold"
             android:textAlignment="center" />
         <TextView
-            android:id="@+id/textmo"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,7 +32,6 @@
             android:textAlignment="center"
             android:padding="@dimen/padding2"/>
         <TextView
-            android:id="@+id/texttu"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -42,7 +40,6 @@
             android:textStyle="bold"
             android:textAlignment="center"/>
         <TextView
-            android:id="@+id/textwe"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -52,7 +49,6 @@
             android:textAlignment="center"
             android:padding="@dimen/padding2" />
         <TextView
-            android:id="@+id/textth"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -61,7 +57,6 @@
             android:textStyle="bold"
             android:textAlignment="center"/>
         <TextView
-            android:id="@+id/textfr"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -71,7 +66,6 @@
             android:textAlignment="center"
             android:padding="@dimen/padding2"/>
         <TextView
-            android:id="@+id/textsa"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -80,7 +74,6 @@
             android:textStyle="bold"
             android:textAlignment="center"/>
         <TextView
-            android:id="@+id/textsu"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -92,7 +85,6 @@
     </LinearLayout>
 
     <ScrollView
-        android:id="@+id/container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tsd"
@@ -106,8 +98,7 @@
             android:layout_centerInParent="true"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:weightSum="8"
-            android:id="@+id/container1">
+            android:weightSum="8">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

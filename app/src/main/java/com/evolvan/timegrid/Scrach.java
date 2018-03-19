@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,18 +33,18 @@ public class Scrach extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootview = inflater.inflate(com.evolvan.evo09.timegrid.R.layout.scratch_layout, container, false);
+        View rootview = inflater.inflate(com.evolvan.timegrid.R.layout.scratch_layout, container, false);
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
 
-        dynamic=(TextView) rootview.findViewById(com.evolvan.evo09.timegrid.R.id.dynamic);
+        dynamic=(TextView) rootview.findViewById(com.evolvan.timegrid.R.id.dynamic);
         dynamic.setOnClickListener(this);
 
-        scratchWebView=(WebView)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.scratchWebView);
+        scratchWebView=(WebView)rootview.findViewById(com.evolvan.timegrid.R.id.scratchWebView);
         WebSettings settings =scratchWebView.getSettings();
         scratchWebView.setBackgroundColor(Color.TRANSPARENT);
 
-        String slide_1_desc = getString(com.evolvan.evo09.timegrid.R.string.scratch_data);
+        String slide_1_desc = getString(com.evolvan.timegrid.R.string.scratch_data);
         String myHtmlString = "<html><body align='justify'>" + "<p>" + slide_1_desc+"</p>\n" + "</body></html>";
         scratchWebView.loadData(myHtmlString, "text/html", null);
 
@@ -54,7 +54,7 @@ public class Scrach extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case com.evolvan.evo09.timegrid.R.id.dynamic: {
+            case com.evolvan.timegrid.R.id.dynamic: {
                 dynamicdata();
                 break;
             }

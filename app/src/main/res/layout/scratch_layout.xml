@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.evolvan.evo09.timegrid.Scrach">
+    tools:context="com.evolvan.timegrid.Scrach">
 
 
     <LinearLayout
@@ -24,7 +24,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
                 <TextView
-                    android:id="@+id/ins_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/scratch_title"

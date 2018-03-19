@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    android:background="@android:color/white"    tools:context="com.evolvan.evo09.timegrid.F6Saturday">
+    android:background="@android:color/white"
+    tools:context="com.evolvan.timegrid.F6Saturday">
 
     <!-- TODO: Update blank fragment layout -->
     <ListView

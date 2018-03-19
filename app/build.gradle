@@ -15,8 +15,8 @@ android {
         applicationId 'com.evolvan.timegrid'
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
@@ -36,6 +36,14 @@ android {
             signingConfig signingConfigs.config
         }
     }
+    allprojects {
+        repositories {
+            jcenter()
+            maven {
+                url "https://maven.google.com"
+            }
+        }
+    }
 }
 
 dependencies {
@@ -47,9 +55,6 @@ dependencies {
     compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:support-v4:26.+'
-    compile 'com.google.android.gms:play-services-gcm:8.1.0'
-    compile 'com.github.d-max:spots-dialog:0.7@aar'
-    compile 'com.github.bluejamesbond:textjustify-android:2.1.6'
     testCompile 'junit:junit:4.12'
     compile 'me.relex:circleindicator:1.2.2@aar'
     compile 'com.jaredrummler:android-device-names:1.0.9'

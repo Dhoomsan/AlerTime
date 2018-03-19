@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

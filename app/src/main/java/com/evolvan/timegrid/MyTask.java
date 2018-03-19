@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -13,6 +13,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,7 +44,7 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
     AlertDialog alert;
 
     Button ButtonAddUpdate,ButtonCancel;
-    static TextView Dayofweek,StartTime,EndTime;
+    static TextView Dayofweektxt,StartTime,EndTime;
     int[] intEStime,intEEtime;
 
     Boolean timeExist;
@@ -91,37 +93,37 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle(com.evolvan.evo09.timegrid.R.string.Day_View);
+        getActivity().setTitle(com.evolvan.timegrid.R.string.Day_View);
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View views= inflater.inflate(com.evolvan.evo09.timegrid.R.layout.fragment_mytask, container, false);
+        View views= inflater.inflate(com.evolvan.timegrid.R.layout.fragment_mytask, container, false);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
-        pager=(ViewPager) views.findViewById(com.evolvan.evo09.timegrid.R.id.pager);
+        pager=(ViewPager) views.findViewById(com.evolvan.timegrid.R.id.pager);
         pager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
         pager.getAdapter().notifyDataSetChanged();
         pager.addOnPageChangeListener(this);
 
-        ButtonAddUpdate=(Button) views.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonAddUpdate);
-        ButtonCancel=(Button) views.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonCancel);
+        ButtonAddUpdate=(Button) views.findViewById(com.evolvan.timegrid.R.id.ButtonAddUpdate);
+        ButtonCancel=(Button) views.findViewById(com.evolvan.timegrid.R.id.ButtonCancel);
 
-        Dayofweek=(TextView)views.findViewById(com.evolvan.evo09.timegrid.R.id.Dayofweek);
-        StartTime=(TextView)views.findViewById(com.evolvan.evo09.timegrid.R.id.StartTime);
-        EndTime=(TextView)views.findViewById(com.evolvan.evo09.timegrid.R.id.EndTime);
+        Dayofweektxt =(TextView)views.findViewById(com.evolvan.timegrid.R.id.Dayofweek);
+        StartTime=(TextView)views.findViewById(com.evolvan.timegrid.R.id.StartTime);
+        EndTime=(TextView)views.findViewById(com.evolvan.timegrid.R.id.EndTime);
         StartTime.setOnClickListener(this);
         EndTime.setOnClickListener(this);
 
-        Subject=(AutoCompleteTextView) views.findViewById(com.evolvan.evo09.timegrid.R.id.Subject);
-        Venue=(AutoCompleteTextView) views.findViewById(com.evolvan.evo09.timegrid.R.id.Venue);
-        AlermBefore=(EditText)views.findViewById(com.evolvan.evo09.timegrid.R.id.AlermBefore);
+        Subject=(AutoCompleteTextView) views.findViewById(com.evolvan.timegrid.R.id.Subject);
+        Venue=(AutoCompleteTextView) views.findViewById(com.evolvan.timegrid.R.id.Venue);
+        AlermBefore=(EditText)views.findViewById(com.evolvan.timegrid.R.id.AlermBefore);
         AlermBefore.setFilters(new InputFilter[]{new InputFilterMinMax("1", "120")});
 
-        AlermRepeat=(CheckBox)views.findViewById(com.evolvan.evo09.timegrid.R.id.AlermRepeat);
-        Allday=(CheckBox)views.findViewById(com.evolvan.evo09.timegrid.R.id.Allday);
+        AlermRepeat=(CheckBox)views.findViewById(com.evolvan.timegrid.R.id.AlermRepeat);
+        Allday=(CheckBox)views.findViewById(com.evolvan.timegrid.R.id.Allday);
 
         sub = new ArrayAdapter<String>(getContext(),android.R.layout.select_dialog_item,autosub);
         ven = new ArrayAdapter<String>(getContext(),android.R.layout.select_dialog_item,autoven);
@@ -178,6 +180,9 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
             if (pager.getChildCount() > 0) {
                 Calendar calendar = Calendar.getInstance();
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                Dayofweektxt.setText(tabtitles[dayOfWeek - 2]);
+                getdataposition = tabtitles[dayOfWeek - 2];
+
                 if (Calendar.MONDAY == dayOfWeek) {
                     pager.setCurrentItem(0, true);
                 } else if (Calendar.TUESDAY == dayOfWeek) {
@@ -204,27 +209,27 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(com.evolvan.evo09.timegrid.R.menu.add_landscape, menu);
+        inflater.inflate(com.evolvan.timegrid.R.menu.add_landscape, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        layout = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.updatelayout);
-        slideUp = AnimationUtils.loadAnimation(getContext(), com.evolvan.evo09.timegrid.R.anim.slide_up);
+        layout = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.updatelayout);
+        slideUp = AnimationUtils.loadAnimation(getContext(), com.evolvan.timegrid.R.anim.slide_up);
         switch(item.getItemId()) {
-            case com.evolvan.evo09.timegrid.R.id.action_add: {
+            case com.evolvan.timegrid.R.id.action_add: {
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString(AddUpdateFlag, insertdata);
                 editor.commit();
-                Button b = (Button) layout.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonAddUpdate);
-                b.setText(com.evolvan.evo09.timegrid.R.string.Add);
+                Button b = (Button) layout.findViewById(com.evolvan.timegrid.R.id.ButtonAddUpdate);
+                b.setText(com.evolvan.timegrid.R.string.Add);
                 layout.setVisibility(View.VISIBLE);
                 layout.startAnimation(slideUp);
                 Allday.setVisibility(View.VISIBLE);
                 AddData();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.action_LANDSCAPE: {
+            case com.evolvan.timegrid.R.id.action_LANDSCAPE: {
                 ((MainActivity)getActivity()).WhenLandScape();
                 break;
             }
@@ -234,43 +239,43 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
 
     @Override
     public void onClick(View view) {
-        layout = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.updatelayout);
-        slideDown = AnimationUtils.loadAnimation(getContext(), com.evolvan.evo09.timegrid.R.anim.slide_down);
+        layout = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.updatelayout);
+        slideDown = AnimationUtils.loadAnimation(getContext(), com.evolvan.timegrid.R.anim.slide_down);
         switch (view.getId())
         {
-            case com.evolvan.evo09.timegrid.R.id.ButtonAddUpdate:{
+            case com.evolvan.timegrid.R.id.ButtonAddUpdate:{
                 AddorUpdateData();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.ButtonCancel: {
+            case com.evolvan.timegrid.R.id.ButtonCancel: {
                 layout.startAnimation(slideDown);
                 layout.setVisibility(View.GONE);
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.StartTime:{
+            case com.evolvan.timegrid.R.id.StartTime:{
                 TimeFlag=789;
                 SetTime();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.EndTime:{
+            case com.evolvan.timegrid.R.id.EndTime:{
                 TimeFlag=456;
                 SetTime();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.Subject:{
+            case com.evolvan.timegrid.R.id.Subject:{
                 autocomplete();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.Venue:{
+            case com.evolvan.timegrid.R.id.Venue:{
                 autocomplete();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.Allday:{
+            case com.evolvan.timegrid.R.id.Allday:{
                 if(Allday.isChecked()){
-                    Dayofweek.setVisibility(View.GONE);
+                    Dayofweektxt.setVisibility(View.GONE);
                 }
                 else {
-                    Dayofweek.setVisibility(View.VISIBLE);
+                    Dayofweektxt.setVisibility(View.VISIBLE);
                 }
                 break;
             }
@@ -278,44 +283,23 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
     }
 
     public void SetTime(){
-
-        StrStartTime=StartTime.getText().toString();
-        StrEndTime=EndTime.getText().toString();
-        String[] SplitStrStartTime = StrStartTime.split(" ");
-        String[] SplitStrEndTime = StrEndTime.split(" ");
-        String SStrStartTime = SplitStrStartTime[0];
-        String SStrEndTime= SplitStrEndTime[0];
-        if(TimeFlag==789) {
-            Date dateStrStartTime = new Date();
-            dateStrStartTime.setTime((((Integer.parseInt(SStrStartTime.split(":")[0])) * 60 + (Integer.parseInt(SStrStartTime.split(":")[1]))) + dateStrStartTime.getTimezoneOffset()) * 60000);
-            hour =dateStrStartTime.getHours();
-            minute = dateStrStartTime.getMinutes();
-        }
-        else if(TimeFlag==456) {
-            Date dateStrEndTime = new Date();
-            dateStrEndTime.setTime((((Integer.parseInt(SStrEndTime.split(":")[0])) * 60 + (Integer.parseInt(SStrEndTime.split(":")[1]))) + dateStrEndTime.getTimezoneOffset()) * 60000);
-            hour =dateStrEndTime.getHours();
-            minute = dateStrEndTime.getMinutes();
-        }
-        else {
-            final Calendar mcurrentTime = Calendar.getInstance();
-            hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-            minute = mcurrentTime.get(Calendar.MINUTE);
-        }
-
+        final Calendar mcurrentTime = Calendar.getInstance();
+        final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        int minute = mcurrentTime.get(Calendar.MINUTE);
         TimePickerDialog mTimePicker= new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                int hour = selectedHour;
-                int minute=selectedMinute;
-                getTime=String.format("%02d:%02d %s", hour == 0 ? 12 : hour, selectedMinute, selectedHour < 12 ? "AM" : "PM");
+                int inthour = selectedHour;
+                int intminute=selectedMinute;
+                getTime=String.format("%02d:%02d %s", inthour == 0 ? 12 : inthour, intminute, inthour < 12 ? "AM" : "PM");
                 if(TimeFlag==789) {
                     StartTime.setText(getTime);
+                    intstart = inthour * 60 + intminute;
                 }
-                if(TimeFlag==456) {
+                else if(TimeFlag==456) {
                     EndTime.setText(getTime);
+                    intend=inthour * 60 + intminute;
                 }
-
             }
         }, hour, minute, true);
         mTimePicker.setTitle("Select Time");
@@ -327,60 +311,63 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
         getStoreId= sharedpreferences.getString(StoreId, DefaultUnameValue);
         InsertUpdateStoreId= sharedpreferences.getString(AddUpdateFlag, DefaultInsertUpdateValue);
 
-        Strday=Dayofweek.getText().toString();
+        Strday= Dayofweektxt.getText().toString();
         StrStartTime=StartTime.getText().toString();
         StrEndTime=EndTime.getText().toString();
         StrSubject=Subject.getText().toString();
         StrVenue=Venue.getText().toString();
         StrAlembefor=AlermBefore.getText().toString();
-        String[] SplitStrStartTime = StrStartTime.split(" ");
-        String[] SplitStrEndTime = StrEndTime.split(" ");
-        String SStrStartTime = SplitStrStartTime[0];
-        String SStrEndTime= SplitStrEndTime[0];
 
-        Date dateStrStartTime = new Date();
-        dateStrStartTime.setTime((((Integer.parseInt(SStrStartTime.split(":")[0])) * 60 + (Integer.parseInt(SStrStartTime.split(":")[1]))) + dateStrStartTime.getTimezoneOffset()) * 60000);
-        Date dateStrEndTime = new Date();
-        dateStrEndTime.setTime((((Integer.parseInt(SStrEndTime.split(":")[0])) * 60 + (Integer.parseInt(SStrEndTime.split(":")[1]))) + dateStrEndTime.getTimezoneOffset()) * 60000);
-        intstart = dateStrStartTime.getHours()*60+dateStrStartTime.getMinutes();
-        intend = dateStrEndTime.getHours()*60+dateStrEndTime.getMinutes();
-
-        if(Strday.length()==0){
+        if(TextUtils.isEmpty(Strday) || Strday.length()==0){
             snackbar1 = Snackbar.make(getView(), "Day of Week Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(StrStartTime.length()==0){
+        else if(TextUtils.isEmpty(StrStartTime)  || StrStartTime.length()==0){
             snackbar1 = Snackbar.make(getView(), "Start Time Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(StrEndTime.length()==0){
+        else if(TextUtils.isEmpty(StrEndTime) || StrEndTime.length()==0){
             snackbar1 = Snackbar.make(getView(), "End Time Cannot be empty!", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
         else if(intstart>=intend || intstart==0 || StrStartTime.length()==0 || StrEndTime.length()==0){
             snackbar1 = Snackbar.make(getView(), "Start Time Cannot be higher than or Equals to End Time.", Snackbar.LENGTH_SHORT);snackbar1.show();
         }
-        else if(StrSubject.length()==0) {
+        else if(TextUtils.isEmpty(StrSubject) || StrSubject.length()==0) {
             Subject.requestFocus();
             Subject.setError(Error);
         }
-        else if(StrVenue.length()==0) {
+        else if(TextUtils.isEmpty(StrVenue) || StrVenue.length()==0) {
             Venue.requestFocus();
             Venue.setError(Error);
         }
-        else if((StrAlembefor.length()==0) &&(AlermRepeat.isChecked())) {
+        else if((StrAlembefor.length()==0 || TextUtils.isEmpty(StrAlembefor)) &&(AlermRepeat.isChecked())) {
             AlermBefore.requestFocus();
             AlermBefore.setError(Error);
         }
-        else if(!StrAlembefor.equals("") && !AlermRepeat.isChecked()){
+        else if((!StrAlembefor.equals("") || StrAlembefor.length()!=0) && !AlermRepeat.isChecked()){
             snackbar1 = Snackbar.make(getView(), "Tick Checkbox!", Snackbar.LENGTH_SHORT);
             snackbar1.show();
         }
         else {
-            if(StrAlembefor.length()==0){
+            if(StrAlembefor.length()==0 || TextUtils.isEmpty(StrAlembefor)){
                 StrAlembefor="00";
             }
+            String[] SplitStrStartTime = StrStartTime.split(" ");
+            String[] SplitStrEndTime = StrEndTime.split(" ");
+            String SStrStartTime = SplitStrStartTime[0];
+            String SStrEndTime= SplitStrEndTime[0];
+            if(StrStartTime.length()!=0 && StrEndTime.length()!=0) {
+                Date dateStrStartTime = new Date();
+                dateStrStartTime.setTime((((Integer.parseInt(SStrStartTime.split(":")[0])) * 60 + (Integer.parseInt(SStrStartTime.split(":")[1]))) + dateStrStartTime.getTimezoneOffset()) * 60000);
+                Date dateStrEndTime = new Date();
+                dateStrEndTime.setTime((((Integer.parseInt(SStrEndTime.split(":")[0])) * 60 + (Integer.parseInt(SStrEndTime.split(":")[1]))) + dateStrEndTime.getTimezoneOffset()) * 60000);
+                intstart = dateStrStartTime.getHours() * 60 + dateStrStartTime.getMinutes();
+                intend = dateStrEndTime.getHours() * 60 + dateStrEndTime.getMinutes();
+            }
+
             TimeExistOrNot(intstart,intend);
+
             if (insertdata.equals(InsertUpdateStoreId)) {
                 if(timeExist==true){
-                    Toast.makeText(getActivity(),"Timing  Already Exists in Table update it.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(),"Timing  Already Exists in Table.", Toast.LENGTH_LONG).show();
                 }
                 else {
                     InsertDataInTable(Strday, StrStartTime, StrEndTime, StrSubject, StrVenue, StrAlembefor);
@@ -404,6 +391,9 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
 
                     }
                 }
+            }
+            else {
+                Toast.makeText(getActivity(),"Checkout error  :Something went wrong!", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -451,7 +441,7 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
 
         pageposition=position;
         getdataposition=tabtitles[position];
-        Dayofweek.setText(tabtitles[position]);
+        Dayofweektxt.setText(tabtitles[position]);
         autocomplete();
         AddData();
     }
@@ -473,38 +463,42 @@ public class MyTask extends Fragment implements View.OnClickListener,ViewPager.O
     }
 
     public void AddData() {
+
         SQLITEDATABASE = getActivity().openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " WHERE  " + SQLITEHELPER.KEY_DOWeek + " = '" + getdataposition + "' ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
-        while (cursor != null && cursor.moveToNext()) {
-            String Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
-            String Etime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
-            String[] SplitStime = Stime.split(" ");
-            String[] SplitEtime = Etime.split(" ");
-            String StineSplitStime = SplitStime[0];
-            String EtineSplitEtime = SplitEtime[0];
-            Date date1 = new Date();
-            date1.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
-            Date date2 = new Date();
-            date2.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + date2.getTimezoneOffset()) * 60000);
-            int shour = date1.getHours();
-            int smint = date1.getMinutes();
-            int ehour = date2.getHours();
-            int emint = date2.getMinutes();
-            int sdiff = shour * 60 + smint;
-            int Ediff = ehour * 60 + emint;
-            int diff = Ediff - sdiff;
-            Date date3 = new Date();
-            date3.setTime(date2.getTime() + (diff * 60000));
-            int hour = date3.getHours();
-            int mint = date3.getMinutes();
-            intstart = shour * 60 + smint;
-            intend = hour * 60 + mint;
-            StartTime.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime)));
-            EndTime.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
-            Subject.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Subject)));
-            Venue.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Venue)));
-
+        if(cursor.getCount()==0) {
+            cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME + " ORDER BY " + SQLITEHELPER.KEY_STime + " ASC ", null);
         }
+            while (cursor != null && cursor.moveToNext()) {
+                String Stime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_STime));
+                String Etime = cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime));
+                String[] SplitStime = Stime.split(" ");
+                String[] SplitEtime = Etime.split(" ");
+                String StineSplitStime = SplitStime[0];
+                String EtineSplitEtime = SplitEtime[0];
+                Date date1 = new Date();
+                date1.setTime((((Integer.parseInt(StineSplitStime.split(":")[0])) * 60 + (Integer.parseInt(StineSplitStime.split(":")[1]))) + date1.getTimezoneOffset()) * 60000);
+                Date date2 = new Date();
+                date2.setTime((((Integer.parseInt(EtineSplitEtime.split(":")[0])) * 60 + (Integer.parseInt(EtineSplitEtime.split(":")[1]))) + date2.getTimezoneOffset()) * 60000);
+                int shour = date1.getHours();
+                int smint = date1.getMinutes();
+                int ehour = date2.getHours();
+                int emint = date2.getMinutes();
+                int sdiff = shour * 60 + smint;
+                int Ediff = ehour * 60 + emint;
+                int diff = Ediff - sdiff;
+                Date date3 = new Date();
+                date3.setTime(date2.getTime() + (diff * 60000));
+                int hour = date3.getHours();
+                int mint = date3.getMinutes();
+                intstart = shour * 60 + smint;
+                intend = hour * 60 + mint;
+                StartTime.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_ETime)));
+                EndTime.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
+                Subject.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Subject)));
+                Venue.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.KEY_Venue)));
+
+            }
     }
 
     public void TimeExistOrNot(int intstart, int intend) {

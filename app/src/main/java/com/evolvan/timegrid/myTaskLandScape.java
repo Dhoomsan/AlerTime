@@ -1,5 +1,6 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,13 +40,11 @@ import java.util.Date;
 import static android.content.Context.MODE_PRIVATE;
 
 public class myTaskLandScape extends Fragment {
-    int zoomcell = 1;
+    int zoomcell = 2,sshour,ssmint,ctime,storestime,storeetime;
     private ProgressDialog csprogress;
     static int t = 0,j,  ST, ET, DStandEt, sizetime, sizemon, sizetue, sizewed, sizethu, sizefri, sizesat, sizesun, Shour, SnextHour, Sminutes,width=0,height=0;
-    static String[] Timedata, Mondata, Tuedata, Weddata, Thudata, Fridata, Satdata, Sundata, SplitMondSTCompare, SplitMonETCompare;
-    static String[] MondST, MonET, TueST, TueET, WedST, WedET, ThuST, ThuET, FriST, FriET, SatST, SatET, SunST, SunET;
-    static String[] MonId, TueId, WedId, ThuId, FriId, SatId, SunId;
-    String DaySTCompare, MonETCompare, shourSplitMondSTCompare, shourSplitMonETCompare,strMondata,strDayId=null;
+    static String[] SplitSTCompare,SplitETCompare,SplitEtime,SplitStime, CStimeId,CStime, CEtime,CMonId, CMon, CMonSTime, CMonETime,CTueId, CTue, CTueETime, CTueTime,CWedId, CWed, CWedTime, CWedETime,CThuId, CThu, CThuTime, CThuETime,CFriId, CFri, CFriTime, CFriETime,CSatId, CSat, CSatTime, CSatETime,CSunId, CSun, CSunTime, CSunETime,Timedata, Mondata, Tuedata, Weddata, Thudata, Fridata, Satdata, Sundata, SplitMondSTCompare, SplitMonETCompare, MondST, MonET, TueST, TueET, WedST, WedET, ThuST, ThuET, FriST, FriET, SatST, SatET, SunST, SunET, MonId, TueId, WedId, ThuId, FriId, SatId, SunId;
+    String  st,et,dayOfTheWeek,StrSubject,StrVenue,StrAlembefor,Error="All Field Are Required !",LastEndTime,SplitEtimeFirst,StartFirstTime,shourminute, DaySTCompare, MonETCompare, shourSplitMondSTCompare, shourSplitMonETCompare,strMondata,strDayId=null;
     Date dateSTime, date1, date2, dateETime;
     ArrayList<String> Timedatalist;
 
@@ -55,13 +54,10 @@ public class myTaskLandScape extends Fragment {
 
     Toolbar.LayoutParams lp;
     LinearLayout.LayoutParams param1;
-    LinearLayout Layouttime, LayoutMon, LayoutTue, LayoutWed, LayoutThu, LayoutFri, LayoutSat, LayoutSun;
-    LinearLayout LDay,datafield,Landscapmain,updel;
+    LinearLayout Layouttime, LayoutMon, LayoutTue, LayoutWed, LayoutThu, LayoutFri, LayoutSat, LayoutSun, LDay,datafield,Landscapmain,updel;
     TextView Day;
     Display display;
-    String[]SplitEtime,SplitStime, CStimeId,CStime, CEtime,CMonId, CMon, CMonSTime, CMonETime,CTueId, CTue, CTueETime, CTueTime,CWedId, CWed, CWedTime, CWedETime,CThuId, CThu, CThuTime, CThuETime,CFriId, CFri, CFriTime, CFriETime,CSatId, CSat, CSatTime, CSatETime,CSunId, CSun, CSunTime, CSunETime;
-    String StrSubject,StrVenue,StrAlembefor,Error="All Field Are Required !",LastEndTime,SplitEtimeFirst,StartFirstTime,shourminute;
-    android.support.v7.app.AlertDialog alert;
+    AlertDialog alert;
 
     Button ButtonAddUpdate,ButtonDelete,ButtonUpdate;
     static EditText AlermBefore;
@@ -70,9 +66,6 @@ public class myTaskLandScape extends Fragment {
     boolean refreshcheck = false;
 
     Calendar cal;
-    int sshour,ssmint,ctime,storestime,storeetime;
-    String[] SplitSTCompare,SplitETCompare;
-    String st,et,dayOfTheWeek;
     SimpleDateFormat sdf;
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -82,13 +75,13 @@ public class myTaskLandScape extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle(com.evolvan.evo09.timegrid.R.string.Grid_View);
+        getActivity().setTitle(com.evolvan.timegrid.R.string.Grid_View);
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(com.evolvan.evo09.timegrid.R.layout.fragment_landscape_layout, container, false);
+        View view = inflater.inflate(com.evolvan.timegrid.R.layout.fragment_landscape_layout, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         csprogress = new ProgressDialog(getActivity());
         SQLITEHELPER = new SQLiteHelper(getActivity());
@@ -133,14 +126,14 @@ public class myTaskLandScape extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(com.evolvan.evo09.timegrid.R.menu.portrait, menu);
+        inflater.inflate(com.evolvan.timegrid.R.menu.portrait, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch(item.getItemId()) {
-            case com.evolvan.evo09.timegrid.R.id.action_PORTRAIT: {
+            case com.evolvan.timegrid.R.id.action_PORTRAIT: {
                 ((MainActivity)getActivity()).WhenRecord();
                 break;
             }
@@ -326,16 +319,15 @@ public class myTaskLandScape extends Fragment {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             display = ((WindowManager) getActivity().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             width = display.getWidth() / 8;
-            Log.d("zoomcell1", String.valueOf(zoomcell));
             height = 120 * zoomcell;
-            Layouttime = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayouttime);
-            LayoutMon = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayoutmon);
-            LayoutTue = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayouttue);
-            LayoutWed = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayoutwed);
-            LayoutThu = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayoutthu);
-            LayoutFri = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayoutfri);
-            LayoutSat = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayoutsat);
-            LayoutSun = (LinearLayout) getActivity().findViewById(com.evolvan.evo09.timegrid.R.id.linearLayoutsun);
+            Layouttime = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayouttime);
+            LayoutMon = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayoutmon);
+            LayoutTue = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayouttue);
+            LayoutWed = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayoutwed);
+            LayoutThu = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayoutthu);
+            LayoutFri = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayoutfri);
+            LayoutSat = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayoutsat);
+            LayoutSun = (LinearLayout) getActivity().findViewById(com.evolvan.timegrid.R.id.linearLayoutsun);
 
             LinearLayout.LayoutParams Margin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             Margin.setMargins(0, 5, 0, 0);
@@ -366,7 +358,7 @@ public class myTaskLandScape extends Fragment {
                         LDay = new LinearLayout(getContext());
                         Day = new TextView(getContext());
                         Day.setText(StartFirstTime);
-                        Day.setBackgroundResource(com.evolvan.evo09.timegrid.R.drawable.gradientbottom);
+                        Day.setBackgroundResource(R.drawable.borderbottom);
                         Day.setTextColor(Color.parseColor("#4a5a71"));
                         Day.setGravity(Gravity.CENTER_HORIZONTAL);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -388,7 +380,7 @@ public class myTaskLandScape extends Fragment {
                         Day.setGravity(Gravity.CENTER_HORIZONTAL);
                         Day.setText(String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM"));
                         Day.setTextColor(Color.parseColor("#4a5a71"));
-                        Day.setBackgroundResource(com.evolvan.evo09.timegrid.R.drawable.gradientbottom);
+                        Day.setBackgroundResource(com.evolvan.timegrid.R.drawable.borderbottom);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
                         }
@@ -651,10 +643,10 @@ public class myTaskLandScape extends Fragment {
             }
         });
         if (ctime > storestime && ctime < storeetime && cday.equals(dayOfTheWeek)){
-            Day.setBackgroundResource(com.evolvan.evo09.timegrid.R.drawable.highlightcolor);
+            Day.setBackgroundResource(com.evolvan.timegrid.R.drawable.highlightcolor);
         }
         else {
-            Day.setBackgroundResource(com.evolvan.evo09.timegrid.R.drawable.gradientbottom);
+            Day.setBackgroundResource(com.evolvan.timegrid.R.drawable.borderbottom);
         }
         Day.setPadding(0,5,0,5);
         Day.setText(Html.fromHtml("<small><font size=\"10 \" color=\"#006B60\">" + DaySTCompare + "</font></small>" + "<br>" + strMondata));
@@ -675,7 +667,7 @@ public class myTaskLandScape extends Fragment {
         LDay = new LinearLayout(getContext());
         Day = new TextView(getContext());
         Day.setText(" ");
-        Day.setBackgroundColor(ContextCompat.getColor(getContext(), com.evolvan.evo09.timegrid.R.color.colorTransparent));
+        Day.setBackgroundColor(ContextCompat.getColor(getContext(), com.evolvan.timegrid.R.color.colorTransparent));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, zoomcell *2);
         }
@@ -688,22 +680,22 @@ public class myTaskLandScape extends Fragment {
     public void ConfirmUpdate(final int storDayId){
         final BottomSheetDialog alertDialogBuilder = new BottomSheetDialog(getContext());
         LayoutInflater li = LayoutInflater.from(getContext());
-        final View promptsView = li.inflate(com.evolvan.evo09.timegrid.R.layout.updatelandscapedata, null);
+        final View promptsView = li.inflate(com.evolvan.timegrid.R.layout.updatelandscapedata, null);
         alertDialogBuilder.setContentView(promptsView);
         alertDialogBuilder.getWindow().setGravity(Gravity.BOTTOM);
         alertDialogBuilder.show();
 
-        updel=(LinearLayout)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.updel);
-        Landscapmain=(LinearLayout)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.Landscapmain);
-        datafield=(LinearLayout)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.datafield);
+        updel=(LinearLayout)promptsView.findViewById(com.evolvan.timegrid.R.id.updel);
+        Landscapmain=(LinearLayout)promptsView.findViewById(com.evolvan.timegrid.R.id.Landscapmain);
+        datafield=(LinearLayout)promptsView.findViewById(com.evolvan.timegrid.R.id.datafield);
         datafield.setVisibility(promptsView.GONE);
-        ButtonAddUpdate=(Button) promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonAddUpdate);
-        ButtonDelete=(Button)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonDelete);
-        ButtonUpdate=(Button)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonUpdate);
-        Subject=(AutoCompleteTextView) promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.Subject);
-        Venue=(AutoCompleteTextView) promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.Venue);
-        AlermBefore=(EditText)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.AlermBefore);
-        AlermRepeat=(CheckBox)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.AlermRepeat);
+        ButtonAddUpdate=(Button) promptsView.findViewById(com.evolvan.timegrid.R.id.ButtonAddUpdate);
+        ButtonDelete=(Button)promptsView.findViewById(com.evolvan.timegrid.R.id.ButtonDelete);
+        ButtonUpdate=(Button)promptsView.findViewById(com.evolvan.timegrid.R.id.ButtonUpdate);
+        Subject=(AutoCompleteTextView) promptsView.findViewById(com.evolvan.timegrid.R.id.Subject);
+        Venue=(AutoCompleteTextView) promptsView.findViewById(com.evolvan.timegrid.R.id.Venue);
+        AlermBefore=(EditText)promptsView.findViewById(com.evolvan.timegrid.R.id.AlermBefore);
+        AlermRepeat=(CheckBox)promptsView.findViewById(com.evolvan.timegrid.R.id.AlermRepeat);
 
         ButtonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -716,7 +708,7 @@ public class myTaskLandScape extends Fragment {
         ButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setMessage("Are you sure you want to Delete?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {

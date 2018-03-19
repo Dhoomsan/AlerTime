@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.evolvan.evo09.timegrid.Instruction">
+    tools:context="com.evolvan.timegrid.Instruction">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"

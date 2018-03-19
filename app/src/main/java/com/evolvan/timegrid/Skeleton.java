@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -29,17 +29,17 @@ public class Skeleton extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootview = inflater.inflate(com.evolvan.evo09.timegrid.R.layout.grid_layout, container, false);
+        View rootview = inflater.inflate(com.evolvan.timegrid.R.layout.grid_layout, container, false);
 
         SQLITEHELPER = new SQLiteHelper(getActivity());
 
-        statically = (TextView) rootview.findViewById(com.evolvan.evo09.timegrid.R.id.statically);
+        statically = (TextView) rootview.findViewById(com.evolvan.timegrid.R.id.statically);
         statically.setOnClickListener(this);
-        skeletonWebView=(WebView)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.skeletonWebView);
+        skeletonWebView=(WebView)rootview.findViewById(com.evolvan.timegrid.R.id.skeletonWebView);
         skeletonWebView.getSettings();
         skeletonWebView.setBackgroundColor(Color.TRANSPARENT);
 
-        String slide_2_desc = getString(com.evolvan.evo09.timegrid.R.string.grid_data);
+        String slide_2_desc = getString(com.evolvan.timegrid.R.string.grid_data);
         String myHtmlString = "<html><body align='justify'>" +
                 "<p>" + slide_2_desc+"</p>\n" +
                 "</body></html>";
@@ -51,7 +51,7 @@ public class Skeleton extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case com.evolvan.evo09.timegrid.R.id.statically: {
+            case com.evolvan.timegrid.R.id.statically: {
                 ((MainActivity)getActivity()).WhenStatic();
                 break;
             }

@@ -1,14 +1,15 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -31,6 +32,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,22 +43,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator;
-
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
+import static android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION;
 import static android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS;
+import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
+import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final int TIME_DELAY = 2000;
-    int enableAutoStartCode=147;
     public static final int RequestPermissionCode = 741;
     private static long back_pressed;
 
@@ -66,9 +69,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Cursor cursor;
     Intent mServiceIntent;
     private AlarmService mSensorService;
-    Context ctx;
-    public Context getCtx() {
-        return ctx;
+    Context context=null;
+    public Context getContext() {
+        return context;
     }
 
     Fragment fragment=null;
@@ -86,11 +89,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences sharedpreferences;
     private SharedPreferences.Editor mEditor;
     public static final String MyPREFERENCES = "MyPREFERENCES" ;
-    String  appname ;
+
+    private final String send_dialogValue = "";
+    public static final String send_dialog = "send_dialog";
+    String get_send_dialog,appname ;
 
     NavigationView navigationView;
 
     boolean permissiongrant=false;
+    static
 
     Intent intent;
     @Override
@@ -101,34 +108,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ctx = this;
-        setContentView(com.evolvan.evo09.timegrid.R.layout.activity_main);
+        context = this;
+        setContentView(com.evolvan.timegrid.R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(com.evolvan.evo09.timegrid.R.id.toolbar);
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, RECEIVE_BOOT_COMPLETED, ACTION_MANAGE_OVERLAY_PERMISSION, ACTION_MANAGE_WRITE_SETTINGS,ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS,REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS}, RequestPermissionCode);
+
+        Toolbar toolbar = (Toolbar) findViewById(com.evolvan.timegrid.R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        appname = getString(com.evolvan.evo09.timegrid.R.string.app_name);
+        appname = getString(com.evolvan.timegrid.R.string.app_name);
 
         sharedpreferences =getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         mEditor = sharedpreferences.edit();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(com.evolvan.evo09.timegrid.R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(com.evolvan.timegrid.R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, com.evolvan.evo09.timegrid.R.string.navigation_drawer_open, com.evolvan.evo09.timegrid.R.string.navigation_drawer_close);
+                this, drawer, toolbar, com.evolvan.timegrid.R.string.navigation_drawer_open, com.evolvan.timegrid.R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         SQLITEHELPER = new SQLiteHelper(this);
         DBCreate();
 
-        mSensorService = new AlarmService(getCtx());
-        mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
-
         csprogress = new ProgressDialog(this);
-        navigationView = (NavigationView) findViewById(com.evolvan.evo09.timegrid.R.id.nav_view);
+        navigationView = (NavigationView) findViewById(com.evolvan.timegrid.R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE , RECEIVE_BOOT_COMPLETED,ACTION_MANAGE_OVERLAY_PERMISSION, ACTION_MANAGE_WRITE_SETTINGS}, RequestPermissionCode);
 
         if(permissiongrant=true) {
             SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
@@ -142,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             enableAutoStart();
         }
+
     }
 
     public void DBCreate(){
@@ -152,26 +157,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else {DBCreate();}
     }
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void hideItem() {
         SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
         cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
-        navigationView = (NavigationView) findViewById(com.evolvan.evo09.timegrid.R.id.nav_view);
+        navigationView = (NavigationView) findViewById(com.evolvan.timegrid.R.id.nav_view);
         Menu action_menu = navigationView.getMenu();
         if(cursor.getCount()==0) {
-            action_menu.findItem(com.evolvan.evo09.timegrid.R.id.action_deleteStatic).setVisible(false);
+            action_menu.findItem(com.evolvan.timegrid.R.id.action_deleteStatic).setVisible(false);
         }
         else {
-            action_menu.findItem(com.evolvan.evo09.timegrid.R.id.action_deleteStatic).setVisible(true);
+            action_menu.findItem(com.evolvan.timegrid.R.id.action_deleteStatic).setVisible(true);
         }
     }
 
@@ -186,8 +181,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     boolean RECEIVE = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                     boolean OVERLAY = grantResults[3] == PackageManager.PERMISSION_GRANTED;
                     boolean SETTINGS = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                    boolean BATTERY = grantResults[5] == PackageManager.PERMISSION_GRANTED;
+                    boolean BATTERY1 = grantResults[6] == PackageManager.PERMISSION_GRANTED;
+                    boolean BATTERY2 = grantResults[7] == PackageManager.PERMISSION_GRANTED;
 
-                    if (WRITE || READ || RECEIVE || OVERLAY || SETTINGS) {
+                    if (WRITE || READ || RECEIVE || OVERLAY || SETTINGS || BATTERY) {
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -201,43 +199,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .setCancelable(false)
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, RECEIVE_BOOT_COMPLETED, ACTION_MANAGE_OVERLAY_PERMISSION, ACTION_MANAGE_WRITE_SETTINGS}, RequestPermissionCode);
+                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, RECEIVE_BOOT_COMPLETED, ACTION_MANAGE_OVERLAY_PERMISSION, ACTION_MANAGE_WRITE_SETTINGS,ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS,REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS}, RequestPermissionCode);
                                     }
                                 });
                         AlertDialog alert = builder.create();
-                        alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
+                        alert.setIcon(com.evolvan.timegrid.R.drawable.logo);// dialog  Icon
                         alert.setTitle("Confirmation"); // dialog  Title
                         alert.show();
                     }
-                }
-            }
-        }
-    }
-
-    @Override
-    @TargetApi(Build.VERSION_CODES.M)
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case 258: {
-                if (Settings.canDrawOverlays(this)) {
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startService(new Intent(getApplicationContext(), AlarmService.class));
-                        }
-                    }, 2000);
-                }
-            }
-            case 147: {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Permission granted!", Toast.LENGTH_LONG).show();
-                        }
-                    }, 2000);
                 }
             }
         }
@@ -258,16 +227,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case com.evolvan.evo09.timegrid.R.id.action_helpinfo: {
+            case com.evolvan.timegrid.R.id.action_helpinfo: {
                 instruction_dialog();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.action_deleteStatic: {
+            case com.evolvan.timegrid.R.id.action_deleteStatic: {
                 SQLITEDATABASE = openOrCreateDatabase(SQLITEHELPER.DATABASE_NAME, MODE_PRIVATE, null);
                 cursor = SQLITEDATABASE.rawQuery("SELECT * FROM " + SQLITEHELPER.TABLE_NAME, null);
                 if(cursor.getCount()!=0) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Do you really want to Delete All Record?")
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                            .setMessage("Do you really want to Delete All Record?")
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -305,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             });
                     AlertDialog alert = builder.create();
-                    alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
+                    alert.setIcon(com.evolvan.timegrid.R.drawable.logo);// dialog  Icon
                     alert.setTitle("Confirmation"); // dialog  Title
                     alert.show();
                 }
@@ -314,13 +283,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.nav_share: {
+            case com.evolvan.timegrid.R.id.nav_share: {
                 try {
                     Intent share = new Intent(Intent.ACTION_SEND);
                     share.setType("text/plain");
-                    share.putExtra(Intent.EXTRA_SUBJECT, "MockMe");
-                    String sAux = "\nLet me recommend you this application\n\n";
-                    sAux = sAux + "https://play.google.com/store/apps/details?id=mockme.evolvan.com.mockme&hl=en \n\n";
+                    share.putExtra(Intent.EXTRA_SUBJECT, "TimeGrid");
+                    String sAux = "\nI recommend you this application\n\n";
+                    sAux = sAux + "https://play.google.com/store/apps/details?id=com.evolvan.timegrid \n\n";
                     share.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(share, "Share Using..."));
                 } catch (Exception e) {
@@ -332,10 +301,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(fragment !=null)
         {
             FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
-            ft.replace(com.evolvan.evo09.timegrid.R.id.content_frame,fragment);
+            ft.replace(com.evolvan.timegrid.R.id.content_frame,fragment);
             ft.commit();
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(com.evolvan.evo09.timegrid.R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(com.evolvan.timegrid.R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -345,37 +314,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = this.getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragment = new Instruction();
-        fragmentTransaction.replace(com.evolvan.evo09.timegrid.R.id.content_frame, fragment);
+        fragmentTransaction.replace(com.evolvan.timegrid.R.id.content_frame, fragment);
         fragmentTransaction.commit();
     }
 
     public void WhenRecord(){
+
         hideItem();
+
         fragmentManager = this.getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragment = new MyTask();
-        fragmentTransaction.replace(com.evolvan.evo09.timegrid.R.id.content_frame, fragment);
+        fragmentTransaction.replace(com.evolvan.timegrid.R.id.content_frame, fragment);
         fragmentTransaction.commit();
-        if (checkDrawOverlayPermission()) {
-            startService();
-        }
 
+        startService();
     }
-    public void startService(){
-        mSensorService = new AlarmService(getCtx());
-        mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
-        if (!isMyServiceRunning(mSensorService.getClass())) {
 
-                startService(mServiceIntent);
+    public void startService(){
+        mSensorService = new AlarmService(getContext());
+        mServiceIntent = new Intent(getContext(), mSensorService.getClass());
+        if (!isMyServiceRunning(mSensorService.getClass())) {
+            startService(mServiceIntent);
 
         }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void WhenLandScape(){
         fragmentManager = this.getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragment = new myTaskLandScape();
-        fragmentTransaction.replace(com.evolvan.evo09.timegrid.R.id.content_frame, fragment);
+        fragmentTransaction.replace(com.evolvan.timegrid.R.id.content_frame, fragment);
         fragmentTransaction.commit();
     }
 
@@ -383,15 +362,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = this.getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragment = new myTaskStatic();
-        fragmentTransaction.replace(com.evolvan.evo09.timegrid.R.id.content_frame, fragment);
+        fragmentTransaction.replace(com.evolvan.timegrid.R.id.content_frame, fragment);
         fragmentTransaction.commit();
     }
 
     public void layoutUpdate(){
-        layout = (LinearLayout) findViewById(com.evolvan.evo09.timegrid.R.id.updatelayout);
-        slideUp = AnimationUtils.loadAnimation(this, com.evolvan.evo09.timegrid.R.anim.slide_up);
-        Button b =(Button)layout.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonAddUpdate);
-        b.setText(com.evolvan.evo09.timegrid.R.string.Update);
+        layout = (LinearLayout) findViewById(com.evolvan.timegrid.R.id.updatelayout);
+        slideUp = AnimationUtils.loadAnimation(this, com.evolvan.timegrid.R.anim.slide_up);
+        Button b =(Button)layout.findViewById(com.evolvan.timegrid.R.id.ButtonAddUpdate);
+        b.setText(com.evolvan.timegrid.R.string.Update);
         layout.setVisibility(View.VISIBLE);
         layout.startAnimation(slideUp);
     }
@@ -399,19 +378,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     public void instruction_dialog(){
         LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(com.evolvan.evo09.timegrid.R.layout.fragment_help_info, null);
+        View promptsView = li.inflate(com.evolvan.timegrid.R.layout.fragment_help_info, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        // set prompts.xml to alertdialog builder
+        // set prompts.xml to alertdialog notification
         alertDialogBuilder.setView(promptsView);
         // create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        ButtonCancel=(ImageView)promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.ButtonCancel);
+        ButtonCancel=(ImageView)promptsView.findViewById(com.evolvan.timegrid.R.id.ButtonCancel);
 
-        DialogViewPager = (ViewPager) promptsView.findViewById(com.evolvan.evo09.timegrid.R.id.DialogViewPager);
+        DialogViewPager = (ViewPager) promptsView.findViewById(com.evolvan.timegrid.R.id.DialogViewPager);
         DialogViewPager.setAdapter(new MyAdapter(MainActivity.this,XMENArray));
-        indicator = (CircleIndicator)promptsView. findViewById(com.evolvan.evo09.timegrid.R.id.indicator);
+        indicator = (CircleIndicator)promptsView. findViewById(com.evolvan.timegrid.R.id.indicator);
         indicator.setViewPager(DialogViewPager);
 
         ButtonCancel.setOnClickListener(new View.OnClickListener() {
@@ -424,151 +403,66 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         alertDialog.show();
     }
 
-    public boolean checkDrawOverlayPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (!Settings.canDrawOverlays(this)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enable Overlay")
-                    .setMessage("Please allow Overlay to always run the Notification,else our services can't be run."+"\n"+"Enable"+appname)
-                    .setCancelable(false)
-                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            intent = new Intent(ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                            startActivityForResult(intent, 258);
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
-            alert.show();
+    private void enableAutoStart() {
+        try {
+            intent = new Intent();
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
+                intent = new Intent("com.coloros.safecenter.permission.PermissionAppAllPermissionActivity");
+            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+            } else if ("oneplus".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.oneplus.security", "com.oneplus.security.chainlaunch.view.ChainLaunchAppListAct‌​ivity"));
+            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+            } else if ("Honor".equalsIgnoreCase(manufacturer) || "huawei".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+            }else if ("Letv".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+            }
+            else {
+                get_send_dialog= sharedpreferences.getString(send_dialog, send_dialogValue);
+                if(!get_send_dialog.equals(send_dialog)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("instruction")
+                            .setMessage("Change setting if notification is not receiving." + "\n" + "1.On the settings screen, scroll down a little and then tap on Security to open the security related settings." + "\n" + "2.In the security section you will find many settings related to apps like app permissions, app verification, whether to install from unknown sources etc. You have to tap on Auto-start Management to in this list." +
+                                    "\n" + "3.In the auto-start management screen, it will display a list of all the apps that are being auto-started in your Android phone. You can simply uncheck any apps that you want to disable from being auto-started. Similarly, checking an app will enable it to be auto-started with Android bootup.")
+                            .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.setIcon(com.evolvan.timegrid.R.drawable.logo);// dialog  Icon
+                    alert.show();
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString(send_dialog, send_dialog);
+                    editor.commit();
+                }
 
-            return false;
-        } else {
-            return true;
-        }
+            }
+            List<ResolveInfo> list = this.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (list.size() > 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Enable AutoStart")
+                        .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
+                        .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                startActivity(intent);
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.setIcon(com.evolvan.timegrid.R.drawable.logo);// dialog  Icon
+                alert.show();
+            }
+        } catch (ActivityNotFoundException e) {e.printStackTrace();}
     }
 
-    private void enableAutoStart() {
-        String manufacturer = android.os.Build.MANUFACTURER;
-        if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enable AutoStart")
-                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
-                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-                            startActivityForResult(intent,enableAutoStartCode);
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
-            alert.show();
-        }  else if ("Letv".equalsIgnoreCase(manufacturer)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enable AutoStart")
-                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
-                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
-                            startActivityForResult(intent,enableAutoStartCode);
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
-            alert.show();
-        }  else if ("Honor".equalsIgnoreCase(manufacturer)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enable AutoStart")
-                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
-                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
-                            startActivityForResult(intent,enableAutoStartCode);
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
-            alert.show();
-        }  else if ("oppo".equalsIgnoreCase(manufacturer)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enable AutoStart")
-                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
-                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            try {
-                                intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity");
-                                startActivityForResult(intent,enableAutoStartCode);
-                            } catch (Exception e) {
-                                try {
-                                    intent.setClassName("com.oppo.safe", "com.oppo.safe.permission.startup.StartupAppListActivity");
-                                    startActivityForResult(intent,enableAutoStartCode);
-                                } catch (Exception ex) {
-                                    try {
-                                        intent.setClassName("com.coloros.safecenter", "com.coloros.safecenter.startupapp.StartupAppListActivity");
-                                        startActivityForResult(intent,enableAutoStartCode);
-                                    } catch (Exception exx) {
-                                        try {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                if (!android.provider.Settings.System.canWrite(ctx)){
-                                                    intent = new Intent(ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + getPackageName()));
-                                                    startActivityForResult(intent,enableAutoStartCode);
-                                                }
-                                            }
-                                        }catch (Exception exxxxx){
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
-            alert.show();
-        }  else if ("vivo".contains(manufacturer)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enable AutoStart")
-                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
-                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            try {
-                                 intent = new Intent();
-                                intent.setComponent(new ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity"));
-                                startActivityForResult(intent,enableAutoStartCode);
-                            } catch (Exception e) {
-                                try {
-                                    intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-                                    startActivityForResult(intent,enableAutoStartCode);
-                                } catch (Exception ex) {
-                                    try {
-                                        intent.setClassName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager");
-                                        startActivityForResult(intent,enableAutoStartCode);
-                                    } catch (Exception exx) {
-                                        ex.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
-            alert.show();
-        }
-        else if ("huawei".equalsIgnoreCase(manufacturer)) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enable AutoStart")
-                    .setMessage("Please allow QuickAlert to always run in the background,else our services can't be run")
-                    .setPositiveButton("ALLOW", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
-                            startActivityForResult(intent,enableAutoStartCode);
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setIcon(com.evolvan.evo09.timegrid.R.drawable.logo);// dialog  Icon
-            alert.show();
-        }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        startService();
     }
 }

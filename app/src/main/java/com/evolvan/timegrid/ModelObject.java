@@ -1,12 +1,12 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 public enum ModelObject {
 
-    RED(com.evolvan.evo09.timegrid.R.string.app_name, com.evolvan.evo09.timegrid.R.layout.view_add),
-    BLUE(com.evolvan.evo09.timegrid.R.string.app_name, com.evolvan.evo09.timegrid.R.layout.view_update),
-    GREEN(com.evolvan.evo09.timegrid.R.string.app_name, com.evolvan.evo09.timegrid.R.layout.view_delete),
-    PINK(com.evolvan.evo09.timegrid.R.string.app_name, com.evolvan.evo09.timegrid.R.layout.view_create_grid),
-    YELLOW(com.evolvan.evo09.timegrid.R.string.app_name, com.evolvan.evo09.timegrid.R.layout.view_landscape);
+    RED(com.evolvan.timegrid.R.string.app_name, com.evolvan.timegrid.R.layout.view_add),
+    BLUE(com.evolvan.timegrid.R.string.app_name, com.evolvan.timegrid.R.layout.view_update),
+    GREEN(com.evolvan.timegrid.R.string.app_name, com.evolvan.timegrid.R.layout.view_delete),
+    PINK(com.evolvan.timegrid.R.string.app_name, com.evolvan.timegrid.R.layout.view_create_grid),
+    YELLOW(com.evolvan.timegrid.R.string.app_name, com.evolvan.timegrid.R.layout.view_landscape);
 
     private int mTitleResId;
     private int mLayoutResId;

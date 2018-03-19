@@ -1,6 +1,7 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -19,6 +20,7 @@ import android.support.v4.app.NotificationCompat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,11 +31,11 @@ public class AlarmService extends Service  {
     SQLiteHelper SQLITEHELPER;
     Cursor cursor;
     private static final int NOTIFICATION_ID = 1;
-    NotificationCompat.Builder builder;
+    NotificationCompat.Builder notification;
     Intent mainIntent;
     PendingIntent pendingIntent;
     NotificationManager manager;
-
+    int notificationId = new Random().nextInt();
     public AlarmService(Context applicationContext) {
         super();
     }
@@ -41,10 +43,17 @@ public class AlarmService extends Service  {
     public AlarmService() {
     }
     @Override
+    public void onCreate() {
+        super.onCreate();
+        Notification notification = new Notification();
+        startForeground(123456, notification);
+    }
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
         SQLITEHELPER = new SQLiteHelper(this);
         startTimer();
-        return super.onStartCommand(intent, flags, startId);
+       return START_STICKY;
     }
 
     private Timer timer;
@@ -79,10 +88,8 @@ public class AlarmService extends Service  {
             String CREATE_WEEKTABLE = "CREATE TABLE IF NOT EXISTS " + SQLITEHELPER.TABLE_NAME + " (" + SQLITEHELPER.KEY_ID + " INTEGER PRIMARY KEY NOT NULL, "+ SQLITEHELPER.KEY_DOWeek + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_STime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_ETime + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Subject + " VARCHAR NOT NULL, " + SQLITEHELPER.KEY_Venue + " VARCHAR NOT NULL , " + SQLITEHELPER.KEY_AlermBefor + " VARCHAR NOT NULL)";
             SQLITEDATABASE.execSQL(CREATE_WEEKTABLE);
             if(SQLITEDATABASE.isOpen()) {
-                //Log.d("SQ", "open");
             }
             else {
-                //Log.d("SLV", "not open");
             }
         }
         @Override
@@ -105,7 +112,6 @@ public class AlarmService extends Service  {
                     date3.setTime(date1.getTime() - (Integer.parseInt(Abefore) * 60000));
                     int hour = date3.getHours();
                     int mint = date3.getMinutes();
-                    long alarmtime=date3.getTime();
                     String CSTime = String.format("%02d:%02d %s", hour == 0 ? 12 : hour, mint, hour < 12 ? "AM" : "PM");
 
                     Calendar cal = Calendar.getInstance();
@@ -114,22 +120,22 @@ public class AlarmService extends Service  {
                     String ctime = String.format("%02d:%02d %s", shour == 0 ? 12 : shour, smint, shour < 12 ? "AM" : "PM");
 
                     if (ctime.equals(CSTime)) {
-                        String appname = getString(com.evolvan.evo09.timegrid.R.string.app_name);
+                        String appname = getString(com.evolvan.timegrid.R.string.app_name);
                         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                        builder = new NotificationCompat.Builder(getApplicationContext());
-                        builder.setContentTitle(appname)
-                                .setContentText("Today Task is " + sub + " ( " + ven + " ) \n at " + Stime)
+                        notification = new NotificationCompat.Builder(getApplicationContext());
+                        notification.setContentTitle(appname)
+                                .setContentText("Today Task is " + sub + " ( " + ven + " ) at " + Stime)
                                 .setVibrate(new long[]{150, 300, 150, 600})
                                 .setSound(defaultSoundUri)
-                                .setSmallIcon(com.evolvan.evo09.timegrid.R.drawable.logo)
+                                .setSmallIcon(com.evolvan.timegrid.R.drawable.logo)
                                 .setAutoCancel(true);
 
                         mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                         pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainIntent, 0);
-                        builder.setContentIntent(pendingIntent);
+                        notification.setContentIntent(pendingIntent);
 
                         manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                        manager.notify(NOTIFICATION_ID, builder.build());
+                        manager.notify(NOTIFICATION_ID, notification.build());
                     }
                 }
             }
@@ -143,16 +149,14 @@ public class AlarmService extends Service  {
 
     @Override
     public void onTaskRemoved(Intent rootIntent){
-        Intent restartServiceIntent = new Intent(getApplicationContext(), AlarmService.class);
-        restartServiceIntent.setPackage(getPackageName());
+        Calendar calendar = Calendar.getInstance();
+        rootIntent = new Intent(getApplicationContext(), this.getClass());
+        rootIntent.setPackage(getPackageName());
 
-        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, rootIntent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmService.set(
-                AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 1000,
-                restartServicePendingIntent);
-        System.exit(1);
+        alarmService.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                mInterval, restartServicePendingIntent);
         super.onTaskRemoved(rootIntent);
     }
 
@@ -160,5 +164,12 @@ public class AlarmService extends Service  {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarm.set(alarm.RTC_WAKEUP, System.currentTimeMillis() + mInterval, PendingIntent.getService(this, 0, new Intent(this, AlarmService.class), 0));
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
     }
 }

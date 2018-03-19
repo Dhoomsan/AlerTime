@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.evolvan.evo09.timegrid">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.evolvan.timegrid">
 
     <supports-screens
         android:anyDensity="true"
@@ -14,10 +15,12 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
+    <uses-permission android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <action android:name="android.intent.action.QUICKBOOT_POWERON" />
     <uses-permission android:name="android.permission.REBOOT"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
@@ -28,29 +31,25 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.evolvan.evo09.timegrid.MainActivity"
+            android:name="com.evolvan.timegrid.MainActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service
-            android:name="com.evolvan.evo09.timegrid.AlarmService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
+        <service android:name="com.evolvan.timegrid.AlarmService"
+            android:process=":service"/>
+        <receiver android:name="com.evolvan.timegrid.AlarmBroadcastReceiver"
             android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name="com.evolvan.evo09.timegrid.AlarmBroadcastReceiver"
-            android:enabled="false"
-            android:exported="false"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <data android:scheme="package"/>
+                <action android:name="YouWillNeverKillMe"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
     </application>

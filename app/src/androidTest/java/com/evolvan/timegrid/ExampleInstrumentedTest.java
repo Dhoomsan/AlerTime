@@ -1,4 +1,4 @@
-package com.evolvan.timegrid.timegrid1;
+package com.evolvan.timegrid;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

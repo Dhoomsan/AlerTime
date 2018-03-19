@@ -1,4 +1,4 @@
-package com.evolvan.evo09.timegrid;
+package com.evolvan.timegrid;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -45,19 +45,19 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootview= inflater.inflate(com.evolvan.evo09.timegrid.R.layout.fragment_staticform, container, false);
+        View rootview= inflater.inflate(com.evolvan.timegrid.R.layout.fragment_staticform, container, false);
         SQLITEHELPER = new SQLiteHelper(getActivity());
         csprogress = new ProgressDialog(getContext());
 
-        StartTime=(EditText)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.StartTime);
-        EndTime=(EditText)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.EndTime);
-        BreakStartTime=(EditText)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.BreakStartTime);
-        Alarmbefore=(EditText) rootview.findViewById(com.evolvan.evo09.timegrid.R.id.Alarmbefore);
-        BreakDuration=(EditText)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.BreakDuration);
-        PeriodDuration=(EditText)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.PeriodDuration);
+        StartTime=(EditText)rootview.findViewById(com.evolvan.timegrid.R.id.StartTime);
+        EndTime=(EditText)rootview.findViewById(com.evolvan.timegrid.R.id.EndTime);
+        BreakStartTime=(EditText)rootview.findViewById(com.evolvan.timegrid.R.id.BreakStartTime);
+        Alarmbefore=(EditText) rootview.findViewById(com.evolvan.timegrid.R.id.Alarmbefore);
+        BreakDuration=(EditText)rootview.findViewById(com.evolvan.timegrid.R.id.BreakDuration);
+        PeriodDuration=(EditText)rootview.findViewById(com.evolvan.timegrid.R.id.PeriodDuration);
 
-        buttonSubmit=(Button)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.buttonSubmit);
-        backstack=(Button)rootview.findViewById(com.evolvan.evo09.timegrid.R.id.backstack);
+        buttonSubmit=(Button)rootview.findViewById(com.evolvan.timegrid.R.id.buttonSubmit);
+        backstack=(Button)rootview.findViewById(com.evolvan.timegrid.R.id.backstack);
 
         backstack.setOnClickListener(this);
         StartTime.setOnClickListener(this);
@@ -77,26 +77,26 @@ public class myTaskStatic extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case com.evolvan.evo09.timegrid.R.id.backstack:{
+            case com.evolvan.timegrid.R.id.backstack:{
                 ((MainActivity) getActivity()).WhenNullRecord();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.StartTime:{
+            case com.evolvan.timegrid.R.id.StartTime:{
                 TimeFlag=789;
                 SetTime();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.EndTime:{
+            case com.evolvan.timegrid.R.id.EndTime:{
                 TimeFlag=456;
                 SetTime();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.BreakStartTime:{
+            case com.evolvan.timegrid.R.id.BreakStartTime:{
                 TimeFlag=123;
                 SetTime();
                 break;
             }
-            case com.evolvan.evo09.timegrid.R.id.buttonSubmit:{
+            case com.evolvan.timegrid.R.id.buttonSubmit:{
                 ButtonSubmit();
                 break;
             }
